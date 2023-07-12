@@ -35,7 +35,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AiFillBug, AiFillCloseCircle } from 'react-icons/ai';
 import { motion } from 'framer-motion';
 import { FaTelegramPlane } from 'react-icons/fa';
-import { getLocal } from '@/lib/LocalStorage/localStorage';
+import { getLocal, setLocal } from '@/lib/LocalStorage/localStorage';
 import { LOCAL_USER_TYPE } from '@/constant';
 import { IRouteItem, ROUTING_PAGES } from '@/constant/route';
 import { shimmer, toBase64 } from '@/lib/ImageOptimization';
@@ -201,6 +201,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const toast = createStandaloneToast();
 
   const handleLogout = async () => {
+    setLocal(LOCAL_USER_TYPE, '');
+    Router.replace('/login');
     // if (user?.userType === 'penjual') {
     //   const res = await ApiPenjualLogout();
     //   if (res.status === 200) {
