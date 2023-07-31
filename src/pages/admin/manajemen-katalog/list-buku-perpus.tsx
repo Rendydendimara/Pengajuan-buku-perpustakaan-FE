@@ -65,7 +65,7 @@ interface IDataRow {
 //   user?: IUser;
 // }
 
-const ListBukuAdmin: NextPage = () => {
+const ListBukuPerpusAdmin: NextPage = () => {
   const router = useRouter();
   const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([
     {
@@ -209,22 +209,12 @@ const ListBukuAdmin: NextPage = () => {
             Kembali
           </Button>
           <Text fontWeight='700' color='gray.700' fontSize='2xl'>
-            Manajemen Buku
+            Manajemen Buku Perpus
           </Text>
           <Box my='4'>
             <Flex w='full' justifyContent='flex-end' alignItems='center'>
               <Flex w='full' alignItems='center' gap='15px'>
-                <Link href='/admin/manajemen-katalog/tambah-buku'>
-                  <Button
-                    rightIcon={<AiOutlinePlus />}
-                    colorScheme='blue'
-                    mt='2'
-                    mb='4'
-                  >
-                    Buku
-                  </Button>
-                </Link>
-                <Link href='/admin/manajemen-katalog/bulk-katalog'>
+                <Link href='/admin/manajemen-katalog/bulk-buku-perpus'>
                   <Button
                     rightIcon={<AiOutlinePlus />}
                     colorScheme='purple'
@@ -232,16 +222,6 @@ const ListBukuAdmin: NextPage = () => {
                     mb='4'
                   >
                     Bulk
-                  </Button>
-                </Link>
-                <Link href='/admin/manajemen-katalog/bulk-buku-perpus'>
-                  <Button
-                    rightIcon={<AiOutlinePlus />}
-                    colorScheme='teal'
-                    mt='2'
-                    mb='4'
-                  >
-                    Buku Perpus
                   </Button>
                 </Link>
               </Flex>
@@ -279,8 +259,8 @@ const ListBukuAdmin: NextPage = () => {
   );
 };
 
-// export default privateRouteAdminProdi(ListBukuAdmin);
-export default ListBukuAdmin;
+// export default privateRouteAdminProdi(ListBukuPerpusAdmin);
+export default ListBukuPerpusAdmin;
 
 function CustomTable({ columns, data, getListPengguna }: any) {
   // Use the state and functions returned from useTable to build your UI

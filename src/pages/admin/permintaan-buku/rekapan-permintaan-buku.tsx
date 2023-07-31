@@ -173,15 +173,15 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
       </Head>
       <AppTemplate>
         <Box p='4'>
-          <Button
+          {/* <Button
             colorScheme='green'
-            onClick={back}
+            // onClick={back}
             my='5'
             leftIcon={<BiArrowBack />}
             size='md'
           >
             Kembali
-          </Button>
+          </Button> */}
           <Text fontWeight='700' color='gray.700' fontSize='2xl'>
             Rekapan Permintaan Buku
           </Text>

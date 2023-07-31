@@ -32,9 +32,6 @@ const TambahAdminProdi: NextPage = () => {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalType, setModalType] = useState<'add' | 'cancel' | ''>('');
-  const [initialValue, setInitialValue] = useState(
-    '<p>Tambahkan deskripsi produkmu untuk memudahkan pelanggan melihat informasi produk</p>'
-  );
   const [isShowPassword, setIsShowPassword] = useState<boolean>(true);
   const [isShowConfirmPassword, setIsShowConfirmPassword] =
     useState<boolean>(true);

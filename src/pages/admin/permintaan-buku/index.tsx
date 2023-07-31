@@ -336,6 +336,7 @@ function CustomTable({ columns, data, getListPengguna }: any) {
                           <Button
                             onClick={() => detailPage(row.original.id)}
                             colorScheme='blue'
+                            size='sm'
                           >
                             Detail
                           </Button>

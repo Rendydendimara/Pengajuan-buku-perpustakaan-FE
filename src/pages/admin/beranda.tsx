@@ -1,7 +1,14 @@
 import AppTemplate from '@/components/templates/AppTemplate';
 import Layout from '@/components/templates/Layout';
 import { APP_NAME } from '@/constant';
-import { Box, Flex, HStack, SimpleGrid, Text } from '@chakra-ui/layout';
+import {
+  Box,
+  Flex,
+  Heading,
+  HStack,
+  SimpleGrid,
+  Text,
+} from '@chakra-ui/layout';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -35,9 +42,9 @@ const BerandaAdmin: NextPage = () => {
           <Text fontSize='2xl'>Selamat Datang</Text>
           <Text>FULLNAME, Admin</Text>
           <Box my='8'>
-            <Text fontWeight='700' fontSize='20px'>
+            <Heading as='h3' fontWeight='700'>
               Data Statistik
-            </Text>
+            </Heading>
             <Box my='4'>
               <SimpleGrid spacing={3} columns={[2]}>
                 <ItemStatistik
