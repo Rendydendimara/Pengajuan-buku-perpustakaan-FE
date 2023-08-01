@@ -2,7 +2,7 @@ import AppTemplate from '@/components/templates/AppTemplate';
 import Layout from '@/components/templates/Layout';
 import { APP_NAME } from '@/constant';
 import { Button, IconButton } from '@chakra-ui/button';
-import { FormLabel } from '@chakra-ui/form-control';
+import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -11,7 +11,7 @@ import {
   Search2Icon,
 } from '@chakra-ui/icons';
 import { Input, InputGroup, InputRightElement } from '@chakra-ui/input';
-import { Box, Flex, Text } from '@chakra-ui/layout';
+import { Box, Center, Flex, Text } from '@chakra-ui/layout';
 import {
   Modal,
   ModalBody,
@@ -29,6 +29,7 @@ import {
   Table,
   Tbody,
   Td,
+  Textarea,
   Th,
   Thead,
   Tooltip,
@@ -48,6 +49,7 @@ import { useSelector } from 'react-redux';
 import { usePagination, useTable, useSortBy } from 'react-table';
 import { BiArrowBack } from 'react-icons/bi';
 import moment from 'moment';
+import { getColorStatus } from '@/utils/colors';
 
 interface IDataRow {
   id: string;
@@ -57,6 +59,7 @@ interface IDataRow {
   prodi: string;
   jumlah: number;
   aksi: string;
+  status: string;
 }
 
 // interface IReduxStateWorkspace {
@@ -75,6 +78,7 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
+      status: 'diproses',
     },
     {
       id: new Date().getTime().toString(),
@@ -84,6 +88,7 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
+      status: 'ditolak',
     },
     {
       id: new Date().getTime().toString(),
@@ -93,6 +98,7 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
+      status: 'gagal',
     },
     {
       id: new Date().getTime().toString(),
@@ -102,6 +108,7 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
+      status: 'diterima',
     },
     {
       id: new Date().getTime().toString(),
@@ -111,6 +118,7 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
+      status: 'selesai',
     },
     {
       id: new Date().getTime().toString(),
@@ -120,6 +128,7 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
+      status: 'selesai',
     },
   ]);
   // const { showToast } = useGlobalContext();
@@ -156,6 +165,10 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       {
         Header: 'Jumlah',
         accessor: 'jumlah',
+      },
+      {
+        Header: 'Status',
+        accessor: 'status',
       },
       {
         Header: 'Aksi',
@@ -290,8 +303,8 @@ function CustomTable({ columns, data, getListPengguna }: any) {
     usePagination
   );
 
-  const detailPage = (id: string) => {
-    Router.push(`/admin/permintaan-buku/${id}`);
+  const gotoDetail = (id: string) => {
+    Router.push(`/admin/permintaan-buku/detail/${id}`);
   };
 
   const editPage = (id: string) => {
@@ -359,7 +372,30 @@ function CustomTable({ columns, data, getListPengguna }: any) {
                           >
                             Terima
                           </Button>
+                          <Button
+                            onClick={() => gotoDetail(row.original.id)}
+                            colorScheme='blue'
+                            size='sm'
+                          >
+                            Detail
+                          </Button>
                         </Flex>
+                      </Td>
+                    );
+                  } else if (cell.column.Header === 'Status') {
+                    return (
+                      <Td key={y} {...cell.getCellProps()}>
+                        <Center
+                          padding='1'
+                          borderRadius='10px'
+                          alignItems='center'
+                          bgColor={getColorStatus(row.original.status)}
+                          justifyContent='center'
+                        >
+                          <Text color='white' fontWeight='700'>
+                            {row.original.status}
+                          </Text>
+                        </Center>
                       </Td>
                     );
                   } else {
@@ -474,6 +510,10 @@ function CustomTable({ columns, data, getListPengguna }: any) {
               Apakah kamu yakin untuk{' '}
               {modalType === 'reject' ? 'menolak' : 'menerima'} pengajuan ?
             </Text>
+            <FormControl my='5' id='email' isRequired>
+              <FormLabel>Informasi tambahan</FormLabel>
+              <Textarea rows={5} />
+            </FormControl>
           </ModalBody>
           <ModalFooter gap='2'>
             <Button onClick={onClose} colorScheme='green'>
