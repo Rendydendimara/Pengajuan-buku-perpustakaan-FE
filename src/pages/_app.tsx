@@ -15,38 +15,43 @@ import { ApiCheckLogin } from '@/api/auth';
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [pageLoading, setLoadingPage] = useState(true);
+  const [pageLoading, setLoadingPage] = useState(false);
 
   const getUserInfo = async (userType: string, token: string) => {
-    const res = await ApiCheckLogin({ token, type: userType });
-    if (res.status === 200) {
-      store.dispatch({
-        type: 'SET_USER',
-        user: {
-          ...res.data.data,
-          type: userType,
-        },
-      });
-      localCookieSaveToken(res.data.data.token);
-    } else {
-      router.replace('/login');
-    }
+    // const res = await ApiCheckLogin({ token, type: userType });
+    // if (res.status === 200) {
+    //   store.dispatch({
+    //     type: 'SET_USER',
+    //     user: {
+    //       ...res.data.data,
+    //       type: userType,
+    //     },
+    //   });
+    //   localCookieSaveToken(res.data.data.token);
+    // } else {
+    //   router.replace('/login');
+    // }
 
     setLoadingPage(false);
   };
 
   useEffect(() => {
     async function funcAsyncDefault() {
-      const token = localCookieLoadToken() ?? '';
-      const userType = getLocal(LOCAL_USER_TYPE);
-
-      if (token) {
-        await getUserInfo(userType, token);
-      } else {
-        router.replace(`/login`);
-      }
+      // const token = localCookieLoadToken() ?? '';
+      // const userType = getLocal(LOCAL_USER_TYPE);
+      // if (token) {
+      //   await getUserInfo(userType, token);
+      // } else {
+      //   router.replace(`/login`);
+      // }
     }
-    funcAsyncDefault();
+    // funcAsyncDefault();
+    const userType = getLocal(LOCAL_USER_TYPE);
+    if (userType) {
+      router.replace(`/${userType}/beranda`);
+    } else {
+      router.replace(`/login`);
+    }
   }, []);
 
   if (pageLoading) {
