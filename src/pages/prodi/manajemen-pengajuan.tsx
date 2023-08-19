@@ -68,7 +68,7 @@ const ManajemenPengajuanProdi: NextPage = () => {
       prodi: 'Teknik Informatika',
       jumlah: 10,
       status: 'diproses',
-      diAjuakanPada: moment().format('LLLL'),
+      diAjuakanPada: moment().format('L'),
       aksi: new Date().getTime().toString(),
     },
     {
@@ -77,7 +77,7 @@ const ManajemenPengajuanProdi: NextPage = () => {
       prodi: 'Teknik Informatika',
       jumlah: 10,
       status: 'diterima',
-      diAjuakanPada: moment().format('LLLL'),
+      diAjuakanPada: moment().format('L'),
       aksi: new Date().getTime().toString(),
     },
     {
@@ -86,7 +86,7 @@ const ManajemenPengajuanProdi: NextPage = () => {
       prodi: 'Teknik Informatika',
       jumlah: 10,
       status: 'selesai',
-      diAjuakanPada: moment().format('LLLL'),
+      diAjuakanPada: moment().format('L'),
       aksi: new Date().getTime().toString(),
     },
     {
@@ -95,7 +95,7 @@ const ManajemenPengajuanProdi: NextPage = () => {
       prodi: 'Teknik Informatika',
       jumlah: 10,
       status: 'gagal',
-      diAjuakanPada: moment().format('LLLL'),
+      diAjuakanPada: moment().format('L'),
       aksi: new Date().getTime().toString(),
     },
     {
@@ -104,7 +104,7 @@ const ManajemenPengajuanProdi: NextPage = () => {
       prodi: 'Teknik Informatika',
       jumlah: 10,
       status: 'ditolak',
-      diAjuakanPada: moment().format('LLLL'),
+      diAjuakanPada: moment().format('L'),
       aksi: new Date().getTime().toString(),
     },
   ]);

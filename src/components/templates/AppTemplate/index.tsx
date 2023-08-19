@@ -264,6 +264,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
     <Flex
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
+      display='none'
       height='20'
       alignItems='center'
       bg={useColorModeValue('white', 'gray.900')}
@@ -286,26 +287,19 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         fontFamily='monospace'
         fontWeight='bold'
       >
-        {/* {`${user?.fullname}, ${
-          user?.userType === 'penjual'
-            ? 'Penjual'
-            : user?.userType === 'adminProdi'
-            ? 'Admin Prodi'
-            : 'Admin Umum'
-        }`} */}
         {userType}
       </Text>
 
-      <Text
+      {/* <Text
         display={{ base: 'flex', md: 'none' }}
         fontSize='2xl'
         fontFamily='monospace'
         fontWeight='bold'
       >
         Logo
-      </Text>
+      </Text> */}
 
-      <HStack spacing={{ base: '0', md: '6' }}>
+      {/* <HStack spacing={{ base: '0', md: '6' }}>
         <Flex alignItems={'center'}>
           <Menu>
             <MenuButton
@@ -357,7 +351,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
             </MenuList>
           </Menu>
         </Flex>
-      </HStack>
+      </HStack> */}
     </Flex>
   );
 };

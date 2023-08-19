@@ -1,6 +1,10 @@
+import { ApiLogin } from '@/api/auth';
 import Layout from '@/components/templates/Layout';
 import { APP_NAME, LOCAL_USER_TYPE } from '@/constant';
-import { setLocal } from '@/lib/LocalStorage/localStorage';
+import { localCookieSaveToken } from '@/lib/Cookies/token';
+import { getLocal, setLocal } from '@/lib/LocalStorage/localStorage';
+import { ICombinedState } from '@/provider/redux/store';
+import { actionSetUser } from '@/provider/redux/User/UserActions';
 import {
   Alert,
   AlertIcon,
@@ -29,25 +33,29 @@ import { BiLogIn } from 'react-icons/bi';
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 
+interface IReduxStateWorkspace {
+  user: any;
+}
+
 const LoginAdminUmum: NextPage = () => {
   const [formLogin, setFormLogin] = useState({
     nidn: '',
     password: '',
     email: '',
-    userType: 'admin',
+    type: 'admin',
   });
   const dispatch = useDispatch();
   const [isShowPassword, setIsShowPassword] = useState<boolean>(true);
   const [loadingFetchLogin, setLoadingFetchLogin] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isErrorVerifikasi, setIsErrorVerifikasi] = useState<boolean>(false);
-  // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
-  //   (state) => {
-  //     return {
-  //       user: state.user.user,
-  //     };
-  //   }
-  // );
+  const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
+    (state) => {
+      return {
+        user: state.user.user,
+      };
+    }
+  );
   const handleTogglePasswordShow = (): void => {
     setIsShowPassword(!isShowPassword);
   };
@@ -64,7 +72,7 @@ const LoginAdminUmum: NextPage = () => {
   const onChangeType = (e: any) => {
     setFormLogin({
       ...formLogin,
-      userType: e.target.value,
+      type: e.target.value,
     });
   };
 
@@ -74,44 +82,37 @@ const LoginAdminUmum: NextPage = () => {
     setErrorMessage('');
     setLoadingFetchLogin(true);
     event.preventDefault();
-    setLocal(LOCAL_USER_TYPE, formLogin.userType);
-    Router.replace(`/${formLogin.userType}/beranda`);
+    // setLocal(LOCAL_USER_TYPE, formLogin.type);
+    // Router.replace(`/${formLogin.type}/beranda`);
 
-    // const res: any = await ApiAdminUmumLogin(formLogin);
-    // if (res.status === 200) {
-    //   dispatch(
-    //     actionSetUser({
-    //       _id: res.data.data._id,
-    //       fullname: res.data.data.fullname,
-    //       email: res.data.data.email,
-    //       gender: res.data.data.gender,
-    //       noTelfon: res.data.data.noTelfon,
-    //       profileImage: res.data.data.profileImage,
-    //       prodi: undefined,
-    //       createdAt: res.data.data.createdAt,
-    //       updatedAt: res.data.data.updatedAt,
-    //       userType: 'adminUmum',
-    //     })
-    //   );
-    //   setLocal(LOCAL_USER_TYPE, 'adminUmum');
-    //   localCookieSaveToken(res.data.data.token);
-    //   Router.replace('/admin-umum/beranda');
-    // } else {
-    //   setErrorMessage(res.data.message);
-    //   if (res.data.message?.includes('terverifikasi')) {
-    //     setIsErrorVerifikasi(true);
-    //   }
-    // }
+    const res: any = await ApiLogin(formLogin);
+    if (res.status === 200) {
+      dispatch({
+        type: 'SET_USER',
+        user: {
+          ...res.data.data,
+          type: formLogin.type,
+        },
+      });
+      setLocal(LOCAL_USER_TYPE, formLogin.type);
+      localCookieSaveToken(res.data.data.token);
+      Router.replace(`/${formLogin.type}/beranda`);
+    } else {
+      setErrorMessage(res.data.message);
+      // if (res.data.message?.includes('terverifikasi')) {
+      //   setIsErrorVerifikasi(true);
+      // }
+    }
     setLoadingFetchLogin(false);
   };
 
   const disableForm = () => {
-    if (formLogin.userType === 'admin') {
+    if (formLogin.type === 'admin') {
       if (formLogin.password && formLogin.email) {
         return false;
       }
       return true;
-    } else if (formLogin.userType === 'prodi') {
+    } else if (formLogin.type === 'prodi') {
       if (formLogin.password && formLogin.nidn) {
         return false;
       }
@@ -121,9 +122,11 @@ const LoginAdminUmum: NextPage = () => {
   };
 
   useEffect(() => {
-    // if (user) {
-    //   Router.push('/admin-umum/beranda');
-    // }
+    const userType = getLocal(LOCAL_USER_TYPE);
+    console.log('user', user);
+    if (user) {
+      Router.push(`/${userType}/beranda`);
+    }
   }, []);
 
   return (
@@ -174,7 +177,7 @@ const LoginAdminUmum: NextPage = () => {
                 <FormControl my='5' id='email' isRequired>
                   <FormLabel>Tipe Akun</FormLabel>
                   <Select
-                    value={formLogin.userType}
+                    value={formLogin.type}
                     placeholder='Pilih akun...'
                     onChange={onChangeType}
                   >
@@ -182,7 +185,7 @@ const LoginAdminUmum: NextPage = () => {
                     <option value='prodi'>Prodi</option>
                   </Select>
                 </FormControl>
-                {formLogin.userType === 'prodi' ? (
+                {formLogin.type === 'prodi' ? (
                   <FormControl my='5' id='nidn' isRequired>
                     <FormLabel>NIDN</FormLabel>
                     <Input

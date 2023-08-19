@@ -1,6 +1,6 @@
 import { IconType } from 'react-icons';
 import { AiOutlineBarChart, AiOutlineMedicineBox } from 'react-icons/ai';
-import { BiBox, BiGitPullRequest } from 'react-icons/bi';
+import { BiBox, BiGitPullRequest, BiLogOut } from 'react-icons/bi';
 import { BsShop } from 'react-icons/bs';
 import { CgProfile, CgUserList } from 'react-icons/cg';
 import { FiHome, FiUsers } from 'react-icons/fi';
@@ -47,6 +47,12 @@ export const ROUTING_PAGES: any = {
       label: 'Profile',
       href: '/admin/profile',
       icon: CgProfile,
+      type: 'parent',
+    },
+    {
+      label: 'Keluar',
+      href: '/admin/logout',
+      icon: BiLogOut,
       type: 'parent',
     },
   ],

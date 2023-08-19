@@ -227,7 +227,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -235,7 +235,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -243,7 +243,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -251,7 +251,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -259,7 +259,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -267,7 +267,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                     </Tbody>
@@ -297,7 +297,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -305,7 +305,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -313,7 +313,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -321,7 +321,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -329,7 +329,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -337,7 +337,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                     </Tbody>
@@ -367,7 +367,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -375,7 +375,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -383,7 +383,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -391,7 +391,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -399,7 +399,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -407,7 +407,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                     </Tbody>

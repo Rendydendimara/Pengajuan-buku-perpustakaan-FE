@@ -103,10 +103,10 @@ const ManajemenPenggunaAdmin: NextPage = () => {
         Header: 'No',
         accessor: 'no',
       },
-      {
-        Header: 'ID',
-        accessor: 'id',
-      },
+      // {
+      //   Header: 'ID',
+      //   accessor: 'id',
+      // },
       {
         Header: 'Nama',
         accessor: 'nama',
@@ -171,15 +171,6 @@ const ManajemenPenggunaAdmin: NextPage = () => {
       </Head>
       <AppTemplate>
         <Box p='4'>
-          <Button
-            colorScheme='green'
-            onClick={back}
-            my='5'
-            leftIcon={<BiArrowBack />}
-            size='md'
-          >
-            Kembali
-          </Button>
           <Text fontWeight='700' color='gray.700' fontSize='2xl'>
             Manajemen Pengguna Akun Prodi
           </Text>
@@ -190,6 +181,7 @@ const ManajemenPenggunaAdmin: NextPage = () => {
                 colorScheme='green'
                 mt='2'
                 mb='4'
+                size='sm'
               >
                 Tambah Akun Prodi
               </Button>
@@ -287,12 +279,14 @@ function CustomTable({ columns, data, getListPengguna }: any) {
                       <Td key={y} {...cell.getCellProps()}>
                         <Flex alignItems='center' gap='10px'>
                           <Button
+                            size='sm'
                             onClick={() => editPage(row.original.id)}
                             colorScheme='orange'
                           >
                             Ubah
                           </Button>
                           <Button
+                            size='sm'
                             onClick={() => detailPage(row.original.id)}
                             colorScheme='blue'
                           >

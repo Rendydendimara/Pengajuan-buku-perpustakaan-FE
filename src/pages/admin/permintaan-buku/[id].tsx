@@ -74,7 +74,7 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       id: new Date().getTime().toString(),
       no: 1,
       judulBuku: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('LLLL'),
+      ajukanPada: moment().format('L'),
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
@@ -84,7 +84,7 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       id: new Date().getTime().toString(),
       no: 2,
       judulBuku: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('LLLL'),
+      ajukanPada: moment().format('L'),
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
@@ -94,7 +94,7 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       id: new Date().getTime().toString(),
       no: 3,
       judulBuku: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('LLLL'),
+      ajukanPada: moment().format('L'),
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
@@ -104,7 +104,7 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       id: new Date().getTime().toString(),
       no: 4,
       judulBuku: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('LLLL'),
+      ajukanPada: moment().format('L'),
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
@@ -114,7 +114,7 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       id: new Date().getTime().toString(),
       no: 5,
       judulBuku: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('LLLL'),
+      ajukanPada: moment().format('L'),
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
@@ -124,7 +124,7 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       id: new Date().getTime().toString(),
       no: 6,
       judulBuku: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('LLLL'),
+      ajukanPada: moment().format('L'),
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
@@ -146,10 +146,10 @@ const AdminDetailPermintaanBuku: NextPage = () => {
         Header: 'No',
         accessor: 'no',
       },
-      {
-        Header: 'ID',
-        accessor: 'id',
-      },
+      // {
+      //   Header: 'ID',
+      //   accessor: 'id',
+      // },
       {
         Header: 'Ajukan Pada',
         accessor: 'ajukanPada',
@@ -222,15 +222,6 @@ const AdminDetailPermintaanBuku: NextPage = () => {
       </Head>
       <AppTemplate>
         <Box p='4'>
-          <Button
-            colorScheme='green'
-            onClick={back}
-            my='5'
-            leftIcon={<BiArrowBack />}
-            size='md'
-          >
-            Kembali
-          </Button>
           <Text fontWeight='700' color='gray.700' fontSize='2xl'>
             Detail Permintaan Buku Teknik Informatika
           </Text>
@@ -257,11 +248,11 @@ const AdminDetailPermintaanBuku: NextPage = () => {
                 data={dataPengguna}
                 getListPengguna={getListPengguna}
               />
-              <Flex justifyContent='flex-end' w='full'>
+              {/* <Flex justifyContent='flex-end' w='full'>
                 <Button colorScheme='blue' my='4'>
                   Tambah Ke Rekapan
                 </Button>
-              </Flex>
+              </Flex> */}
             </Box>
           </Box>
         </Box>
@@ -516,10 +507,10 @@ function CustomTable({ columns, data, getListPengguna }: any) {
             </FormControl>
           </ModalBody>
           <ModalFooter gap='2'>
-            <Button onClick={onClose} colorScheme='green'>
+            <Button size='sm' onClick={onClose} colorScheme='green'>
               Ya, Lanjut
             </Button>
-            <Button colorScheme='red' onClick={onClose}>
+            <Button colorScheme='red' size='sm' onClick={onClose}>
               Batal
             </Button>
           </ModalFooter>

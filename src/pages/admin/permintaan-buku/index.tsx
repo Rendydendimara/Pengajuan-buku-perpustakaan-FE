@@ -62,7 +62,7 @@ const PermintaanBukuAdmin: NextPage = () => {
       id: new Date().getTime().toString(),
       no: 1,
       namaPengajuan: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('LLLL'),
+      ajukanPada: moment().format('L'),
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
@@ -71,7 +71,7 @@ const PermintaanBukuAdmin: NextPage = () => {
       id: new Date().getTime().toString(),
       no: 2,
       namaPengajuan: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('LLLL'),
+      ajukanPada: moment().format('L'),
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
@@ -80,7 +80,7 @@ const PermintaanBukuAdmin: NextPage = () => {
       id: new Date().getTime().toString(),
       no: 3,
       namaPengajuan: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('LLLL'),
+      ajukanPada: moment().format('L'),
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
@@ -89,7 +89,7 @@ const PermintaanBukuAdmin: NextPage = () => {
       id: new Date().getTime().toString(),
       no: 4,
       namaPengajuan: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('LLLL'),
+      ajukanPada: moment().format('L'),
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
@@ -98,7 +98,7 @@ const PermintaanBukuAdmin: NextPage = () => {
       id: new Date().getTime().toString(),
       no: 5,
       namaPengajuan: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('LLLL'),
+      ajukanPada: moment().format('L'),
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
@@ -107,7 +107,7 @@ const PermintaanBukuAdmin: NextPage = () => {
       id: new Date().getTime().toString(),
       no: 6,
       namaPengajuan: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('LLLL'),
+      ajukanPada: moment().format('L'),
       prodi: 'TIF',
       jumlah: 10,
       aksi: new Date().getTime().toString(),
@@ -128,10 +128,10 @@ const PermintaanBukuAdmin: NextPage = () => {
         Header: 'No',
         accessor: 'no',
       },
-      {
-        Header: 'ID',
-        accessor: 'id',
-      },
+      // {
+      //   Header: 'ID',
+      //   accessor: 'id',
+      // },
       {
         Header: 'Nama Pengajuan',
         accessor: 'namaPengajuan',
@@ -200,15 +200,6 @@ const PermintaanBukuAdmin: NextPage = () => {
       </Head>
       <AppTemplate>
         <Box p='4'>
-          <Button
-            colorScheme='green'
-            onClick={back}
-            my='5'
-            leftIcon={<BiArrowBack />}
-            size='md'
-          >
-            Kembali
-          </Button>
           <Text fontWeight='700' color='gray.700' fontSize='2xl'>
             Permintaan Buku
           </Text>
@@ -235,7 +226,7 @@ const PermintaanBukuAdmin: NextPage = () => {
                 getListPengguna={getListPengguna}
               />
               <Link href='/admin/permintaan-buku/rekapan-permintaan-buku'>
-                <Button colorScheme='blue' my='4'>
+                <Button colorScheme='blue' size='sm' my='4'>
                   Lihat Semua Rekapan
                 </Button>
               </Link>

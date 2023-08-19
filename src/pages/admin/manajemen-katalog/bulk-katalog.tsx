@@ -252,7 +252,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -260,7 +260,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -268,7 +268,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -276,7 +276,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -284,7 +284,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -292,7 +292,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                     </Tbody>
@@ -322,7 +322,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -330,7 +330,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -338,7 +338,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -346,7 +346,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -354,7 +354,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -362,7 +362,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                     </Tbody>
@@ -392,7 +392,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -400,7 +400,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -408,7 +408,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -416,7 +416,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -424,7 +424,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                       <Tr>
@@ -432,7 +432,7 @@ const BulkKatalogAdmin: NextPage = () => {
                         <Td>Judul buku</Td>
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                         <Td>{new Date().getFullYear()}</Td>
                       </Tr>
                     </Tbody>

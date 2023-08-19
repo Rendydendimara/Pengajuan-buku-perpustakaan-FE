@@ -25,7 +25,7 @@ export function privateRouteAdmin(WrappedComponent: any) {
           window.location.href = '/login';
         }
       }
-      if (auth && auth.decodedToken.userType !== 'admin') {
+      if (auth && auth.decodedToken.type !== 'admin') {
         if (typeof window !== 'undefined') {
           window.location.href = '/login';
         }
@@ -55,7 +55,7 @@ export function privateRouteAdmin(WrappedComponent: any) {
       // console.log('token', token);
       // console.log('auth', auth);
 
-      if (auth.decodedToken.userType !== 'admin') {
+      if (auth.decodedToken.type !== 'admin') {
         window.location.href = '/login';
       }
       if (!token) {

@@ -48,7 +48,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
       judulBuku: 'Judul buku',
       penulis: 'Penulis',
       penerbit: 'Penerbit',
-      tanggalUpload: moment().format('LLLL'),
+      tanggalUpload: moment().format('L'),
       tahun: new Date().getFullYear().toString(),
       aksi: new Date().getTime().toString(),
     },
@@ -58,7 +58,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
       judulBuku: 'Judul buku',
       penulis: 'Penulis',
       penerbit: 'Penerbit',
-      tanggalUpload: moment().format('LLLL'),
+      tanggalUpload: moment().format('L'),
       tahun: new Date().getFullYear().toString(),
       aksi: new Date().getTime().toString(),
     },
@@ -68,7 +68,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
       judulBuku: 'Judul buku',
       penulis: 'Penulis',
       penerbit: 'Penerbit',
-      tanggalUpload: moment().format('LLLL'),
+      tanggalUpload: moment().format('L'),
       tahun: new Date().getFullYear().toString(),
       aksi: new Date().getTime().toString(),
     },
@@ -78,7 +78,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
       judulBuku: 'Judul buku',
       penulis: 'Penulis',
       penerbit: 'Penerbit',
-      tanggalUpload: moment().format('LLLL'),
+      tanggalUpload: moment().format('L'),
       tahun: new Date().getFullYear().toString(),
       aksi: new Date().getTime().toString(),
     },
@@ -237,7 +237,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
                         <Td>{new Date().getFullYear()}</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                       </Tr>
                       <Tr>
                         <Td>2</Td>
@@ -245,7 +245,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
                         <Td>{new Date().getFullYear()}</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                       </Tr>
                       <Tr>
                         <Td>3</Td>
@@ -253,7 +253,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
                         <Td>{new Date().getFullYear()}</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                       </Tr>
                     </Tbody>
                   </Table>
@@ -288,7 +288,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
                         <Td>{new Date().getFullYear()}</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                       </Tr>
                       <Tr>
                         <Td>2</Td>
@@ -296,7 +296,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
                         <Td>{new Date().getFullYear()}</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                       </Tr>
                       <Tr>
                         <Td>3</Td>
@@ -304,7 +304,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
                         <Td>{new Date().getFullYear()}</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                       </Tr>
                     </Tbody>
                   </Table>
@@ -339,7 +339,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
                         <Td>{new Date().getFullYear()}</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                       </Tr>
                       <Tr>
                         <Td>2</Td>
@@ -347,7 +347,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
                         <Td>{new Date().getFullYear()}</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                       </Tr>
                       <Tr>
                         <Td>3</Td>
@@ -355,7 +355,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
                         <Td>Penulis</Td>
                         <Td>Penerbit</Td>
                         <Td>{new Date().getFullYear()}</Td>
-                        <Td>{moment().format('LLLL')}</Td>
+                        <Td>{moment().format('L')}</Td>
                       </Tr>
                     </Tbody>
                   </Table>

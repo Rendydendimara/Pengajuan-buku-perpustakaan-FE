@@ -53,8 +53,11 @@ import { AiOutlinePlus } from 'react-icons/ai';
 interface IDataRow {
   id: string;
   no: number;
-  namaKatalog: string;
-  tanggalCreate: string;
+  judulBuku: string;
+  penulis: string;
+  penerbit: string;
+  tanggalUpload: string;
+  tahun: string;
   aksi: string;
 }
 
@@ -62,35 +65,47 @@ interface IDataRow {
 //   user?: IUser;
 // }
 
-const ListKatalogAdmin: NextPage = () => {
+const ListBukuKatalogAdmin: NextPage = () => {
   const router = useRouter();
   const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([
     {
       id: new Date().getTime().toString(),
       no: 1,
-      namaKatalog: 'Nama Katalog',
-      tanggalCreate: moment().format('LLLL'),
+      judulBuku: 'Judul buku',
+      penulis: 'Penulis',
+      penerbit: 'Penerbit',
+      tanggalUpload: moment().format('L'),
+      tahun: new Date().getFullYear().toString(),
       aksi: new Date().getTime().toString(),
     },
     {
       id: new Date().getTime().toString(),
       no: 2,
-      namaKatalog: 'Nama Katalog',
-      tanggalCreate: moment().format('LLLL'),
+      judulBuku: 'Judul buku',
+      penulis: 'Penulis',
+      penerbit: 'Penerbit',
+      tanggalUpload: moment().format('L'),
+      tahun: new Date().getFullYear().toString(),
       aksi: new Date().getTime().toString(),
     },
     {
       id: new Date().getTime().toString(),
       no: 3,
-      namaKatalog: 'Nama Katalog',
-      tanggalCreate: moment().format('LLLL'),
+      judulBuku: 'Judul buku',
+      penulis: 'Penulis',
+      penerbit: 'Penerbit',
+      tanggalUpload: moment().format('L'),
+      tahun: new Date().getFullYear().toString(),
       aksi: new Date().getTime().toString(),
     },
     {
       id: new Date().getTime().toString(),
       no: 4,
-      namaKatalog: 'Nama Katalog',
-      tanggalCreate: moment().format('LLLL'),
+      judulBuku: 'Judul buku',
+      penulis: 'Penulis',
+      penerbit: 'Penerbit',
+      tanggalUpload: moment().format('L'),
+      tahun: new Date().getFullYear().toString(),
       aksi: new Date().getTime().toString(),
     },
   ]);
@@ -108,17 +123,29 @@ const ListKatalogAdmin: NextPage = () => {
         Header: 'No',
         accessor: 'no',
       },
+      // {
+      //   Header: 'ID',
+      //   accessor: 'id',
+      // },
       {
-        Header: 'ID',
-        accessor: 'id',
+        Header: 'Judul Buku',
+        accessor: 'judulBuku',
       },
       {
-        Header: 'Nama Katalog',
-        accessor: 'namaKatalog',
+        Header: 'Penulis',
+        accessor: 'penulis',
       },
       {
-        Header: 'Tanggal Create',
-        accessor: 'tanggalCreate',
+        Header: 'Penerbit',
+        accessor: 'penerbit',
+      },
+      {
+        Header: 'Tanggal Upload',
+        accessor: 'tanggalUpload',
+      },
+      {
+        Header: 'Tahun',
+        accessor: 'tahun',
       },
       {
         Header: 'Aksi',
@@ -172,70 +199,47 @@ const ListKatalogAdmin: NextPage = () => {
       </Head>
       <AppTemplate>
         <Box p='4'>
-          <Button
-            colorScheme='green'
-            onClick={back}
-            my='5'
-            leftIcon={<BiArrowBack />}
-            size='md'
-          >
-            Kembali
-          </Button>
           <Text fontWeight='700' color='gray.700' fontSize='2xl'>
-            Manajemen Katalog
+            Manajemen Buku Katalog | Erlangga
           </Text>
           <Box my='4'>
             <Flex w='full' justifyContent='flex-end' alignItems='center'>
               <Flex w='full' alignItems='center' gap='15px'>
-                <Link href='/admin/manajemen-katalog/tambah-katalog'>
+                <Link href='/admin/manajemen-katalog/tambah-buku'>
                   <Button
+                    size='sm'
                     rightIcon={<AiOutlinePlus />}
                     colorScheme='blue'
-                    mt='2'
-                    mb='4'
                   >
-                    Katalog
+                    Buku
                   </Button>
                 </Link>
-                {/* <Link href='/admin/manajemen-katalog/bulk-katalog'>
+                <Link href='/admin/manajemen-katalog/bulk-katalog'>
                   <Button
+                    size='sm'
                     rightIcon={<AiOutlinePlus />}
                     colorScheme='purple'
-                    mt='2'
-                    mb='4'
                   >
                     Bulk
                   </Button>
-                </Link> */}
-                {/* <Link href='/admin/manajemen-katalog/bulk-buku-perpus'>
-                  <Button
-                    rightIcon={<AiOutlinePlus />}
-                    colorScheme='teal'
-                    mt='2'
-                    mb='4'
-                  >
-                    Buku Perpus
-                  </Button>
-                </Link> */}
+                </Link>
               </Flex>
               <Box>
-                <FormLabel>Filter</FormLabel>
-                <Select>
-                  <option value=''>Penerbit A </option>
-                  <option value=''>Penerbit B </option>
-                  <option value=''>Penerbit C </option>
-                  <option value=''>Penerbit D </option>
-                </Select>
-                {/* <InputGroup w='500px' size='md'>
-                  <Input placeholder='Cari nama...' />
-                  <InputRightElement>
-                    <IconButton
-                      aria-label='cari'
-                      // onClick={handleClick}
-                      icon={<Search2Icon />}
-                    />
-                  </InputRightElement>
-                </InputGroup> */}
+                <Flex w='full' justifyContent='flex-end'>
+                  <Box>
+                    <FormLabel>Cari nama</FormLabel>
+                    <InputGroup w='500px' size='md'>
+                      <Input placeholder='Cari nama...' />
+                      <InputRightElement>
+                        <IconButton
+                          aria-label='cari'
+                          // onClick={handleClick}
+                          icon={<Search2Icon />}
+                        />
+                      </InputRightElement>
+                    </InputGroup>
+                  </Box>
+                </Flex>
               </Box>
             </Flex>
             <Box my='3'>
@@ -252,8 +256,8 @@ const ListKatalogAdmin: NextPage = () => {
   );
 };
 
-// export default privateRouteAdminProdi(ListKatalogAdmin);
-export default ListKatalogAdmin;
+// export default privateRouteAdminProdi(ListBukuKatalogAdmin);
+export default ListBukuKatalogAdmin;
 
 function CustomTable({ columns, data, getListPengguna }: any) {
   // Use the state and functions returned from useTable to build your UI
@@ -318,12 +322,14 @@ function CustomTable({ columns, data, getListPengguna }: any) {
                       <Td key={y} {...cell.getCellProps()}>
                         <Flex alignItems='center' gap='10px'>
                           <Button
+                            size='sm'
                             onClick={() => editPage(row.original.id)}
                             colorScheme='orange'
                           >
                             Ubah
                           </Button>
                           <Button
+                            size='sm'
                             onClick={() => hapus(row.original.id)}
                             colorScheme='red'
                           >
@@ -435,21 +441,21 @@ function CustomTable({ columns, data, getListPengguna }: any) {
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Hapus Katalog</ModalHeader>
+          <ModalHeader>Hapus Buku</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Box>
-              <Text>Apakah kamu yakin untuk menghapus katalog ?</Text>
+              <Text>Apakah kamu yakin untuk menghapus buku ?</Text>
               <Text>
-                Setelah penghapusan, data katalog tidak bisa dilihat lagi
+                Setelah penghapusan, data buku tidak bisa dilihat lagi
               </Text>
             </Box>
           </ModalBody>
           <ModalFooter gap='2'>
-            <Button onClick={onClose} colorScheme='green'>
+            <Button size='sm' onClick={onClose} colorScheme='green'>
               Ya, Lanjut
             </Button>
-            <Button colorScheme='red' onClick={onClose}>
+            <Button size='sm' colorScheme='red' onClick={onClose}>
               Batal
             </Button>
           </ModalFooter>

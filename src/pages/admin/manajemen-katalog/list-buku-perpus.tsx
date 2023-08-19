@@ -74,7 +74,7 @@ const ListBukuPerpusAdmin: NextPage = () => {
       judulBuku: 'Judul buku',
       penulis: 'Penulis',
       penerbit: 'Penerbit',
-      tanggalUpload: moment().format('LLLL'),
+      tanggalUpload: moment().format('L'),
       tahun: new Date().getFullYear().toString(),
       aksi: new Date().getTime().toString(),
     },
@@ -84,7 +84,7 @@ const ListBukuPerpusAdmin: NextPage = () => {
       judulBuku: 'Judul buku',
       penulis: 'Penulis',
       penerbit: 'Penerbit',
-      tanggalUpload: moment().format('LLLL'),
+      tanggalUpload: moment().format('L'),
       tahun: new Date().getFullYear().toString(),
       aksi: new Date().getTime().toString(),
     },
@@ -94,7 +94,7 @@ const ListBukuPerpusAdmin: NextPage = () => {
       judulBuku: 'Judul buku',
       penulis: 'Penulis',
       penerbit: 'Penerbit',
-      tanggalUpload: moment().format('LLLL'),
+      tanggalUpload: moment().format('L'),
       tahun: new Date().getFullYear().toString(),
       aksi: new Date().getTime().toString(),
     },
@@ -104,7 +104,7 @@ const ListBukuPerpusAdmin: NextPage = () => {
       judulBuku: 'Judul buku',
       penulis: 'Penulis',
       penerbit: 'Penerbit',
-      tanggalUpload: moment().format('LLLL'),
+      tanggalUpload: moment().format('L'),
       tahun: new Date().getFullYear().toString(),
       aksi: new Date().getTime().toString(),
     },
@@ -123,10 +123,10 @@ const ListBukuPerpusAdmin: NextPage = () => {
         Header: 'No',
         accessor: 'no',
       },
-      {
-        Header: 'ID',
-        accessor: 'id',
-      },
+      // {
+      //   Header: 'ID',
+      //   accessor: 'id',
+      // },
       {
         Header: 'Judul Buku',
         accessor: 'judulBuku',
@@ -199,15 +199,6 @@ const ListBukuPerpusAdmin: NextPage = () => {
       </Head>
       <AppTemplate>
         <Box p='4'>
-          <Button
-            colorScheme='green'
-            onClick={back}
-            my='5'
-            leftIcon={<BiArrowBack />}
-            size='md'
-          >
-            Kembali
-          </Button>
           <Text fontWeight='700' color='gray.700' fontSize='2xl'>
             Manajemen Buku Perpus
           </Text>
@@ -216,6 +207,7 @@ const ListBukuPerpusAdmin: NextPage = () => {
               <Flex w='full' alignItems='center' gap='15px'>
                 <Link href='/admin/manajemen-katalog/bulk-buku-perpus'>
                   <Button
+                    size='sm'
                     rightIcon={<AiOutlinePlus />}
                     colorScheme='purple'
                     mt='2'
@@ -325,12 +317,14 @@ function CustomTable({ columns, data, getListPengguna }: any) {
                       <Td key={y} {...cell.getCellProps()}>
                         <Flex alignItems='center' gap='10px'>
                           <Button
+                            size='sm'
                             onClick={() => editPage(row.original.id)}
                             colorScheme='orange'
                           >
                             Ubah
                           </Button>
                           <Button
+                            size='sm'
                             onClick={() => hapus(row.original.id)}
                             colorScheme='red'
                           >
@@ -453,10 +447,10 @@ function CustomTable({ columns, data, getListPengguna }: any) {
             </Box>
           </ModalBody>
           <ModalFooter gap='2'>
-            <Button onClick={onClose} colorScheme='green'>
+            <Button size='sm' onClick={onClose} colorScheme='green'>
               Ya, Lanjut
             </Button>
-            <Button colorScheme='red' onClick={onClose}>
+            <Button size='sm' colorScheme='red' onClick={onClose}>
               Batal
             </Button>
           </ModalFooter>

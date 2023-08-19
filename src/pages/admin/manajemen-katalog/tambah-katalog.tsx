@@ -125,16 +125,7 @@ const TambahKatalogAdmin: NextPage = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <AppTemplate>
-        <Box p='2'>
-          <Button
-            onClick={back}
-            my='5'
-            leftIcon={<BiArrowBack />}
-            colorScheme='green'
-            size='md'
-          >
-            Kembali
-          </Button>
+        <Box p='2' h='100vh'>
           <Text fontWeight='700' fontSize='2xl'>
             {actionType === 'edit' ? 'Ubah' : 'Tambah'} Katalog
           </Text>
@@ -162,6 +153,7 @@ const TambahKatalogAdmin: NextPage = () => {
               </form>
               <Box mt='5'>
                 <Button
+                  size='sm'
                   type='submit'
                   w='full'
                   onClick={() => onOpenModal('add')}
@@ -174,6 +166,7 @@ const TambahKatalogAdmin: NextPage = () => {
                   {actionType === 'edit' ? 'Update' : 'Upload'}
                 </Button>
                 <Button
+                  size='sm'
                   mt='2'
                   onClick={() => onOpenModal('cancel')}
                   w='full'

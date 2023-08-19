@@ -81,15 +81,6 @@ const AdminDetailProdi: NextPage = () => {
           <link rel='icon' href='/favicon.ico' />
         </Head>
         <Box p='2'>
-          <Button
-            onClick={back}
-            my='5'
-            leftIcon={<BiArrowBack />}
-            colorScheme='green'
-            size='md'
-          >
-            Kembali
-          </Button>
           <Text fontWeight='700' color='gray.700' fontSize='2xl'>
             Detail Akun Prodi
           </Text>
