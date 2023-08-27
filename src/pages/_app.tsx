@@ -15,7 +15,7 @@ import { ApiCheckLogin } from '@/api/auth';
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [pageLoading, setLoadingPage] = useState(true);
+  const [pageLoading, setLoadingPage] = useState(false);
 
   const getUserInfo = async (userType: string, token: string) => {
     const res = await ApiCheckLogin({ token, type: userType });

@@ -84,25 +84,28 @@ const LoginAdminUmum: NextPage = () => {
     event.preventDefault();
     // setLocal(LOCAL_USER_TYPE, formLogin.type);
     // Router.replace(`/${formLogin.type}/beranda`);
+    setLocal(LOCAL_USER_TYPE, formLogin.type);
+    // localCookieSaveToken(res.data.data.token);
+    Router.replace(`/${formLogin.type}/beranda`);
 
-    const res: any = await ApiLogin(formLogin);
-    if (res.status === 200) {
-      dispatch({
-        type: 'SET_USER',
-        user: {
-          ...res.data.data,
-          type: formLogin.type,
-        },
-      });
-      setLocal(LOCAL_USER_TYPE, formLogin.type);
-      localCookieSaveToken(res.data.data.token);
-      Router.replace(`/${formLogin.type}/beranda`);
-    } else {
-      setErrorMessage(res.data.message);
-      // if (res.data.message?.includes('terverifikasi')) {
-      //   setIsErrorVerifikasi(true);
-      // }
-    }
+    // const res: any = await ApiLogin(formLogin);
+    // if (res.status === 200) {
+    //   dispatch({
+    //     type: 'SET_USER',
+    //     user: {
+    //       ...res.data.data,
+    //       type: formLogin.type,
+    //     },
+    //   });
+    //   setLocal(LOCAL_USER_TYPE, formLogin.type);
+    //   localCookieSaveToken(res.data.data.token);
+    //   Router.replace(`/${formLogin.type}/beranda`);
+    // } else {
+    //   setErrorMessage(res.data.message);
+    //   // if (res.data.message?.includes('terverifikasi')) {
+    //   //   setIsErrorVerifikasi(true);
+    //   // }
+    // }
     setLoadingFetchLogin(false);
   };
 
@@ -121,13 +124,13 @@ const LoginAdminUmum: NextPage = () => {
     return true;
   };
 
-  useEffect(() => {
-    const userType = getLocal(LOCAL_USER_TYPE);
-    console.log('user', user);
-    if (user) {
-      Router.push(`/${userType}/beranda`);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const userType = getLocal(LOCAL_USER_TYPE);
+  //   console.log('user', user);
+  //   if (user) {
+  //     Router.push(`/${userType}/beranda`);
+  //   }
+  // }, []);
 
   return (
     <Layout>

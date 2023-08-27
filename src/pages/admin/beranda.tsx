@@ -193,8 +193,8 @@ const BerandaAdmin: NextPage = () => {
   );
 };
 
-// export default BerandaAdmin;
-export default privateRouteAdmin(BerandaAdmin);
+export default BerandaAdmin;
+// export default privateRouteAdmin(BerandaAdmin);
 
 interface IItemStatistik {
   bgColor: string;
