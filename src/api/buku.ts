@@ -174,3 +174,24 @@ export const ApiBulkBukuKatalog = async (data: {
     };
   }
 };
+
+export const ApiGetDetailBuku = async (id: string) => {
+  const response = await AxiosWithToken()
+    .get(`${BACKEND_URL}/buku/detail/${id}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  if (response) {
+    return response;
+  } else {
+    return {
+      status: 500,
+      data: {
+        message: 'Server error.',
+      },
+    };
+  }
+};

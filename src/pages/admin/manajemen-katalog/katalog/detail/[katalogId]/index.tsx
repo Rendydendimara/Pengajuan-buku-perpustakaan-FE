@@ -13,6 +13,7 @@ import {
 import { Input, InputGroup, InputRightElement } from '@chakra-ui/input';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import {
+  createStandaloneToast,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -49,6 +50,8 @@ import { usePagination, useTable } from 'react-table';
 import { BiArrowBack } from 'react-icons/bi';
 import moment from 'moment';
 import { AiOutlinePlus } from 'react-icons/ai';
+import { ApiGetDetailKatalogBuku } from '@/api/katalogBuku';
+import { ApiDeleteBuku, ApiGetListBuku } from '@/api/buku';
 
 interface IDataRow {
   id: string;
@@ -67,6 +70,7 @@ interface IDataRow {
 
 const ListBukuKatalogAdmin: NextPage = () => {
   const router = useRouter();
+  const { toast } = createStandaloneToast();
   const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([
     {
       id: new Date().getTime().toString(),
@@ -156,39 +160,60 @@ const ListBukuKatalogAdmin: NextPage = () => {
   );
 
   const getListPengguna = async () => {
-    // const res = await ApiGetListPenjualAdminProdi({
-    //   prodiId: user?.prodi ?? '',
-    // });
-    // if (res.status === 200) {
-    //   let temp: IDataRow[] = [];
-    //   for (const data of res.data.data) {
-    //     const lapak = await ApiGetLapakByProdiId(data.prodi._id);
-    //     temp.push({
-    //       id: data._id,
-    //       nama: data.fullname,
-    //       email: data.email,
-    //       prodi: data.prodi.name,
-    //       statusAkun: data.isSuspend ?? false,
-    //       lapak: lapak?.data?.data?.namaLapak ?? '-',
-    //     });
-    //   }
-    //   setDataPengguna(temp);
-    // } else {
-    //   showToast({
-    //     title: 'Error',
-    //     message: res.data.message,
-    //     type: 'error',
-    //   });
-    // }
+    const res = await ApiGetListBuku();
+    if (res.status === 200) {
+      let temp: IDataRow[] = [];
+      let i = 0;
+      for (const data of res.data.data) {
+        i++;
+        temp.push({
+          no: i,
+          id: data._id,
+          judulBuku: data.judul,
+          penulis: data.penulis,
+          penerbit: data.katalog.name,
+          tanggalUpload: moment(data.createdAt).format('L'),
+          tahun: data.tahunTerbit,
+          aksi: data._id,
+        });
+      }
+      setDataPengguna(temp);
+    } else {
+      toast({
+        title: 'Error',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
   };
 
   const back = () => {
     router.back();
   };
 
+  const [catalogData, setCatalogData] = useState<any>();
+
+  const getCatalogName = async (id: string) => {
+    const res = await ApiGetDetailKatalogBuku(id);
+    if (res.status === 200) {
+      setCatalogData(res.data.data);
+    } else {
+      console.log('back');
+      Router.push(`/admin/manajemen-katalog/katalog/`);
+    }
+  };
+
   useEffect(() => {
     getListPengguna();
   }, []);
+
+  useEffect(() => {
+    const { katalogId }: any = router.query;
+
+    if (katalogId) {
+      getCatalogName(katalogId);
+    }
+  }, [router.query]);
 
   return (
     <Layout>
@@ -200,12 +225,16 @@ const ListBukuKatalogAdmin: NextPage = () => {
       <AppTemplate>
         <Box p='4'>
           <Text fontWeight='700' color='gray.700' fontSize='2xl'>
-            Manajemen Buku Katalog | Erlangga
+            Manajemen Buku Katalog | {catalogData?.name}
           </Text>
           <Box my='4'>
             <Flex w='full' justifyContent='flex-end' alignItems='center'>
               <Flex w='full' alignItems='center' gap='15px'>
-                <Link href='/admin/manajemen-katalog/tambah-buku'>
+                <Link
+                  href={
+                    '/admin/manajemen-katalog/katalog/detail/64eaf73535600cdec6ff9ae9/tambah-buku'
+                  }
+                >
                   <Button
                     size='sm'
                     rightIcon={<AiOutlinePlus />}
@@ -288,14 +317,40 @@ function CustomTable({ columns, data, getListPengguna }: any) {
     usePagination
   );
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [idSelected, setIdSelected] = useState('');
+  const { toast } = createStandaloneToast();
+  const router = useRouter();
 
   const hapus = (id: string) => {
+    setIdSelected(id);
     onOpen();
     // Router.push(`/admin/manajemen-pengguna/${id}`);
   };
 
   const editPage = (id: string) => {
-    // Router.push(`/admin/manajemen-pengguna/tambah?id=${id}&action=edit`);
+    const katalogId: any = router.query.katalogId;
+    Router.push(
+      `/admin/manajemen-katalog/katalog/detail/${katalogId}/tambah-buku?id=${id}&action=edit`
+    );
+  };
+
+  const handleHapusBuku = async () => {
+    const res = await ApiDeleteBuku(idSelected);
+    if (res.status === 200) {
+      toast({
+        title: 'Berhasil',
+        description: 'Berhasil hapus buku',
+        status: 'success',
+      });
+      getListPengguna();
+    } else {
+      toast({
+        title: 'Gagal',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
+    onClose();
   };
 
   // Render the UI for your table
@@ -452,7 +507,7 @@ function CustomTable({ columns, data, getListPengguna }: any) {
             </Box>
           </ModalBody>
           <ModalFooter gap='2'>
-            <Button size='sm' onClick={onClose} colorScheme='green'>
+            <Button size='sm' onClick={handleHapusBuku} colorScheme='green'>
               Ya, Lanjut
             </Button>
             <Button size='sm' colorScheme='red' onClick={onClose}>

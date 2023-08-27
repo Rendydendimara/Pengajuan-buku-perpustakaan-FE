@@ -9,6 +9,7 @@ export const ApiCreateDosenProdi = async (data: {
   namaLengkap: string;
   noTelfon: string;
   programStudi: string;
+  email: string;
 }) => {
   const response = await Axios.post(`${BACKEND_URL}/dosen-prodi/create`, data)
     .then((response) => {
@@ -58,6 +59,7 @@ export const ApiUpdateDosenProdi = async (data: {
   noTelfon: string;
   programStudi: string;
   id: string;
+  email: string;
 }) => {
   const response = await Axios.put(`${BACKEND_URL}/dosen-prodi/update`, data)
     .then((response) => {
@@ -82,6 +84,27 @@ export const ApiUpdateDosenProdi = async (data: {
 export const ApiDeleteDosenProdi = async (id: string) => {
   const response = await AxiosWithToken()
     .delete(`${BACKEND_URL}/dosen-prodi/delete/${id}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  if (response) {
+    return response;
+  } else {
+    return {
+      status: 500,
+      data: {
+        message: 'Server error.',
+      },
+    };
+  }
+};
+
+export const ApiGetDetailDosenProdi = async (id: string) => {
+  const response = await AxiosWithToken()
+    .get(`${BACKEND_URL}/dosen-prodi/detail/${id}`)
     .then((response) => {
       return response;
     })

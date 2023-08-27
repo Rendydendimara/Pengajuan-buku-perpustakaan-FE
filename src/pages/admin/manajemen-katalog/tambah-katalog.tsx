@@ -27,6 +27,12 @@ import { useEffect, useRef, useState } from 'react';
 // }
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 import { BiArrowBack } from 'react-icons/bi';
+import {
+  ApiCreateKatalogBuku,
+  ApiGetDetailKatalogBuku,
+  ApiUpdateKatalogBuku,
+} from '@/api/katalogBuku';
+import { createStandaloneToast } from '@chakra-ui/toast';
 
 const TambahKatalogAdmin: NextPage = () => {
   const router = useRouter();
@@ -53,6 +59,7 @@ const TambahKatalogAdmin: NextPage = () => {
   const handleToggleConfirmPasswordShow = (): void => {
     setIsShowConfirmPassword(!isShowConfirmPassword);
   };
+  const { toast } = createStandaloneToast();
 
   const onChangeForm = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -77,27 +84,44 @@ const TambahKatalogAdmin: NextPage = () => {
     event.preventDefault();
     if (actionType === 'edit') {
       // update api
+      const res = await ApiUpdateKatalogBuku({
+        name: form.judulKatalog,
+        id: idSelected ?? '',
+      });
+      if (res.status === 200) {
+        toast({
+          title: 'Berhasil',
+          description: 'Berhasil mengubah katalog',
+          status: 'success',
+        });
+        router.push('/admin/manajemen-katalog/katalog');
+      } else {
+        toast({
+          title: 'Gagal',
+          description: res.data.message,
+          status: 'error',
+        });
+      }
     } else {
-      // create api
+      const res = await ApiCreateKatalogBuku({
+        name: form.judulKatalog,
+      });
+      if (res.status === 200) {
+        toast({
+          title: 'Berhasil',
+          description: 'Berhasil menambah katalog',
+          status: 'success',
+        });
+        router.push('/admin/manajemen-katalog/katalog');
+      } else {
+        toast({
+          title: 'Gagal',
+          description: res.data.message,
+          status: 'error',
+        });
+      }
     }
-    // const res: any = await ApiCreateAccountPenjualAdminProdi({
-    //   judulKatalog: form.judulKatalog,
-    //   penulis: form.penulis,
-    //   penerbit: form.penerbit,
-    //   tanggalUpload: form.tanggalUpload,
-    //   tahunBuku: form.tahunBuku,
-    //   password: form.password,
-    // });
-    // if (res.status === 200) {
-    //   showToast({
-    //     title: 'Berhasil',
-    //     message: 'Berhasil membuat akun Penjual',
-    //     type: 'success',
-    //   });
-    //   router.push('/admin-prodi/pengguna/list-pengguna');
-    // } else {
-    //   setErrorMessage(res.data.message);
-    // }
+
     setLoadingPost(false);
   };
 
@@ -105,12 +129,25 @@ const TambahKatalogAdmin: NextPage = () => {
     router.back();
   };
 
+  const getDetailCatalog = async (id: string) => {
+    const res = await ApiGetDetailKatalogBuku(id);
+    if (res.status === 200) {
+      setForm({ judulKatalog: res.data.data.name });
+    } else {
+      toast({
+        title: 'Gagal',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
+  };
+
   useEffect(() => {
     const { id }: any = router.query;
     if (id) {
       setActionType('edit');
       setIdSelected(id);
-      // getDetailProduk(id);
+      getDetailCatalog(id);
     }
   }, [router.query]);
 
@@ -158,12 +195,13 @@ const TambahKatalogAdmin: NextPage = () => {
                   w='full'
                   onClick={() => onOpenModal('add')}
                   colorScheme='green'
+                  isDisabled={form.judulKatalog ? false : true}
                   _hover={{
                     bg: 'green.700',
                   }}
                   isLoading={loadingPost}
                 >
-                  {actionType === 'edit' ? 'Update' : 'Upload'}
+                  {actionType === 'edit' ? 'Update' : 'Create'}
                 </Button>
                 <Button
                   size='sm'

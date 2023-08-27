@@ -5,6 +5,7 @@ import { privateRouteAdmin } from '@/lib/withprivateRouteAdmin';
 import { Button } from '@chakra-ui/button';
 import { Box, Divider, Flex, Heading, Text } from '@chakra-ui/layout';
 import {
+  createStandaloneToast,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -24,41 +25,64 @@ import { ImProfile } from 'react-icons/im';
 import { useDispatch } from 'react-redux';
 import { shimmer, toBase64 } from '@/lib/ImageOptimization';
 import { BiArrowBack } from 'react-icons/bi';
+import { ApiDeleteDosenProdi, ApiGetDetailDosenProdi } from '@/api/dosenProdi';
 
 const AdminDetailProdi: NextPage = () => {
   const [userTypeInfo, setUserTypeInfo] = useState('');
   const [lapakName, setLapakName] = useState('');
+  const [prodi, setProdi] = useState({
+    id: '',
+    namaLengkap: '',
+    kelamin: '',
+    nidn: '',
+    noTelfon: '',
+    programStudi: '',
+    email: '',
+  });
   const dispatch = useDispatch();
   // const [detailUser, setDetailUser] = useState<IUser>();
-
+  const { toast } = createStandaloneToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
   // const { showToast } = useGlobalContext();
 
   const getDetailUser = async (id: string) => {
-    // let res = await ApiGetDetailPenjual(id);
-    // if (res.status === 200) {
-    //   const lapak = await ApiGetLapakByProdiId(res.data.data.prodi._id);
-    //   setDetailUser({
-    //     _id: res.data.data._id,
-    //     fullname: res.data.data.fullname,
-    //     email: res.data.data.email,
-    //     gender: res.data.data.gender,
-    //     noTelfon: res.data.data.noTelfon,
-    //     profileImage: res.data.data.profileImage,
-    //     prodi: res.data.data.prodi.name,
-    //     createdAt: res.data.data.createdAt,
-    //     updatedAt: res.data.data.updatedAt,
-    //     userType: 'penjual',
-    //   });
-    //   setLapakName(lapak?.data?.data?.namaLapak ?? '');
-    // } else {
-    //   showToast({
-    //     title: 'Error',
-    //     message: res.data.message,
-    //     type: 'error',
-    //   });
-    // }
+    let res = await ApiGetDetailDosenProdi(id);
+    if (res.status === 200) {
+      setProdi({
+        id: res.data.data._id,
+        namaLengkap: res.data.data.namaLengkap,
+        kelamin: res.data.data.kelamin,
+        nidn: res.data.data.nidn,
+        noTelfon: res.data.data.noTelfon,
+        programStudi: res.data.data.programStudi,
+        email: res.data.data.email,
+      });
+    } else {
+      toast({
+        title: 'Error',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
+  };
+
+  const handleDeleteProdi = async () => {
+    let res = await ApiDeleteDosenProdi(prodi.id);
+    if (res.status === 200) {
+      toast({
+        title: 'Berhasil',
+        description: 'Berhasil hapus akun prodi',
+        status: 'success',
+      });
+      router.push('/admin/manajemen-pengguna');
+    } else {
+      toast({
+        title: 'Error',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
   };
 
   const back = () => {
@@ -113,7 +137,7 @@ const AdminDetailProdi: NextPage = () => {
                     Nama Lengkap
                   </Text>
                   <Text textAlign='right' fontWeight='500'>
-                    Erlinda kosong 2
+                    {prodi.namaLengkap}
                   </Text>
                 </Flex>
                 <Divider my='2' />
@@ -123,7 +147,7 @@ const AdminDetailProdi: NextPage = () => {
                     No. Telepon
                   </Text>
                   <Text textAlign='right' fontWeight='500'>
-                    08214324234324
+                    {prodi.noTelfon}
                   </Text>
                 </Flex>
                 <Divider my='2' />
@@ -133,7 +157,7 @@ const AdminDetailProdi: NextPage = () => {
                     NIDN
                   </Text>
                   <Text textAlign='right' fontWeight='500'>
-                    1232432432
+                    {prodi.nidn}
                   </Text>
                 </Flex>
                 <Divider my='2' />
@@ -143,17 +167,7 @@ const AdminDetailProdi: NextPage = () => {
                     Email
                   </Text>
                   <Text textAlign='right' fontWeight='500'>
-                    erlinda02@gmail.com
-                  </Text>
-                </Flex>
-                <Divider my='2' />
-                <Divider my='2' />
-                <Flex alignItems='center' justifyContent='space-between'>
-                  <Text textAlign='left' fontWeight='bold'>
-                    NIDN
-                  </Text>
-                  <Text textAlign='right' fontWeight='500'>
-                    1232432432
+                    {prodi.email}
                   </Text>
                 </Flex>
                 <Divider my='2' />
@@ -163,7 +177,7 @@ const AdminDetailProdi: NextPage = () => {
                     Program Studi
                   </Text>
                   <Text textAlign='right' fontWeight='500'>
-                    Teknik Informatika
+                    {prodi.programStudi}
                   </Text>
                 </Flex>
                 <Divider my='2' />
@@ -173,7 +187,7 @@ const AdminDetailProdi: NextPage = () => {
                     Jenis Kelamin
                   </Text>
                   <Text textAlign='right' fontWeight='500'>
-                    Laki-laki
+                    {prodi.kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}
                   </Text>
                 </Flex>
                 <Divider my='2' />
@@ -201,7 +215,7 @@ const AdminDetailProdi: NextPage = () => {
               </Box>
             </ModalBody>
             <ModalFooter gap='2'>
-              <Button onClick={onClose} colorScheme='green'>
+              <Button onClick={handleDeleteProdi} colorScheme='green'>
                 Ya, Lanjut
               </Button>
               <Button colorScheme='red' onClick={onClose}>
@@ -215,5 +229,5 @@ const AdminDetailProdi: NextPage = () => {
   );
 };
 
-// export default privateRouteAdmin(AdminDetailProdi);
-export default AdminDetailProdi;
+export default privateRouteAdmin(AdminDetailProdi);
+// export default AdminDetailProdi;

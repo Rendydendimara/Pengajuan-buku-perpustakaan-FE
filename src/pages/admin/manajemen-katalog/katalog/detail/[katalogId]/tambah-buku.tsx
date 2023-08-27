@@ -1,12 +1,13 @@
+import { ApiCreateBuku, ApiGetDetailBuku, ApiUpdateBuku } from '@/api/buku';
+import { ApiGetDetailKatalogBuku } from '@/api/katalogBuku';
 import AppTemplate from '@/components/templates/AppTemplate';
 import Layout from '@/components/templates/Layout';
 import { APP_NAME } from '@/constant';
-import { privateRouteAdmin } from '@/lib/withprivateRouteAdmin';
 import { Alert, AlertIcon } from '@chakra-ui/alert';
-import { Button, IconButton } from '@chakra-ui/button';
+import { Button } from '@chakra-ui/button';
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import { useDisclosure } from '@chakra-ui/hooks';
-import { Input, InputGroup, InputRightElement } from '@chakra-ui/input';
+import { Input } from '@chakra-ui/input';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import {
   Modal,
@@ -18,15 +19,13 @@ import {
   ModalOverlay,
 } from '@chakra-ui/modal';
 import { Select } from '@chakra-ui/select';
+import { createStandaloneToast } from '@chakra-ui/toast';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
-// if (typeof window !== 'undefined') {
-// import { Editor } from 'react-draft-wysiwyg';
-// }
-import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
-import { BiArrowBack } from 'react-icons/bi';
+import Router, { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const TambahBukuAdmin: NextPage = () => {
   const router = useRouter();
@@ -45,18 +44,19 @@ const TambahBukuAdmin: NextPage = () => {
   // const { showToast } = useGlobalContext();
   const [actionType, setActionType] = useState<'add' | 'edit'>('add');
   const [idSelected, setIdSelected] = useState();
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<any>({
     judulBuku: '',
     penulis: '',
-    penerbit: '',
-    tanggalUpload: '',
-    tahunBuku: '',
+    tahunTerbit: '',
+    bahasa: '',
+    prodi: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [loadingPost, setLoadingPost] = useState(false);
   const handleToggleConfirmPasswordShow = (): void => {
     setIsShowConfirmPassword(!isShowConfirmPassword);
   };
+  const { toast } = createStandaloneToast();
 
   const onChangeForm = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -72,6 +72,10 @@ const TambahBukuAdmin: NextPage = () => {
     onOpen();
   };
 
+  const changeDate = (e: any) => {
+    setForm({ ...form, tahunTerbit: e });
+  };
+
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement | HTMLButtonElement>
   ): Promise<void> => {
@@ -80,28 +84,59 @@ const TambahBukuAdmin: NextPage = () => {
     setLoadingPost(true);
     event.preventDefault();
     if (actionType === 'edit') {
+      const katalogId: any = router.query.katalogId;
+      const res = await ApiUpdateBuku({
+        judul: form.judulBuku,
+        penulis: form.penulis,
+        katalog: katalogId,
+        tahunTerbit: new Date(form.tahunTerbit).getFullYear().toString(),
+        bahasa: form.bahasa,
+        prodi: form.prodi,
+        id: idSelected ?? '',
+      });
+      if (res.status === 200) {
+        toast({
+          title: 'Berhasil',
+          description: 'Berhasil mengubah buku',
+          status: 'success',
+        });
+        router.push(`/admin/manajemen-katalog/katalog/detail/${katalogId}/`);
+      } else {
+        toast({
+          title: 'Gagal',
+          description: res.data.message,
+          status: 'error',
+        });
+      }
       // update api
+      // new Date(form.tahunPembelian).getFullYear()
+      // tahunPembelian: new Date(`01-01-${res.data.data.tahun_pembelian}`),
     } else {
-      // create api
+      const katalogId: any = router.query.katalogId;
+      const res = await ApiCreateBuku({
+        judul: form.judulBuku,
+        penulis: form.penulis,
+        katalog: katalogId,
+        tahunTerbit: new Date(form.tahunTerbit).getFullYear().toString(),
+        bahasa: form.bahasa,
+        prodi: form.prodi,
+      });
+      if (res.status === 200) {
+        toast({
+          title: 'Berhasil',
+          description: 'Berhasil menambah buku',
+          status: 'success',
+        });
+        router.push(`/admin/manajemen-katalog/katalog/detail/${katalogId}/`);
+      } else {
+        toast({
+          title: 'Gagal',
+          description: res.data.message,
+          status: 'error',
+        });
+      }
     }
-    // const res: any = await ApiCreateAccountPenjualAdminProdi({
-    //   judulBuku: form.judulBuku,
-    //   penulis: form.penulis,
-    //   penerbit: form.penerbit,
-    //   tanggalUpload: form.tanggalUpload,
-    //   tahunBuku: form.tahunBuku,
-    //   password: form.password,
-    // });
-    // if (res.status === 200) {
-    //   showToast({
-    //     title: 'Berhasil',
-    //     message: 'Berhasil membuat akun Penjual',
-    //     type: 'success',
-    //   });
-    //   router.push('/admin-prodi/pengguna/list-pengguna');
-    // } else {
-    //   setErrorMessage(res.data.message);
-    // }
+
     setLoadingPost(false);
   };
 
@@ -109,12 +144,81 @@ const TambahBukuAdmin: NextPage = () => {
     router.back();
   };
 
+  const onChangeProdi = (e: any) => {
+    setForm({
+      ...form,
+      prodi: e.target.value,
+    });
+  };
+
+  const onChangeBahasa = (e: any) => {
+    setForm({
+      ...form,
+      bahasa: e.target.value,
+    });
+  };
+
+  const [catalogData, setCatalogData] = useState<any>();
+
+  const getCatalogName = async (id: string) => {
+    const res = await ApiGetDetailKatalogBuku(id);
+    if (res.status === 200) {
+      setCatalogData(res.data.data);
+    } else {
+      console.log('back');
+      Router.push(`/admin/manajemen-katalog/katalog/`);
+    }
+  };
+
+  const disabled = () => {
+    if (
+      form.bahasa &&
+      form.judulBuku &&
+      form.penulis &&
+      form.prodi &&
+      form.tahunTerbit
+    )
+      return false;
+    return true;
+  };
+
+  const getDetailBuku = async (id: string) => {
+    const res = await ApiGetDetailBuku(id);
+    if (res.status === 200) {
+      // judul
+      // penulis
+      // katalog
+      // tahunTerbit
+      // bahasa
+      // prodi
+      // createdAt
+      // deletedAt
+      // updatedAt
+      setForm({
+        judulBuku: res.data.data.judul,
+        penulis: res.data.data.penulis,
+        tahunTerbit: new Date(`01-01-${res.data.data.tahunTerbit}`),
+        bahasa: res.data.data.bahasa,
+        prodi: res.data.data.prodi,
+      });
+    } else {
+      toast({
+        title: 'Gagal',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
+  };
+
   useEffect(() => {
-    const { id }: any = router.query;
+    const { id, katalogId }: any = router.query;
     if (id) {
       setActionType('edit');
       setIdSelected(id);
-      // getDetailProduk(id);
+      getDetailBuku(id);
+    }
+    if (katalogId) {
+      getCatalogName(katalogId);
     }
   }, [router.query]);
 
@@ -129,15 +233,6 @@ const TambahBukuAdmin: NextPage = () => {
       </Head>
       <AppTemplate>
         <Box p='2'>
-          <Button
-            onClick={back}
-            my='5'
-            leftIcon={<BiArrowBack />}
-            colorScheme='green'
-            size='md'
-          >
-            Kembali
-          </Button>
           <Text fontWeight='700' fontSize='2xl'>
             {actionType === 'edit' ? 'Ubah' : 'Tambah'} Buku
           </Text>
@@ -153,6 +248,27 @@ const TambahBukuAdmin: NextPage = () => {
             <Box w='50%'>
               <form method='POST'>
                 <FormControl my='3' id='nama_lengkap' isRequired>
+                  <FormLabel>Katalog</FormLabel>
+                  <Select disabled>
+                    <option>{catalogData?.name}</option>
+                  </Select>
+                </FormControl>
+                <FormControl my='3' id='nama_lengkap' isRequired>
+                  <FormLabel>Prodi</FormLabel>
+                  <Select
+                    name='programStudi'
+                    value={form.prodi}
+                    onChange={onChangeProdi}
+                  >
+                    <option value=''></option>
+                    <option value='tif'>Teknik Informatika</option>
+                    <option value='ptk'>Peternakan</option>
+                    <option value='agb'>Agribisnis</option>
+                    <option value='agt'>Agroteknologi</option>
+                    <option value='thp'>Teknologi Hasil Perikanan</option>
+                  </Select>
+                </FormControl>
+                <FormControl my='3' id='nama_lengkap' isRequired>
                   <FormLabel>Judul Buku</FormLabel>
                   <Input
                     type='text'
@@ -162,25 +278,44 @@ const TambahBukuAdmin: NextPage = () => {
                     required
                   />
                 </FormControl>
-                <FormControl my='3' id='penulis' isRequired>
-                  <FormLabel>Tanggal Upload</FormLabel>
+                <FormControl my='3' id='nidn' isRequired>
+                  <FormLabel>Tahun Terbit</FormLabel>
+                  <DatePicker
+                    id='DatePicker'
+                    // type='string'
+                    className='text-primary dateInput yearPicker'
+                    selected={
+                      form.tahunTerbit ? new Date(form.tahunTerbit) : null
+                    }
+                    onChange={changeDate}
+                    // value={form.tahunPembelian}
+                    showYearPicker
+                    dateFormat='yyyy'
+                    yearItemNumber={9}
+                    required
+                  />
+                </FormControl>
+                <FormControl my='3' id='nama_lengkap' isRequired>
+                  <FormLabel>Penulis</FormLabel>
                   <Input
-                    type='date'
-                    name='tanggalUpload'
-                    value={form.tanggalUpload}
+                    type='text'
+                    name='penulis'
+                    value={form.penulis}
                     onChange={onChangeForm}
                     required
                   />
                 </FormControl>
-                <FormControl my='3' id='nidn' isRequired>
-                  <FormLabel>Tahun Buku</FormLabel>
-                  <Input
-                    type='date'
-                    name='tahunBuku'
-                    value={form.tahunBuku}
-                    onChange={onChangeForm}
-                    required
-                  />
+                <FormControl my='3' id='nama_lengkap' isRequired>
+                  <FormLabel>Bahasa</FormLabel>
+                  <Select
+                    name='bahasa'
+                    value={form.bahasa}
+                    onChange={onChangeBahasa}
+                  >
+                    <option value=''></option>
+                    <option value='Indonesia'>Indonesia</option>
+                    <option value='Inggris'>Inggris</option>
+                  </Select>
                 </FormControl>
               </form>
               <Box mt='5'>
@@ -192,6 +327,7 @@ const TambahBukuAdmin: NextPage = () => {
                   _hover={{
                     bg: 'green.700',
                   }}
+                  isDisabled={disabled()}
                   isLoading={loadingPost}
                 >
                   {actionType === 'edit' ? 'Update' : 'Upload'}

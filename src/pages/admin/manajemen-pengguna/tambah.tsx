@@ -27,6 +27,13 @@ import { useEffect, useRef, useState } from 'react';
 // }
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 import { BiArrowBack } from 'react-icons/bi';
+import {
+  ApiCreateDosenProdi,
+  ApiGetDetailDosenProdi,
+  ApiUpdateDosenProdi,
+} from '@/api/dosenProdi';
+import { useGlobalContext } from '@/provider/global-provider';
+import { createStandaloneToast } from '@chakra-ui/toast';
 
 const TambahAdminProdi: NextPage = () => {
   const router = useRouter();
@@ -38,8 +45,8 @@ const TambahAdminProdi: NextPage = () => {
   const handleTogglePasswordShow = (): void => {
     setIsShowPassword(!isShowPassword);
   };
+  const { toast } = createStandaloneToast();
   // const [listProdi, setListProdi] = useState<IProdi[]>([]);
-  // const { showToast } = useGlobalContext();
   const [actionType, setActionType] = useState<'add' | 'edit'>('add');
   const [idSelected, setIdSelected] = useState();
   const [form, setForm] = useState({
@@ -92,29 +99,60 @@ const TambahAdminProdi: NextPage = () => {
     onClose();
     setLoadingPost(true);
     event.preventDefault();
+    if (form.password !== form.confirmPassword) {
+      toast({
+        title: 'Gagal',
+        description: 'Konfirmasi password tidak sama',
+        status: 'error',
+      });
+      setLoadingPost(false);
+      return;
+    }
     if (actionType === 'edit') {
       // update api
+      const res = await ApiUpdateDosenProdi({
+        id: idSelected ?? '',
+        nidn: form.nidn,
+        kelamin: form.jenisKelamin,
+        password: form.password,
+        namaLengkap: form.namaLengkap,
+        noTelfon: form.noTelfon,
+        email: form.email,
+        programStudi: form.programStudi,
+      });
+      if (res.status === 200) {
+        toast({
+          title: 'Berhasil',
+          description: 'Berhasil update akun dosen prodi',
+          status: 'success',
+        });
+        router.push('/admin/manajemen-pengguna');
+      } else {
+        setErrorMessage(res.data.message);
+      }
     } else {
       // create api
+      const res = await ApiCreateDosenProdi({
+        nidn: form.nidn,
+        kelamin: form.jenisKelamin,
+        email: form.email,
+        password: form.password,
+        namaLengkap: form.namaLengkap,
+        noTelfon: form.noTelfon,
+        programStudi: form.programStudi,
+      });
+      if (res.status === 200) {
+        toast({
+          title: 'Berhasil',
+          description: 'Berhasil membuat akun dosen prodi',
+          status: 'success',
+        });
+        router.push('/admin/manajemen-pengguna');
+      } else {
+        setErrorMessage(res.data.message);
+      }
     }
-    // const res: any = await ApiCreateAccountPenjualAdminProdi({
-    //   namaLengkap: form.namaLengkap,
-    //   email: form.email,
-    //   noTelfon: form.noTelfon,
-    //   programStudi: form.programStudi,
-    //   jenisKelamin: form.jenisKelamin,
-    //   password: form.password,
-    // });
-    // if (res.status === 200) {
-    //   showToast({
-    //     title: 'Berhasil',
-    //     message: 'Berhasil membuat akun Penjual',
-    //     type: 'success',
-    //   });
-    //   router.push('/admin-prodi/pengguna/list-pengguna');
-    // } else {
-    //   setErrorMessage(res.data.message);
-    // }
+
     setLoadingPost(false);
   };
 
@@ -122,12 +160,50 @@ const TambahAdminProdi: NextPage = () => {
     router.back();
   };
 
+  const disabled = () => {
+    if (
+      form.namaLengkap &&
+      form.email &&
+      form.noTelfon &&
+      form.programStudi &&
+      form.jenisKelamin &&
+      form.password &&
+      form.confirmPassword &&
+      form.nidn
+    )
+      return false;
+    return true;
+  };
+
+  const getDetailDosen = async (id: string) => {
+    const res = await ApiGetDetailDosenProdi(id);
+    if (res.status === 200) {
+      console.log('res.data', res.data);
+      setForm({
+        namaLengkap: res.data.data.namaLengkap,
+        email: res.data.data.email ?? '',
+        noTelfon: res.data.data.noTelfon,
+        programStudi: res.data.data.programStudi,
+        jenisKelamin: res.data.data.jenisKelamin,
+        password: '',
+        confirmPassword: '',
+        nidn: res.data.data.nidn,
+      });
+    } else {
+      toast({
+        title: 'Gagal',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
+  };
+
   useEffect(() => {
     const { id }: any = router.query;
     if (id) {
       setActionType('edit');
       setIdSelected(id);
-      // getDetailProduk(id);
+      getDetailDosen(id);
     }
   }, [router.query]);
 
@@ -213,6 +289,7 @@ const TambahAdminProdi: NextPage = () => {
                     value={form.programStudi}
                     onChange={onChangeProdi}
                   >
+                    <option value=''></option>
                     <option value='Teknik Informatika'>
                       Teknik Informatika
                     </option>
@@ -231,7 +308,7 @@ const TambahAdminProdi: NextPage = () => {
                     value={form.jenisKelamin}
                     onChange={onChangeJenisKelamin}
                   >
-                    <option></option>
+                    <option value=''></option>
                     <option value='L'>Laki-laki</option>
                     <option value='P'>Perempuan</option>
                   </Select>
@@ -323,6 +400,7 @@ const TambahAdminProdi: NextPage = () => {
                   _hover={{
                     bg: 'green.700',
                   }}
+                  isDisabled={disabled()}
                   isLoading={loadingPost}
                 >
                   {actionType === 'edit' ? 'Ubah' : 'Tambah'} Akun Prodi
@@ -389,5 +467,5 @@ const TambahAdminProdi: NextPage = () => {
   );
 };
 
-// export default privateRouteAdmin(TambahAdminProdi);
-export default TambahAdminProdi;
+export default privateRouteAdmin(TambahAdminProdi);
+// export default TambahAdminProdi;

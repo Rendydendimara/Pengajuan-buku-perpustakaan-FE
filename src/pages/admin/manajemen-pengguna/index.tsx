@@ -13,6 +13,7 @@ import {
 import { Input, InputGroup, InputRightElement } from '@chakra-ui/input';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import {
+  createStandaloneToast,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -39,6 +40,8 @@ import { BiUserPlus } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
 import { usePagination, useTable } from 'react-table';
 import { BiArrowBack } from 'react-icons/bi';
+import { privateRouteAdmin } from '@/lib/withprivateRouteAdmin';
+import { ApiGetListDosenProdi } from '@/api/dosenProdi';
 
 interface IDataRow {
   id: string;
@@ -55,41 +58,9 @@ interface IDataRow {
 
 const ManajemenPenggunaAdmin: NextPage = () => {
   const router = useRouter();
-  const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([
-    {
-      id: new Date().getTime().toString(),
-      no: 1,
-      nama: 'Erlinda kosong sembilan',
-      email: 'erlinda09@gmail.com',
-      prodi: 'TIF',
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 2,
-      nama: 'Erlinda part 2',
-      email: 'erlindapart2@gmail.com',
-      prodi: 'THP',
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 3,
-      nama: 'Erlinda jilid 2',
-      email: 'erlindajilid2@gmail.com',
-      prodi: 'PTK',
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 4,
-      nama: 'Erlinda Paling AGT',
-      email: 'erlindaagt@gmail.com',
-      prodi: 'AGT',
-      aksi: new Date().getTime().toString(),
-    },
-  ]);
-  // const { showToast } = useGlobalContext();
+  const [dataPengguna, setDataPengguna] = useState<any>([]);
+  const { toast } = createStandaloneToast();
+  // const { toast } = useGlobalContext();
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
   //   (state) => {
   //     return {
@@ -128,30 +99,29 @@ const ManajemenPenggunaAdmin: NextPage = () => {
   );
 
   const getListPengguna = async () => {
-    // const res = await ApiGetListPenjualAdminProdi({
-    //   prodiId: user?.prodi ?? '',
-    // });
-    // if (res.status === 200) {
-    //   let temp: IDataRow[] = [];
-    //   for (const data of res.data.data) {
-    //     const lapak = await ApiGetLapakByProdiId(data.prodi._id);
-    //     temp.push({
-    //       id: data._id,
-    //       nama: data.fullname,
-    //       email: data.email,
-    //       prodi: data.prodi.name,
-    //       statusAkun: data.isSuspend ?? false,
-    //       lapak: lapak?.data?.data?.namaLapak ?? '-',
-    //     });
-    //   }
-    //   setDataPengguna(temp);
-    // } else {
-    //   showToast({
-    //     title: 'Error',
-    //     message: res.data.message,
-    //     type: 'error',
-    //   });
-    // }
+    const res = await ApiGetListDosenProdi();
+    if (res.status === 200) {
+      let temp: any[] = [];
+      let i = 0;
+      for (const data of res.data.data) {
+        i++;
+        temp.push({
+          no: i,
+          id: data._id,
+          nama: data.namaLengkap,
+          email: data.email ?? '',
+          prodi: data.programStudi,
+          aksi: data._id,
+        });
+      }
+      setDataPengguna(temp);
+    } else {
+      toast({
+        title: 'Error',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
   };
 
   const back = () => {
@@ -215,8 +185,8 @@ const ManajemenPenggunaAdmin: NextPage = () => {
   );
 };
 
-// export default privateRouteAdminProdi(ManajemenPenggunaAdmin);
-export default ManajemenPenggunaAdmin;
+export default privateRouteAdmin(ManajemenPenggunaAdmin);
+// export default ManajemenPenggunaAdmin;
 
 function CustomTable({ columns, data, getListPengguna }: any) {
   // Use the state and functions returned from useTable to build your UI

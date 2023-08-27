@@ -31,7 +31,6 @@ export default function App({ Component, pageProps }: AppProps) {
     } else {
       router.replace('/login');
     }
-
     setLoadingPage(false);
   };
 
@@ -44,6 +43,7 @@ export default function App({ Component, pageProps }: AppProps) {
         await getUserInfo(userType, token);
       } else {
         router.replace(`/login`);
+        setLoadingPage(false);
       }
     }
     funcAsyncDefault();

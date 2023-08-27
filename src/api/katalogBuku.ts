@@ -87,3 +87,24 @@ export const ApiDeleteKatalogBuku = async (id: string) => {
     };
   }
 };
+
+export const ApiGetDetailKatalogBuku = async (id: string) => {
+  const response = await AxiosWithToken()
+    .get(`${BACKEND_URL}/katalog-buku/detail/${id}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  if (response) {
+    return response;
+  } else {
+    return {
+      status: 500,
+      data: {
+        message: 'Server error.',
+      },
+    };
+  }
+};

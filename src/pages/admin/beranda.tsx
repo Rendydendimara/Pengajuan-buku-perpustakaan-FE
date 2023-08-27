@@ -111,18 +111,18 @@ const BerandaAdmin: NextPage = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <AppTemplate>
-        <Box>
+        <Box h='100%'>
           <Text fontSize='2xl'>Selamat Datang</Text>
           <Text>FULLNAME, Admin</Text>
           <Box my='8'>
             <Heading as='h3' fontSize='24px' fontWeight='700'>
               Data Statistik
             </Heading>
-            <Box my='4'>
+            <Box my='4' h='400px'>
               <ResponsiveContainer width='100%' height='100%'>
                 <LineChart
                   width={500}
-                  height={300}
+                  height={200}
                   data={data}
                   margin={{
                     top: 20,

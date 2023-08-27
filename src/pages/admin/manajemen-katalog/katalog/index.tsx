@@ -13,6 +13,7 @@ import {
 import { Input, InputGroup, InputRightElement } from '@chakra-ui/input';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import {
+  createStandaloneToast,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -49,6 +50,7 @@ import { usePagination, useTable } from 'react-table';
 import { BiArrowBack } from 'react-icons/bi';
 import moment from 'moment';
 import { AiOutlinePlus } from 'react-icons/ai';
+import { ApiDeleteKatalogBuku, ApiGetListKatalogBuku } from '@/api/katalogBuku';
 
 interface IDataRow {
   id: string;
@@ -64,36 +66,7 @@ interface IDataRow {
 
 const ListKatalogAdmin: NextPage = () => {
   const router = useRouter();
-  const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([
-    {
-      id: new Date().getTime().toString(),
-      no: 1,
-      namaKatalog: 'Nama Katalog',
-      tanggalCreate: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 2,
-      namaKatalog: 'Nama Katalog',
-      tanggalCreate: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 3,
-      namaKatalog: 'Nama Katalog',
-      tanggalCreate: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 4,
-      namaKatalog: 'Nama Katalog',
-      tanggalCreate: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-  ]);
+  const [dataPengguna, setDataPengguna] = useState<[]>([]);
   // const { showToast } = useGlobalContext();
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
   //   (state) => {
@@ -127,32 +100,31 @@ const ListKatalogAdmin: NextPage = () => {
     ],
     []
   );
+  const { toast } = createStandaloneToast();
 
   const getListPengguna = async () => {
-    // const res = await ApiGetListPenjualAdminProdi({
-    //   prodiId: user?.prodi ?? '',
-    // });
-    // if (res.status === 200) {
-    //   let temp: IDataRow[] = [];
-    //   for (const data of res.data.data) {
-    //     const lapak = await ApiGetLapakByProdiId(data.prodi._id);
-    //     temp.push({
-    //       id: data._id,
-    //       nama: data.fullname,
-    //       email: data.email,
-    //       prodi: data.prodi.name,
-    //       statusAkun: data.isSuspend ?? false,
-    //       lapak: lapak?.data?.data?.namaLapak ?? '-',
-    //     });
-    //   }
-    //   setDataPengguna(temp);
-    // } else {
-    //   showToast({
-    //     title: 'Error',
-    //     message: res.data.message,
-    //     type: 'error',
-    //   });
-    // }
+    const res = await ApiGetListKatalogBuku();
+    if (res.status === 200) {
+      let temp: any = [];
+      let i = 0;
+      for (const data of res.data.data) {
+        i++;
+        temp.push({
+          no: i,
+          id: data._id,
+          namaKatalog: data.name,
+          tanggalCreate: new Date(data.createdAt).getTime().toString(),
+          aksi: data._id,
+        });
+      }
+      setDataPengguna(temp);
+    } else {
+      toast({
+        title: 'Gagal',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
   };
 
   const back = () => {
@@ -276,8 +248,11 @@ function CustomTable({ columns, data, getListPengguna }: any) {
     usePagination
   );
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedId, setSelectedId] = useState('');
+  const { toast } = createStandaloneToast();
 
   const hapus = (id: string) => {
+    setSelectedId(id);
     onOpen();
     // Router.push(`/admin/manajemen-pengguna/${id}`);
   };
@@ -287,7 +262,26 @@ function CustomTable({ columns, data, getListPengguna }: any) {
   };
 
   const editPage = (id: string) => {
-    // Router.push(`/admin/manajemen-pengguna/tambah?id=${id}&action=edit`);
+    Router.push(`/admin/manajemen-katalog/tambah-katalog?id=${id}&action=edit`);
+  };
+
+  const handleDeleteKatalog = async () => {
+    const res = await ApiDeleteKatalogBuku(selectedId);
+    if (res.status === 200) {
+      toast({
+        title: 'Berhasil',
+        description: 'Berhasil hapus katalog',
+        status: 'success',
+      });
+      getListPengguna();
+    } else {
+      toast({
+        title: 'Gagal',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
+    onClose();
   };
 
   // Render the UI for your table
@@ -446,12 +440,13 @@ function CustomTable({ columns, data, getListPengguna }: any) {
             <Box>
               <Text>Apakah kamu yakin untuk menghapus katalog ?</Text>
               <Text>
-                Setelah penghapusan, data katalog tidak bisa dilihat lagi
+                Setelah penghapusan, data katalog tidak bisa dilihat lagi. Dan
+                seluruh data buku yang ada dikatalog akan otomatis terhapus.
               </Text>
             </Box>
           </ModalBody>
           <ModalFooter gap='2'>
-            <Button size='sm' onClick={onClose} colorScheme='green'>
+            <Button size='sm' onClick={handleDeleteKatalog} colorScheme='green'>
               Ya, Lanjut
             </Button>
             <Button size='sm' colorScheme='red' onClick={onClose}>
