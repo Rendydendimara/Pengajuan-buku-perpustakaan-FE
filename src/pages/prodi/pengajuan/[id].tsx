@@ -1,15 +1,17 @@
+import { ApiGetDetailPengajuanBuku } from '@/api/pengajuanBuku';
 import AppTemplateProdi from '@/components/templates/AppTemplateProdi';
 import LayoutProdi from '@/components/templates/LayoutProdi';
 import { APP_NAME } from '@/constant';
+import { IPengajuanBuku } from '@/interface';
 import { getColorStatus } from '@/utils/colors';
 import { Button } from '@chakra-ui/button';
 import { Box, Flex, Text, VStack } from '@chakra-ui/layout';
-import moment from 'moment';
+import { createStandaloneToast } from '@chakra-ui/toast';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BiArrowBack } from 'react-icons/bi';
 
 // interface IReduxStateWorkspace {
@@ -28,100 +30,40 @@ interface IDataRow {
 
 const DetailPengajuanProdi: NextPage = () => {
   const router = useRouter();
-  const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([
-    {
-      no: 1,
-      judulBuku: 'Judul buku',
-      prodi: 'Teknik Informatika',
-      jumlah: 10,
-      status: 'diproses',
-      diAjuakanPada: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      no: 2,
-      judulBuku: 'Judul buku',
-      prodi: 'Teknik Informatika',
-      jumlah: 10,
-      status: 'diterima',
-      diAjuakanPada: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      no: 3,
-      judulBuku: 'Judul buku',
-      prodi: 'Teknik Informatika',
-      jumlah: 10,
-      status: 'selesai',
-      diAjuakanPada: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      no: 4,
-      judulBuku: 'Judul buku',
-      prodi: 'Teknik Informatika',
-      jumlah: 10,
-      status: 'gagal',
-      diAjuakanPada: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      no: 5,
-      judulBuku: 'Judul buku',
-      prodi: 'Teknik Informatika',
-      jumlah: 10,
-      status: 'ditolak',
-      diAjuakanPada: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-  ]);
+  const { toast } = createStandaloneToast();
+  const [data, setData] = useState<IPengajuanBuku>();
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: 'No',
-        accessor: 'no',
-      },
-      {
-        Header: 'Diajukan Pada',
-        accessor: 'diAjuakanPada',
-      },
-      {
-        Header: 'Program Studi',
-        accessor: 'prodi',
-      },
-      {
-        Header: 'Judul Buku',
-        accessor: 'judulBuku',
-      },
-      {
-        Header: 'Jumlah',
-        accessor: 'jumlah',
-      },
-      {
-        Header: 'Status',
-        accessor: 'status',
-      },
-      {
-        Header: 'Aksi',
-        accessor: 'aksi',
-      },
-    ],
-    []
-  );
+  const getData = async (id: string) => {
+    const res = await ApiGetDetailPengajuanBuku(id);
+    if (res.status === 200) {
+      setData({
+        ...res.data.data,
+        // buku: res.data.data.buku._id.judul,
+        jumlah: res.data.data.buku.length,
+      });
+    } else {
+      toast({
+        status: 'error',
+        duration: 5000,
+        title: 'Error',
+        description: res.data.message,
+        position: 'bottom-right',
+      });
+    }
+  };
 
-  // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
-  //   (state) => {
-  //     return {
-  //       user: state.user.user,
-  //     };
-  //   }
-  // );
+  const getJumlahTotalBuku = () => {
+    let total = 0;
+    data?.buku.map((bk: any) => (total += bk.jumlah));
+    return total;
+  };
 
-  //   Aksi
-  // Status
-
-  const getData = () => {};
+  useEffect(() => {
+    const id: any = router.query.id;
+    if (id) {
+      getData(id);
+    }
+  }, [router.query]);
 
   return (
     <LayoutProdi showOnlyInfoUser>
@@ -154,10 +96,10 @@ const DetailPengajuanProdi: NextPage = () => {
                   >
                     Id Pengajuan Buku
                   </Flex>
-                  <Text>: {new Date().getTime()}</Text>
+                  <Text>: {data?._id}</Text>
                 </Flex>
 
-                <Flex alignItems='center' gap='15px'>
+                <Flex alignItems='flex-start' gap='15px'>
                   <Flex
                     borderColor='blue'
                     w='300px'
@@ -166,11 +108,36 @@ const DetailPengajuanProdi: NextPage = () => {
                     justifyContent='center'
                     padding='2'
                   >
-                    Judul Buku
+                    Buku
                   </Flex>
-                  <Text>: Judul Buku</Text>
+                  <VStack
+                    w='full'
+                    justifyContent='flex-start'
+                    alignItems='flex-start'
+                  >
+                    {data?.buku.map((buku: any, i: number) => (
+                      <Flex
+                        bgColor='gray.400'
+                        borderRadius='4px'
+                        padding='2'
+                        key={i}
+                        minW='600px'
+                        maxW='600px'
+                        alignItems='center'
+                        gap='5px'
+                      >
+                        <Text fontWeight='bold' fontSize='lg'>
+                          {i + 1}
+                        </Text>
+                        <Box>
+                          <Text>Judul: {buku._id.judul}</Text>
+                          <Text>Jumlah: {buku.jumlah}</Text>
+                          <Text>Katalog: {buku._id.katalog.name}</Text>
+                        </Box>
+                      </Flex>
+                    ))}
+                  </VStack>
                 </Flex>
-
                 <Flex alignItems='center' gap='15px'>
                   <Flex
                     borderColor='blue'
@@ -182,9 +149,21 @@ const DetailPengajuanProdi: NextPage = () => {
                   >
                     Jumlah Buku
                   </Flex>
-                  <Text>: 9</Text>
+                  <Text>: {data?.jumlah}</Text>
                 </Flex>
-
+                <Flex alignItems='center' gap='15px'>
+                  <Flex
+                    borderColor='blue'
+                    w='300px'
+                    borderWidth='1px'
+                    alignItems='center'
+                    justifyContent='center'
+                    padding='2'
+                  >
+                    Jumlah Total Buku
+                  </Flex>
+                  <Text>: {getJumlahTotalBuku()}</Text>
+                </Flex>
                 <Flex alignItems='center' gap='15px'>
                   <Flex
                     borderColor='blue'
@@ -196,16 +175,7 @@ const DetailPengajuanProdi: NextPage = () => {
                   >
                     Informasi Tambahan
                   </Flex>
-                  <Text maxW='500px'>
-                    : Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Maxime molestiae accusamus harum laborum libero fuga! Hic
-                    qui consequuntur quaerat voluptatum Lorem ipsum dolor sit
-                    amet consectetur adipisicing elit. Maxime molestiae
-                    accusamus harum laborum libero fuga! Hic qui consequuntur
-                    quaerat voluptatumLorem ipsum dolor sit amet consectetur
-                    adipisicing elit. Maxime molestiae accusamus harum laborum
-                    libero fuga! Hic qui consequuntur quaerat voluptatum?
-                  </Text>
+                  <Text maxW='500px'>: {data?.pesanDosen}</Text>
                 </Flex>
 
                 <Flex alignItems='center' gap='15px'>
@@ -223,11 +193,11 @@ const DetailPengajuanProdi: NextPage = () => {
                     padding='1'
                     borderRadius='10px'
                     alignItems='center'
-                    bgColor={getColorStatus('diterima')}
+                    bgColor={getColorStatus(data?.status ?? '')}
                     justifyContent='center'
                   >
                     <Text color='white' fontWeight='700'>
-                      diterima
+                      {data?.status}
                     </Text>
                   </Flex>
                 </Flex>
@@ -243,16 +213,7 @@ const DetailPengajuanProdi: NextPage = () => {
                   >
                     Informasi Admin
                   </Flex>
-                  <Text maxW='500px'>
-                    : Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Maxime molestiae accusamus harum laborum libero fuga! Hic
-                    qui consequuntur quaerat voluptatum Lorem ipsum dolor sit
-                    amet consectetur adipisicing elit. Maxime molestiae
-                    accusamus harum laborum libero fuga! Hic qui consequuntur
-                    quaerat voluptatumLorem ipsum dolor sit amet consectetur
-                    adipisicing elit. Maxime molestiae accusamus harum laborum
-                    libero fuga! Hic qui consequuntur quaerat voluptatum?
-                  </Text>
+                  <Text maxW='500px'>: {data?.pesanAdmin}</Text>
                 </Flex>
               </VStack>
             </Box>

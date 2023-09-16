@@ -20,7 +20,7 @@ import {
 import { Select } from '@chakra-ui/select';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 // if (typeof window !== 'undefined') {
 // import { Editor } from 'react-draft-wysiwyg';
@@ -37,8 +37,12 @@ import {
   Td,
   TableCaption,
   TableContainer,
+  createStandaloneToast,
 } from '@chakra-ui/react';
 import moment from 'moment';
+import { ApiGetDetailKatalogBuku } from '@/api/katalogBuku';
+import { ApiBulkBukuKatalog } from '@/api/buku';
+import { IDataResultBulk } from '@/interface';
 
 const BulkKatalogAdmin: NextPage = () => {
   const router = useRouter();
@@ -60,11 +64,20 @@ const BulkKatalogAdmin: NextPage = () => {
   const [form, setForm] = useState({
     namaKatalog: '',
     tanggalUpload: '',
-    file: '',
+    file: undefined,
+    prodi: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [loadingPost, setLoadingPost] = useState(false);
   const [showBulkInfo, setShowBulkInfo] = useState(false);
+  const [catalogData, setCatalogData] = useState<any>();
+  const { toast } = createStandaloneToast();
+  const [dataInfoResultBulk, setDataInfoResultBulk] = useState({
+    errorDuplicate: [],
+    errorUpload: [],
+    successUpload: [],
+  });
+
   const handleToggleConfirmPasswordShow = (): void => {
     setIsShowConfirmPassword(!isShowConfirmPassword);
   };
@@ -78,9 +91,23 @@ const BulkKatalogAdmin: NextPage = () => {
     });
   };
 
+  const onChangeProdi = (e: any) => {
+    setForm({
+      ...form,
+      prodi: e.target.value,
+    });
+  };
+
   const onOpenModal = (type: 'add' | 'cancel') => {
     setModalType(type);
     onOpen();
+  };
+
+  const onChangeFile = (e: any) => {
+    setForm({
+      ...form,
+      file: e.target.files[0],
+    });
   };
 
   const handleSubmit = async (
@@ -88,32 +115,31 @@ const BulkKatalogAdmin: NextPage = () => {
   ): Promise<void> => {
     setErrorMessage('');
     onClose();
+    setDataInfoResultBulk({
+      errorDuplicate: [],
+      errorUpload: [],
+      successUpload: [],
+    });
     setLoadingPost(true);
-    setShowBulkInfo(true);
     event.preventDefault();
-    if (actionType === 'edit') {
-      // update api
+
+    const res: any = await ApiBulkBukuKatalog({
+      file: form.file,
+      uploadDate: form.tanggalUpload,
+      catalogId: catalogData._id,
+      prodi: form.prodi,
+    });
+    if (res.status === 200) {
+      toast({
+        title: 'Berhasil',
+        description: res.data.message,
+        status: 'success',
+      });
+      setDataInfoResultBulk(res.data.data);
+      setShowBulkInfo(true);
     } else {
-      // create api
+      setErrorMessage(res.data.message);
     }
-    // const res: any = await ApiCreateAccountPenjualAdminProdi({
-    //   judulBuku: form.judulBuku,
-    //   penulis: form.penulis,
-    //   penerbit: form.penerbit,
-    //   tanggalUpload: form.tanggalUpload,
-    //   tahunBuku: form.tahunBuku,
-    //   password: form.password,
-    // });
-    // if (res.status === 200) {
-    //   showToast({
-    //     title: 'Berhasil',
-    //     message: 'Berhasil membuat akun Penjual',
-    //     type: 'success',
-    //   });
-    //   router.push('/admin-prodi/pengguna/list-pengguna');
-    // } else {
-    //   setErrorMessage(res.data.message);
-    // }
     setLoadingPost(false);
   };
 
@@ -121,12 +147,27 @@ const BulkKatalogAdmin: NextPage = () => {
     router.back();
   };
 
+  const getCatalogName = async (id: string) => {
+    const res = await ApiGetDetailKatalogBuku(id);
+    if (res.status === 200) {
+      setCatalogData(res.data.data);
+    } else {
+      console.log('back');
+      Router.push(`/admin/manajemen-katalog/katalog/`);
+    }
+  };
+
+  const disabled = () => {
+    if (form.tanggalUpload && form.file && form.prodi) {
+      return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
-    const { id }: any = router.query;
-    if (id) {
-      setActionType('edit');
-      setIdSelected(id);
-      // getDetailProduk(id);
+    const { katalogId }: any = router.query;
+    if (katalogId) {
+      getCatalogName(katalogId);
     }
   }, [router.query]);
 
@@ -166,16 +207,23 @@ const BulkKatalogAdmin: NextPage = () => {
               <form method='POST'>
                 <FormControl my='3' id='nama_lengkap' isRequired>
                   <FormLabel>Nama Katalog</FormLabel>
+                  <Select disabled>
+                    <option>{catalogData?.name}</option>
+                  </Select>
+                </FormControl>
+                <FormControl my='3' id='nama_lengkap' isRequired>
+                  <FormLabel>Prodi</FormLabel>
                   <Select
-                    name='namaKatalog'
-                    value={form.namaKatalog}
-                    // onChange={onChangeProdi}
+                    name='programStudi'
+                    value={form.prodi}
+                    onChange={onChangeProdi}
                   >
-                    <option value=''>Katalog A</option>
-                    <option value=''>Katalog B</option>
-                    <option value=''>Katalog C</option>
-                    <option value=''>Katalog D</option>
-                    <option value=''>Katalog E</option>
+                    <option value=''></option>
+                    <option value='tif'>Teknik Informatika</option>
+                    <option value='ptk'>Peternakan</option>
+                    <option value='agb'>Agribisnis</option>
+                    <option value='agt'>Agroteknologi</option>
+                    <option value='thp'>Teknologi Hasil Perikanan</option>
                   </Select>
                 </FormControl>
                 <FormControl my='3' id='penulis' isRequired>
@@ -193,8 +241,7 @@ const BulkKatalogAdmin: NextPage = () => {
                   <Input
                     type='file'
                     name='file'
-                    value={form.file}
-                    onChange={onChangeForm}
+                    onChange={onChangeFile}
                     required
                   />
                 </FormControl>
@@ -209,6 +256,7 @@ const BulkKatalogAdmin: NextPage = () => {
                     bg: 'green.700',
                   }}
                   isLoading={loadingPost}
+                  isDisabled={disabled()}
                 >
                   {actionType === 'edit' ? 'Update' : 'Upload'}
                 </Button>
@@ -235,7 +283,7 @@ const BulkKatalogAdmin: NextPage = () => {
                 </Text>
                 <TableContainer>
                   <Table variant='simple'>
-                    <TableCaption>Berhasil bulk</TableCaption>
+                    <TableCaption>Gagal bulk</TableCaption>
                     <Thead>
                       <Tr>
                         <Th>No</Th>
@@ -247,54 +295,53 @@ const BulkKatalogAdmin: NextPage = () => {
                       </Tr>
                     </Thead>
                     <Tbody>
+                      {dataInfoResultBulk.successUpload.map(
+                        (dt: IDataResultBulk, i) => (
+                          <Tr>
+                            <Td>{i + 1}</Td>
+                            <Td>{dt.judul}</Td>
+                            <Td>{dt.penulis}</Td>
+                            <Td>{catalogData?.name}</Td>
+                            <Td>{moment(dt.tanggalUpload).format('L')}</Td>
+                            <Td>{dt.tahunTerbit}</Td>
+                          </Tr>
+                        )
+                      )}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              </Box>
+
+              <Box my='4'>
+                <Text color='orange' fontWeight='800' size='24px'>
+                  Daftar buku duplikasi
+                </Text>
+                <TableContainer>
+                  <Table variant='simple'>
+                    <TableCaption>Duplkasi buku</TableCaption>
+                    <Thead>
                       <Tr>
-                        <Td>1</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
+                        <Th>No</Th>
+                        <Th>Judul Buku</Th>
+                        <Th>Penulis</Th>
+                        <Th>Penerbit</Th>
+                        <Th>Tanggal Upload</Th>
+                        <Th>Tahun</Th>
                       </Tr>
-                      <Tr>
-                        <Td>2</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>3</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>4</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>5</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>6</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {dataInfoResultBulk.errorDuplicate.map(
+                        (dt: IDataResultBulk, i) => (
+                          <Tr>
+                            <Td>{i + 1}</Td>
+                            <Td>{dt.judul}</Td>
+                            <Td>{dt.penulis}</Td>
+                            <Td>{catalogData?.name}</Td>
+                            <Td>{moment(dt.tanggalUpload).format('L')}</Td>
+                            <Td>{dt.tahunTerbit}</Td>
+                          </Tr>
+                        )
+                      )}
                     </Tbody>
                   </Table>
                 </TableContainer>
@@ -317,124 +364,18 @@ const BulkKatalogAdmin: NextPage = () => {
                       </Tr>
                     </Thead>
                     <Tbody>
-                      <Tr>
-                        <Td>1</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>2</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>3</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>4</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>5</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>6</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                    </Tbody>
-                  </Table>
-                </TableContainer>
-              </Box>
-              <Box my='4'>
-                <Text color='orange' fontWeight='800' size='24px'>
-                  Daftar buku duplikasi
-                </Text>
-                <TableContainer>
-                  <Table variant='simple'>
-                    <TableCaption>Duplkasi buku</TableCaption>
-                    <Thead>
-                      <Tr>
-                        <Th>No</Th>
-                        <Th>Judul Buku</Th>
-                        <Th>Penulis</Th>
-                        <Th>Penerbit</Th>
-                        <Th>Tanggal Upload</Th>
-                        <Th>Tahun</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      <Tr>
-                        <Td>1</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>2</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>3</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>4</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>5</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>6</Td>
-                        <Td>Judul buku</Td>
-                        <Td>Penulis</Td>
-                        <Td>Penerbit</Td>
-                        <Td>{moment().format('L')}</Td>
-                        <Td>{new Date().getFullYear()}</Td>
-                      </Tr>
+                      {dataInfoResultBulk.errorUpload.map(
+                        (dt: IDataResultBulk, i) => (
+                          <Tr>
+                            <Td>{i + 1}</Td>
+                            <Td>{dt.judul}</Td>
+                            <Td>{dt.penulis}</Td>
+                            <Td>{catalogData?.name}</Td>
+                            <Td>{moment(dt.tanggalUpload).format('L')}</Td>
+                            <Td>{dt.tahunTerbit}</Td>
+                          </Tr>
+                        )
+                      )}
                     </Tbody>
                   </Table>
                 </TableContainer>

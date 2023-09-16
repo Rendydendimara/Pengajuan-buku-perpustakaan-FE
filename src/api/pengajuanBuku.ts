@@ -3,9 +3,8 @@ import { BACKEND_URL } from '../constant';
 import { AxiosWithToken } from '../lib/axios';
 
 export const ApiCreatePengajuanBuku = async (data: {
-  buku: string;
+  dataBuku: string;
   dosenProdi: string;
-  jumlah: number;
   pesanDosen: string;
 }) => {
   const response = await Axios.post(
@@ -103,6 +102,54 @@ export const ApiUpdatePengajuanBuku = async (data: {
 export const ApiDeletePengajuanBuku = async (id: string) => {
   const response = await AxiosWithToken()
     .delete(`${BACKEND_URL}/pengajuan-buku/delete/${id}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  if (response) {
+    return response;
+  } else {
+    return {
+      status: 500,
+      data: {
+        message: 'Server error.',
+      },
+    };
+  }
+};
+
+export const ApiGetDetailPengajuanBuku = async (id: string) => {
+  const response = await AxiosWithToken()
+    .get(`${BACKEND_URL}/pengajuan-buku/detail/${id}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  if (response) {
+    return response;
+  } else {
+    return {
+      status: 500,
+      data: {
+        message: 'Server error.',
+      },
+    };
+  }
+};
+
+export const ApiChangeStatusPengajuanBuku = async (data: {
+  status: string;
+  pesan: string;
+  id: string;
+}) => {
+  const response = await Axios.post(
+    `${BACKEND_URL}/pengajuan-buku/change-status`,
+    data
+  )
     .then((response) => {
       return response;
     })

@@ -7,7 +7,7 @@ import {
   localCookieLoadToken,
   localCookieSaveToken,
 } from '@/lib/Cookies/token';
-import { LOCAL_USER_TYPE } from '@/constant';
+import { LOCAL_CART_PRODI, LOCAL_USER_TYPE } from '@/constant';
 import { getLocal } from '@/lib/LocalStorage/localStorage';
 import { Provider } from 'react-redux';
 import { store } from '@/provider/redux/store';
@@ -47,6 +47,17 @@ export default function App({ Component, pageProps }: AppProps) {
       }
     }
     funcAsyncDefault();
+
+    if (typeof window !== 'undefined') {
+      let cartBuku: any = localStorage.getItem(LOCAL_CART_PRODI);
+      if (cartBuku) {
+        cartBuku = JSON.parse(cartBuku);
+        store.dispatch({
+          type: 'SET_CART',
+          cart: cartBuku,
+        });
+      }
+    }
   }, []);
 
   if (pageLoading) {

@@ -1,12 +1,22 @@
+import { ApiGetListBuku } from '@/api/buku';
 import AppTemplateProdi from '@/components/templates/AppTemplateProdi';
 import LayoutProdi from '@/components/templates/LayoutProdi';
-import { APP_NAME } from '@/constant';
+import { APP_NAME, LOCAL_CART_PRODI } from '@/constant';
+import { IDataBuku } from '@/interface';
 import { Button } from '@chakra-ui/button';
 import { Checkbox } from '@chakra-ui/checkbox';
+import { FormControl, FormLabel } from '@chakra-ui/form-control';
+import { Input, InputGroup, InputRightElement } from '@chakra-ui/input';
 import { Box, Flex, Text, VStack } from '@chakra-ui/layout';
+import { Select } from '@chakra-ui/select';
+import { createStandaloneToast } from '@chakra-ui/toast';
+import moment from 'moment';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { BiSearchAlt2, BiSolidBookBookmark } from 'react-icons/bi';
+import { useDispatch } from 'react-redux';
 
 // interface IReduxStateWorkspace {
 //   user?: IUser;
@@ -14,6 +24,9 @@ import { useRouter } from 'next/router';
 
 const BerandaProdi: NextPage = () => {
   const router = useRouter();
+  const { toast } = createStandaloneToast();
+  const [dataBuku, setDataBuku] = useState<IDataBuku[]>([]);
+
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
   //   (state) => {
   //     return {
@@ -26,6 +39,37 @@ const BerandaProdi: NextPage = () => {
     router.push('/prodi/pengajuan');
   };
 
+  const getListBuku = async () => {
+    const res = await ApiGetListBuku();
+    if (res.status === 200) {
+      let temp: IDataBuku[] = [];
+      let i = 0;
+      for (const data of res.data.data) {
+        temp.push({
+          _id: data._id,
+          judul: data.judul,
+          penulis: data.penulis,
+          katalog: data.katalog.name,
+          tahunTerbit: data.tahunTerbit,
+          bahasa: data.bahasa,
+          prodi: data.prodi,
+          tanggalUpload: moment(data.createdAt).format('L'),
+        });
+      }
+      setDataBuku(temp);
+    } else {
+      toast({
+        title: 'Error',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
+  };
+
+  useEffect(() => {
+    getListBuku();
+  }, []);
+
   return (
     <LayoutProdi>
       <Head>
@@ -36,112 +80,62 @@ const BerandaProdi: NextPage = () => {
       <AppTemplateProdi>
         <Box w='full' mt='15'>
           <Text fontSize='lg' fontWeight='700'>
-            Prodi Teknik Informatika / Katalog UGM
+            Prodi Teknik Informatika
           </Text>
+          <Flex mt='6' gap='10px' alignItems='center'>
+            <FormControl w='fit-content'>
+              <FormLabel>Katalog</FormLabel>
+              <Select w='150px' value='UGM' placeholder='Pilih katalog'>
+                <option value='option1'>UGM</option>
+                <option value='option2'>Undana</option>
+                <option value='option3'>UI</option>
+              </Select>
+            </FormControl>
+            <FormControl w='fit-content'>
+              <FormLabel>Tahun</FormLabel>
+              <Select w='150px' value='UGM' placeholder='Pilih tahun'>
+                <option value='2014'>2014</option>
+                <option value='2015'>2015</option>
+                <option value='2016'>2016</option>
+                <option value='2017'>2017</option>
+                <option value='2018'>2018</option>
+                <option value='2019'>2019</option>
+                <option value='2020'>2020</option>
+                <option value='2021'>2021</option>
+                <option value='2022'>2022</option>
+                <option value='2023'>2023</option>
+              </Select>
+            </FormControl>
+            <FormControl w='fit-content'>
+              <FormLabel>Cari buku</FormLabel>
+              <InputGroup w='400px'>
+                <Input placeholder='Cari judul buku' />
+                <InputRightElement width='4.5rem'>
+                  <BiSearchAlt2 />
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+          </Flex>
+
           <Box w='full' mt='6'>
             <VStack w='full' spacing={10}>
               <Box w='full'>
                 <Text fontSize='2xl'>List Buku Prodi</Text>
                 <VStack w='full' spacing={4} mt='4'>
-                  {[1, 2, 3, 4].map((i) => (
-                    <Flex
-                      w='full'
-                      borderRadius='8px'
-                      border='1px solid pink'
-                      justifyContent='space-between'
-                      minH='80px'
-                    >
-                      <Flex gap='40px'>
-                        <Flex
-                          justifyContent='center'
-                          alignItems='center'
-                          bgColor='pink.500'
-                          w='70px'
-                          h='full'
-                        >
-                          <Text color='gray.800' fontSize='2xl'>
-                            {i}
-                          </Text>
-                        </Flex>
-                        <Box>
-                          <Text fontSize='lg'>Judul Buku</Text>
-                          <Text fontWeight='bold' fontSize='lg'>
-                            Katalog
-                          </Text>
-                        </Box>
-                      </Flex>
-                      <Flex
-                        alignItems='center'
-                        justifyContent='space-between'
-                        gap='40px'
-                        pr='4'
-                      >
-                        <Box>
-                          <Text>Penulis</Text>
-                          <Text>{new Date().getFullYear()}</Text>
-                        </Box>
-                        <Box>
-                          <Checkbox size='lg' />
-                        </Box>
-                      </Flex>
-                    </Flex>
+                  {dataBuku.map((buku, i) => (
+                    <ItemBuku key={i} buku={buku} index={i} />
                   ))}
                 </VStack>
               </Box>
               <Box w='full'>
                 <Text fontSize='2xl'>List Buku Umum</Text>
                 <VStack w='full' spacing={4} mt='4'>
-                  {[1, 2, 3, 4].map((i) => (
-                    <Flex
-                      w='full'
-                      borderRadius='8px'
-                      border='1px solid pink'
-                      justifyContent='space-between'
-                      minH='80px'
-                    >
-                      <Flex gap='40px'>
-                        <Flex
-                          justifyContent='center'
-                          alignItems='center'
-                          bgColor='pink.500'
-                          w='70px'
-                          h='full'
-                        >
-                          <Text color='gray.800' fontSize='2xl'>
-                            {i}
-                          </Text>
-                        </Flex>
-                        <Box>
-                          <Text fontSize='lg'>Judul Buku</Text>
-                          <Text fontWeight='bold' fontSize='lg'>
-                            Katalog
-                          </Text>
-                        </Box>
-                      </Flex>
-                      <Flex
-                        alignItems='center'
-                        justifyContent='space-between'
-                        gap='40px'
-                        pr='4'
-                      >
-                        <Box>
-                          <Text>Penulis</Text>
-                          <Text>{new Date().getFullYear()}</Text>
-                        </Box>
-                        <Box>
-                          <Checkbox size='lg' />
-                        </Box>
-                      </Flex>
-                    </Flex>
-                  ))}
+                  {/* {[1, 2, 3, 4].map((i) => (
+                    <ItemBuku key={i} index={i} />
+                  ))} */}
                 </VStack>
               </Box>
             </VStack>
-            <Flex justifyContent='flex-end'>
-              <Button my='8' colorScheme='green' onClick={gotoPengajuan}>
-                Ajukan
-              </Button>
-            </Flex>
           </Box>
         </Box>
       </AppTemplateProdi>
@@ -151,3 +145,111 @@ const BerandaProdi: NextPage = () => {
 
 export default BerandaProdi;
 // export default privateRouteAdmin(BerandaProdi);
+
+interface IItemBuku {
+  index: number;
+  buku: IDataBuku;
+}
+
+const ItemBuku: React.FC<IItemBuku> = (props) => {
+  const { toast } = createStandaloneToast();
+  const dispatch = useDispatch();
+
+  const addToCart = (buku: IDataBuku) => {
+    if (typeof window !== 'undefined') {
+      let cartBuku: any = localStorage.getItem(LOCAL_CART_PRODI);
+      console.log(cartBuku);
+      if (cartBuku) {
+        cartBuku = JSON.parse(cartBuku);
+        const exist = cartBuku.find((dt: IDataBuku) => dt._id === buku._id);
+        console.log('exist', exist);
+        if (!exist) {
+          cartBuku.push(buku);
+          console.log('cartBuku', cartBuku);
+          localStorage.setItem(LOCAL_CART_PRODI, JSON.stringify(cartBuku));
+          dispatch({
+            type: 'SET_CART',
+            cart: cartBuku,
+          });
+          toast({
+            title: 'Berhasil',
+            description: 'berhasil menambahkan ke keranjang',
+            status: 'success',
+          });
+        } else {
+          toast({
+            title: 'Berhasil',
+            description: 'berhasil menambahkan ke keranjang',
+            status: 'success',
+          });
+        }
+      } else {
+        localStorage.setItem(LOCAL_CART_PRODI, JSON.stringify([buku]));
+        dispatch({
+          type: 'SET_CART',
+          cart: [buku],
+        });
+        toast({
+          title: 'Berhasil',
+          description: 'berhasil menambahkan ke keranjang',
+          status: 'success',
+        });
+      }
+    }
+  };
+
+  return (
+    <Flex
+      w='full'
+      borderRadius='8px'
+      border='1px solid pink'
+      justifyContent='space-between'
+      minH='80px'
+    >
+      <Flex gap='10px' w='60%'>
+        <Flex
+          justifyContent='center'
+          alignItems='center'
+          bgColor='pink.500'
+          w='70px'
+          h='full'
+        >
+          <Text color='gray.800' fontSize='2xl'>
+            {props.index}
+          </Text>
+        </Flex>
+        <VStack
+          w='full'
+          justifyContent='center'
+          alignItems='flex-start'
+          spacing='1'
+        >
+          <Text>{props.buku.judul}</Text>
+          <Text>Katalog: {props.buku.katalog}</Text>
+          <Text>Penulis: {props.buku.penulis}</Text>
+        </VStack>
+      </Flex>
+      <Flex
+        w='40%'
+        alignItems='center'
+        justifyContent='space-between'
+        gap='40px'
+        pr='4'
+      >
+        <Box>
+          <Text>Bahasa: {props.buku.bahasa}</Text>
+          <Text>Tahun terbit: {props.buku.tahunTerbit}</Text>
+        </Box>
+        <Box>
+          <Button
+            onClick={() => addToCart(props.buku)}
+            my='8'
+            colorScheme='green'
+          >
+            Ajukan
+          </Button>
+        </Box>
+      </Flex>
+    </Flex>
+  );
+};

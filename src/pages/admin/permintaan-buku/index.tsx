@@ -2,7 +2,7 @@ import AppTemplate from '@/components/templates/AppTemplate';
 import Layout from '@/components/templates/Layout';
 import { APP_NAME } from '@/constant';
 import { Button, IconButton } from '@chakra-ui/button';
-import { FormLabel } from '@chakra-ui/form-control';
+import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -11,8 +11,16 @@ import {
   Search2Icon,
 } from '@chakra-ui/icons';
 import { Input, InputGroup, InputRightElement } from '@chakra-ui/input';
-import { Box, Flex, Text } from '@chakra-ui/layout';
+import { Box, Center, Flex, Text } from '@chakra-ui/layout';
 import {
+  createStandaloneToast,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -22,10 +30,12 @@ import {
   Table,
   Tbody,
   Td,
+  Textarea,
   Th,
   Thead,
   Tooltip,
   Tr,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { Select } from '@chakra-ui/select';
 import { findIndex } from 'lodash';
@@ -40,6 +50,12 @@ import { useSelector } from 'react-redux';
 import { usePagination, useTable, useSortBy } from 'react-table';
 import { BiArrowBack } from 'react-icons/bi';
 import moment from 'moment';
+import {
+  ApiChangeStatusPengajuanBuku,
+  ApiGetListPengajuanBuku,
+} from '@/api/pengajuanBuku';
+import { getProdiName } from '@/utils';
+import { getColorStatus } from '@/utils/colors';
 
 interface IDataRow {
   id: string;
@@ -49,6 +65,7 @@ interface IDataRow {
   prodi: string;
   jumlah: number;
   aksi: string;
+  status: string;
 }
 
 // interface IReduxStateWorkspace {
@@ -57,62 +74,8 @@ interface IDataRow {
 
 const PermintaanBukuAdmin: NextPage = () => {
   const router = useRouter();
-  const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([
-    {
-      id: new Date().getTime().toString(),
-      no: 1,
-      namaPengajuan: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('L'),
-      prodi: 'TIF',
-      jumlah: 10,
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 2,
-      namaPengajuan: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('L'),
-      prodi: 'TIF',
-      jumlah: 10,
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 3,
-      namaPengajuan: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('L'),
-      prodi: 'TIF',
-      jumlah: 10,
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 4,
-      namaPengajuan: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('L'),
-      prodi: 'TIF',
-      jumlah: 10,
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 5,
-      namaPengajuan: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('L'),
-      prodi: 'TIF',
-      jumlah: 10,
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 6,
-      namaPengajuan: 'Erlinda kosong sembilan',
-      ajukanPada: moment().format('L'),
-      prodi: 'TIF',
-      jumlah: 10,
-      aksi: new Date().getTime().toString(),
-    },
-  ]);
+  const { toast } = createStandaloneToast();
+  const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([]);
   // const { showToast } = useGlobalContext();
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
   //   (state) => {
@@ -145,8 +108,12 @@ const PermintaanBukuAdmin: NextPage = () => {
         accessor: 'ajukanPada',
       },
       {
-        Header: 'Jumlah',
+        Header: 'Jumlah Buku',
         accessor: 'jumlah',
+      },
+      {
+        Header: 'Status',
+        accessor: 'status',
       },
       {
         Header: 'Aksi',
@@ -157,30 +124,31 @@ const PermintaanBukuAdmin: NextPage = () => {
   );
 
   const getListPengguna = async () => {
-    // const res = await ApiGetListPenjualAdminProdi({
-    //   prodiId: user?.prodi ?? '',
-    // });
-    // if (res.status === 200) {
-    //   let temp: IDataRow[] = [];
-    //   for (const data of res.data.data) {
-    //     const lapak = await ApiGetLapakByProdiId(data.prodi._id);
-    //     temp.push({
-    //       id: data._id,
-    //       nama: data.fullname,
-    //       email: data.email,
-    //       prodi: data.prodi.name,
-    //       statusAkun: data.isSuspend ?? false,
-    //       lapak: lapak?.data?.data?.namaLapak ?? '-',
-    //     });
-    //   }
-    //   setDataPengguna(temp);
-    // } else {
-    //   showToast({
-    //     title: 'Error',
-    //     message: res.data.message,
-    //     type: 'error',
-    //   });
-    // }
+    const res = await ApiGetListPengajuanBuku();
+    if (res.status === 200) {
+      let temp: IDataRow[] = [];
+      res.data.data.forEach((dt: any, i: number) => {
+        temp.push({
+          id: dt._id,
+          no: i + 1,
+          namaPengajuan: dt.dosenProdi.namaLengkap,
+          ajukanPada: moment(new Date(dt.createdAt)).format('L'),
+          prodi: getProdiName(dt.dosenProdi.programStudi),
+          jumlah: dt.buku.length,
+          aksi: dt._id,
+          status: dt.status,
+        });
+      });
+      setDataPengguna(temp);
+    } else {
+      toast({
+        status: 'error',
+        duration: 5000,
+        title: 'Error',
+        description: res.data.message,
+        position: 'bottom-right',
+      });
+    }
   };
 
   const back = () => {
@@ -270,13 +238,67 @@ function CustomTable({ columns, data, getListPengguna }: any) {
     useSortBy,
     usePagination
   );
-
+  const { toast } = createStandaloneToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [modalType, setModalType] =
+    useState<'reject' | 'accept' | 'selesai' | ''>('');
+  const [loading, setLoading] = useState(false);
   const detailPage = (id: string) => {
-    Router.push(`/admin/permintaan-buku/${id}`);
+    Router.push(`/admin/permintaan-buku/detail/${id}`);
+  };
+  const [formStatus, setFormStatus] = useState({
+    status: '',
+    pesan: '',
+    id: '',
+  });
+
+  const onOpenChangeStatus = (id: string, status: string) => {
+    setFormStatus({
+      ...formStatus,
+      id: id,
+      status: status,
+    });
+    onOpen();
   };
 
   const editPage = (id: string) => {
     Router.push(`/admin/manajemen-pengguna/tambah?id=${id}&action=edit`);
+  };
+
+  const onChangeStatus = async () => {
+    setLoading(true);
+    const res = await ApiChangeStatusPengajuanBuku({
+      status: formStatus.status,
+      pesan: formStatus.pesan,
+      id: formStatus.id,
+    });
+    if (res.status === 200) {
+      toast({
+        status: 'success',
+        duration: 5000,
+        title: 'Berhasil',
+        description: 'Berhasil mengganti status',
+        position: 'bottom-right',
+      });
+      getListPengguna();
+      onClose();
+    } else {
+      toast({
+        status: 'error',
+        duration: 5000,
+        title: 'Error',
+        description: res.data.message,
+        position: 'bottom-right',
+      });
+    }
+    setLoading(false);
+  };
+
+  const changePesan = (e: any) => {
+    setFormStatus({
+      ...formStatus,
+      pesan: e.target.value,
+    });
   };
 
   // Render the UI for your table
@@ -318,12 +340,39 @@ function CustomTable({ columns, data, getListPengguna }: any) {
                     return (
                       <Td key={y} {...cell.getCellProps()}>
                         <Flex alignItems='center' gap='10px'>
-                          {/* <Button
-                            onClick={() => editPage(row.original.id)}
-                            colorScheme='orange'
+                          <Button
+                            isLoading={loading}
+                            onClick={() => {
+                              setModalType('reject');
+                              onOpenChangeStatus(row.original.id, 'ditolak');
+                            }}
+                            colorScheme='red'
+                            size='sm'
                           >
-                            Ubah
-                          </Button> */}
+                            Tolak
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setModalType('accept');
+                              onOpenChangeStatus(row.original.id, 'diterima');
+                            }}
+                            isLoading={loading}
+                            colorScheme='green'
+                            size='sm'
+                          >
+                            Terima
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setModalType('selesai');
+                              onOpenChangeStatus(row.original.id, 'selesai');
+                            }}
+                            isLoading={loading}
+                            colorScheme='green'
+                            size='sm'
+                          >
+                            Selesai
+                          </Button>
                           <Button
                             onClick={() => detailPage(row.original.id)}
                             colorScheme='blue'
@@ -332,6 +381,22 @@ function CustomTable({ columns, data, getListPengguna }: any) {
                             Detail
                           </Button>
                         </Flex>
+                      </Td>
+                    );
+                  } else if (cell.column.Header === 'Status') {
+                    return (
+                      <Td key={y} {...cell.getCellProps()}>
+                        <Center
+                          padding='1'
+                          borderRadius='10px'
+                          alignItems='center'
+                          bgColor={getColorStatus(row.original.status)}
+                          justifyContent='center'
+                        >
+                          <Text color='white' fontWeight='700'>
+                            {row.original.status}
+                          </Text>
+                        </Center>
                       </Td>
                     );
                   } else {
@@ -434,6 +499,47 @@ function CustomTable({ columns, data, getListPengguna }: any) {
           </Tooltip>
         </Flex>
       </Flex>
+      <Modal onClose={onClose} isOpen={isOpen} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            {modalType === 'reject'
+              ? 'Tolak'
+              : modalType === 'accept'
+              ? 'Terima'
+              : 'Selesai'}{' '}
+            Pengajuan
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>
+              Apakah kamu yakin untuk{' '}
+              {modalType === 'reject'
+                ? 'menolak'
+                : modalType === 'accept'
+                ? 'menerima'
+                : 'menyelesaikan'}{' '}
+              pengajuan ?
+            </Text>
+            <FormControl my='5' id='email' isRequired>
+              <FormLabel>Informasi tambahan</FormLabel>
+              <Textarea
+                value={formStatus.pesan}
+                onChange={changePesan}
+                rows={5}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter gap='2'>
+            <Button size='sm' onClick={onChangeStatus} colorScheme='green'>
+              Ya, Lanjut
+            </Button>
+            <Button colorScheme='red' size='sm' onClick={onClose}>
+              Batal
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

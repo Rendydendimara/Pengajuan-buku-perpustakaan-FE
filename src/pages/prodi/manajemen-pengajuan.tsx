@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/icons';
 import AppTemplateProdi from '@/components/templates/AppTemplateProdi';
 import LayoutProdi from '@/components/templates/LayoutProdi';
-import { APP_NAME } from '@/constant';
+import { APP_NAME, LOCAL_USER_ID } from '@/constant';
 import { Button, IconButton } from '@chakra-ui/button';
 import { Checkbox } from '@chakra-ui/checkbox';
 import { Box, Flex, Text, VStack } from '@chakra-ui/layout';
@@ -38,12 +38,18 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   Select,
+  createStandaloneToast,
 } from '@chakra-ui/react';
 import { CiCircleRemove } from 'react-icons/ci';
 import { BsFillCartFill } from 'react-icons/bs';
 import { usePagination, useTable } from 'react-table';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
+import { ApiGetListPengajuanBukuByDosen } from '@/api/pengajuanBuku';
+import { useSelector } from 'react-redux';
+import { ICombinedState } from '@/provider/redux/store';
+import { getProdiName } from '@/utils';
+import { getLocal } from '@/lib/LocalStorage/localStorage';
 
 // interface IReduxStateWorkspace {
 //   user?: IUser;
@@ -53,61 +59,27 @@ interface IDataRow {
   no: number;
   diAjuakanPada: string;
   prodi: string;
-  judulBuku: string;
+  jumlahTotalBuku: number;
   jumlah: number;
   status: string;
   aksi: string;
 }
-
+interface IReduxStateWorkspace {
+  user: any;
+}
 const ManajemenPengajuanProdi: NextPage = () => {
   const router = useRouter();
-  const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([
-    {
-      no: 1,
-      judulBuku: 'Judul buku',
-      prodi: 'Teknik Informatika',
-      jumlah: 10,
-      status: 'diproses',
-      diAjuakanPada: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      no: 2,
-      judulBuku: 'Judul buku',
-      prodi: 'Teknik Informatika',
-      jumlah: 10,
-      status: 'diterima',
-      diAjuakanPada: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      no: 3,
-      judulBuku: 'Judul buku',
-      prodi: 'Teknik Informatika',
-      jumlah: 10,
-      status: 'selesai',
-      diAjuakanPada: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      no: 4,
-      judulBuku: 'Judul buku',
-      prodi: 'Teknik Informatika',
-      jumlah: 10,
-      status: 'gagal',
-      diAjuakanPada: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      no: 5,
-      judulBuku: 'Judul buku',
-      prodi: 'Teknik Informatika',
-      jumlah: 10,
-      status: 'ditolak',
-      diAjuakanPada: moment().format('L'),
-      aksi: new Date().getTime().toString(),
-    },
-  ]);
+  const userId = getLocal(LOCAL_USER_ID);
+  const { toast } = createStandaloneToast();
+  const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
+    (state) => {
+      return {
+        user: state.user.user,
+      };
+    }
+  );
+
+  const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([]);
 
   const columns = useMemo(
     () => [
@@ -124,12 +96,12 @@ const ManajemenPengajuanProdi: NextPage = () => {
         accessor: 'prodi',
       },
       {
-        Header: 'Judul Buku',
-        accessor: 'judulBuku',
+        Header: 'Jumlah Buku',
+        accessor: 'jumlah',
       },
       {
-        Header: 'Jumlah',
-        accessor: 'jumlah',
+        Header: 'Jumlah Total Buku',
+        accessor: 'jumlahTotalBuku',
       },
       {
         Header: 'Status',
@@ -154,7 +126,44 @@ const ManajemenPengajuanProdi: NextPage = () => {
   //   Aksi
   // Status
 
-  const getData = () => {};
+  const getJumlahTotalBuku = (data: any) => {
+    let total = 0;
+    data?.buku.map((bk: any) => (total += bk.jumlah));
+    return total;
+  };
+
+  const getData = async () => {
+    const res = await ApiGetListPengajuanBukuByDosen(userId);
+    if (res.status === 200) {
+      let temp: IDataRow[] = [];
+      let total = 0;
+      res.data.data.forEach((dt: any) => {
+        total += 1;
+        temp.push({
+          no: total,
+          diAjuakanPada: moment(new Date(dt.createdAt)).format('L'),
+          prodi: getProdiName(user.programStudi),
+          jumlahTotalBuku: getJumlahTotalBuku(dt),
+          jumlah: dt.buku.length,
+          status: dt.status,
+          aksi: dt._id,
+        });
+      });
+      setDataPengguna(temp);
+    } else {
+      toast({
+        status: 'error',
+        duration: 5000,
+        title: 'Error',
+        description: res.data.message,
+        position: 'bottom-right',
+      });
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <LayoutProdi showOnlyInfoUser>
@@ -243,7 +252,7 @@ function CustomTable({ columns, data, getData }: any) {
                     return (
                       <Td key={y} {...cell.getCellProps()}>
                         <Flex alignItems='center' gap='10px'>
-                          <Link href='/prodi/pengajuan/1234'>
+                          <Link href={`/prodi/pengajuan/${row.original.aksi}`}>
                             <Button colorScheme='blue'>Detail</Button>
                           </Link>
                         </Flex>

@@ -1,6 +1,6 @@
 import { ApiLogin } from '@/api/auth';
 import Layout from '@/components/templates/Layout';
-import { APP_NAME, LOCAL_USER_TYPE } from '@/constant';
+import { APP_NAME, LOCAL_USER_ID, LOCAL_USER_TYPE } from '@/constant';
 import { localCookieSaveToken } from '@/lib/Cookies/token';
 import { getLocal, setLocal } from '@/lib/LocalStorage/localStorage';
 import { ICombinedState } from '@/provider/redux/store';
@@ -84,28 +84,29 @@ const LoginAdminUmum: NextPage = () => {
     event.preventDefault();
     // setLocal(LOCAL_USER_TYPE, formLogin.type);
     // Router.replace(`/${formLogin.type}/beranda`);
-    setLocal(LOCAL_USER_TYPE, formLogin.type);
+    // setLocal(LOCAL_USER_TYPE, formLogin.type);
     // localCookieSaveToken(res.data.data.token);
-    Router.replace(`/${formLogin.type}/beranda`);
+    // Router.replace(`/${formLogin.type}/beranda`);
 
-    // const res: any = await ApiLogin(formLogin);
-    // if (res.status === 200) {
-    //   dispatch({
-    //     type: 'SET_USER',
-    //     user: {
-    //       ...res.data.data,
-    //       type: formLogin.type,
-    //     },
-    //   });
-    //   setLocal(LOCAL_USER_TYPE, formLogin.type);
-    //   localCookieSaveToken(res.data.data.token);
-    //   Router.replace(`/${formLogin.type}/beranda`);
-    // } else {
-    //   setErrorMessage(res.data.message);
-    //   // if (res.data.message?.includes('terverifikasi')) {
-    //   //   setIsErrorVerifikasi(true);
-    //   // }
-    // }
+    const res: any = await ApiLogin(formLogin);
+    if (res.status === 200) {
+      dispatch({
+        type: 'SET_USER',
+        user: {
+          ...res.data.data,
+          type: formLogin.type,
+        },
+      });
+      setLocal(LOCAL_USER_TYPE, formLogin.type);
+      setLocal(LOCAL_USER_ID, res.data.data._id);
+      localCookieSaveToken(res.data.data.token);
+      Router.replace(`/${formLogin.type}/beranda`);
+    } else {
+      setErrorMessage(res.data.message);
+      // if (res.data.message?.includes('terverifikasi')) {
+      //   setIsErrorVerifikasi(true);
+      // }
+    }
     setLoadingFetchLogin(false);
   };
 

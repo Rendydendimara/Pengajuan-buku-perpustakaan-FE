@@ -23,16 +23,47 @@ import {
   FormControl,
   FormLabel,
   Textarea,
+  createStandaloneToast,
 } from '@chakra-ui/react';
 import { CiCircleRemove } from 'react-icons/ci';
 import { BsFillCartFill } from 'react-icons/bs';
+import { ICombinedState } from '@/provider/redux/store';
+import { getProdiName } from '@/utils';
+import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { findIndex } from 'lodash';
+import { ApiCreatePengajuanBuku } from '@/api/pengajuanBuku';
 
 // interface IReduxStateWorkspace {
 //   user?: IUser;
 // }
+interface IReduxStateWorkspace {
+  user: any;
+  cart: any;
+}
+interface IDataCart {
+  prodi: string;
+  judul: string;
+  katalog: string;
+  id: string;
+  jumlah: number;
+}
 
 const PengajuanProdi: NextPage = () => {
   const router = useRouter();
+  const { user, cart } = useSelector<ICombinedState, IReduxStateWorkspace>(
+    (state) => {
+      return {
+        user: state.user.user,
+        cart: state.cart.cart,
+      };
+    }
+  );
+  const [dataCart, setDataCart] = useState<IDataCart[]>([]);
+  const [informasiTambahan, setInformasiTambahan] = useState('');
+  const toast = createStandaloneToast();
+  const [loading, setLoading] = useState(false);
+
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
   //   (state) => {
   //     return {
@@ -41,9 +72,105 @@ const PengajuanProdi: NextPage = () => {
   //   }
   // );
 
-  const createPengajuan = () => {
-    router.push('/prodi/manajemen-pengajuan');
+  const createPengajuan = async () => {
+    setLoading(true);
+    let isErrorEmptyCount = false;
+    dataCart.forEach((dt) => {
+      if (dt.jumlah < 1) {
+        isErrorEmptyCount = true;
+      }
+    });
+    if (isErrorEmptyCount) {
+      toast.toast({
+        status: 'error',
+        duration: 5000,
+        title: 'Error',
+        description: 'Pastikan jumlah buku harus lebih dari 0',
+        position: 'bottom-right',
+      });
+    } else {
+      const dataBuku: any = [];
+      dataCart.forEach((dt) =>
+        dataBuku.push({
+          _id: dt.id,
+          jumlah: dt.jumlah,
+        })
+      );
+      const res = await ApiCreatePengajuanBuku({
+        dataBuku: JSON.stringify(dataBuku),
+        dosenProdi: user._id,
+        pesanDosen: informasiTambahan,
+      });
+      if (res.status === 200) {
+        toast.toast({
+          status: 'success',
+          duration: 5000,
+          title: 'Berhasil',
+          description: 'Pengajuan berhasil dibuat',
+          position: 'bottom-right',
+        });
+        router.push('/prodi/manajemen-pengajuan');
+      } else {
+        toast.toast({
+          status: 'error',
+          duration: 5000,
+          title: 'Error',
+          description: res.data.message,
+          position: 'bottom-right',
+        });
+      }
+    }
+    setLoading(false);
   };
+
+  const onChangeCount = (id: string, e: any) => {
+    const index = findIndex(dataCart, ['id', id]);
+    if (index != -1) {
+      setDataCart([
+        ...dataCart.slice(0, index),
+        {
+          ...dataCart[index],
+          jumlah: Number(e.target.value),
+        },
+        ...dataCart.slice(index + 1, dataCart.length),
+      ]);
+    }
+  };
+
+  const getJumlahBuku = () => {
+    return dataCart.length;
+  };
+
+  const getTotalBanyakBuku = () => {
+    let count = 0;
+    dataCart.forEach((dt) => (count += Number(dt.jumlah)));
+    return count;
+  };
+
+  const onChangeInformasiTambahan = (e: any) => {
+    setInformasiTambahan(e.target.value);
+  };
+
+  const removeCrt = (id: string) => {
+    const newData = dataCart.filter((dt) => dt.id !== id);
+    setDataCart(newData);
+  };
+
+  useEffect(() => {
+    if (cart) {
+      const temp: IDataCart[] = [];
+      cart.forEach((crt: any) => {
+        temp.push({
+          prodi: crt.prodi,
+          judul: crt.judul,
+          katalog: crt.katalog,
+          id: crt._id,
+          jumlah: 0,
+        });
+      });
+      setDataCart(temp);
+    }
+  }, [cart]);
 
   return (
     <LayoutProdi showOnlyInfoUser>
@@ -77,16 +204,23 @@ const PengajuanProdi: NextPage = () => {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {[1, 2, 3, 4, 5].map((i) => (
+                    {dataCart.map((crt: IDataCart, i: number) => (
                       <Tr key={i}>
-                        <Td>Teknik Informatika</Td>
-                        <Td>Buku Arsitektur Komputer</Td>
-                        <Td>Akhlis Munaziliin</Td>
+                        <Td>{getProdiName(crt.prodi)}</Td>
+                        <Td>{crt.judul}</Td>
+                        <Td>{crt.katalog}</Td>
                         <Td>
-                          <Input borderColor='blue' w='80px' type='number' />
+                          <Input
+                            value={crt.jumlah}
+                            borderColor='blue'
+                            w='80px'
+                            type='number'
+                            onChange={(e) => onChangeCount(crt.id, e)}
+                          />
                         </Td>
                         <Td>
                           <IconButton
+                            onClick={() => removeCrt(crt.id)}
                             colorScheme='red'
                             aria-label='delete'
                             icon={<CiCircleRemove size={24} />}
@@ -110,12 +244,18 @@ const PengajuanProdi: NextPage = () => {
                   </Text>
                   <Box mt='4'>
                     <VStack spacing={1} alignItems='flex-start'>
-                      <Text>Jumlah Buku: 6</Text>
-                      <Text>Total Banyak Buku: 9</Text>
-                      <Text>Program Studi: Teknik Informatika</Text>
+                      <Text>Jumlah Buku: {getJumlahBuku()}</Text>
+                      <Text>Total Banyak Buku: {getTotalBanyakBuku()}</Text>
+                      <Text>
+                        Program Studi: {getProdiName(user.programStudi)}
+                      </Text>
                       <FormControl>
                         <FormLabel>Informasi Tambahan:</FormLabel>
-                        <Textarea rows={5} />
+                        <Textarea
+                          value={informasiTambahan}
+                          onChange={onChangeInformasiTambahan}
+                          rows={5}
+                        />
                       </FormControl>
                     </VStack>
                   </Box>
@@ -124,6 +264,7 @@ const PengajuanProdi: NextPage = () => {
                     leftIcon={<BsFillCartFill />}
                     colorScheme='green'
                     mt='4'
+                    isLoading={loading}
                     onClick={createPengajuan}
                   >
                     Buat Pesanan

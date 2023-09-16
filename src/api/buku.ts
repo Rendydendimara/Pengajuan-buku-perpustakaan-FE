@@ -113,7 +113,12 @@ export const ApiDeleteBuku = async (id: string) => {
   }
 };
 
-export const ApiBulkBukuPerpus = async (data: { file: any }) => {
+export const ApiBulkBukuPerpus = async (data: {
+  file: any;
+  uploadDate: string;
+  catalogId: string;
+  prodi: string;
+}) => {
   let formData = new FormData();
   const config = {
     headers: {
@@ -121,6 +126,9 @@ export const ApiBulkBukuPerpus = async (data: { file: any }) => {
     },
   };
   formData.append('file', data.file);
+  formData.append('uploadDate', data.uploadDate);
+  formData.append('catalogId', data.catalogId);
+  formData.append('prodi', data.prodi);
 
   const response = await AxiosWithToken()
     .post(`${BACKEND_URL}/buku/bulk-buku-perpus`, formData, config)
@@ -144,7 +152,9 @@ export const ApiBulkBukuPerpus = async (data: { file: any }) => {
 
 export const ApiBulkBukuKatalog = async (data: {
   file: any;
-  katalog: string;
+  uploadDate: string;
+  catalogId: string;
+  prodi: string;
 }) => {
   let formData = new FormData();
   const config = {
@@ -153,7 +163,9 @@ export const ApiBulkBukuKatalog = async (data: {
     },
   };
   formData.append('file', data.file);
-  formData.append('katalog', data.katalog);
+  formData.append('uploadDate', data.uploadDate);
+  formData.append('catalogId', data.catalogId);
+  formData.append('prodi', data.prodi);
 
   const response = await AxiosWithToken()
     .post(`${BACKEND_URL}/buku/bulk-buku-katalog`, formData, config)

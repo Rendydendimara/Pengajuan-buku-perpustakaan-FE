@@ -74,10 +74,6 @@ const ManajemenPenggunaAdmin: NextPage = () => {
         Header: 'No',
         accessor: 'no',
       },
-      // {
-      //   Header: 'ID',
-      //   accessor: 'id',
-      // },
       {
         Header: 'Nama',
         accessor: 'nama',
@@ -85,6 +81,10 @@ const ManajemenPenggunaAdmin: NextPage = () => {
       {
         Header: 'Email',
         accessor: 'email',
+      },
+      {
+        Header: 'NIDN',
+        accessor: 'nidn',
       },
       {
         Header: 'Prodi',
@@ -111,6 +111,7 @@ const ManajemenPenggunaAdmin: NextPage = () => {
           nama: data.namaLengkap,
           email: data.email ?? '',
           prodi: data.programStudi,
+          nidn: data.nidn,
           aksi: data._id,
         });
       }

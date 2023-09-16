@@ -290,15 +290,11 @@ const TambahAdminProdi: NextPage = () => {
                     onChange={onChangeProdi}
                   >
                     <option value=''></option>
-                    <option value='Teknik Informatika'>
-                      Teknik Informatika
-                    </option>
-                    <option value='Peternakan'>Peternakan</option>
-                    <option value='Agribisnis'>Agribisnis</option>
-                    <option value='Agroteknologi'>Agroteknologi</option>
-                    <option value='Teknologi Hasil Perikanan'>
-                      Teknologi Hasil Perikanan
-                    </option>
+                    <option value='tif'>Teknik Informatika</option>
+                    <option value='ptk'>Peternakan</option>
+                    <option value='agb'>Agribisnis</option>
+                    <option value='agt'>Agroteknologi</option>
+                    <option value='thp'>Teknologi Hasil Perikanan</option>
                   </Select>
                 </FormControl>
                 <FormControl my='3' isRequired>

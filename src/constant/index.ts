@@ -8,5 +8,7 @@ export const BACKEND_URL: string =
 export const APP_NAME = 'APLIKASI PENGAJUAN BUKU';
 export const IS_SHOW_DEVELOP_INFO = false;
 export const LOCAL_USER_TYPE = 'USER_TYPE_PENGAJUAN_BUKU';
+export const LOCAL_USER_ID = 'USER_PENGEJUAN_BUKU_ID';
 
 export const TOKEN_AUTH_LOCAL = 'kepokepoaja';
+export const LOCAL_CART_PRODI = 'cartProdi@pengajuanbuku';

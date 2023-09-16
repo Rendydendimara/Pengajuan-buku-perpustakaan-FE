@@ -70,6 +70,7 @@ interface IDataRow {
 
 const ListBukuKatalogAdmin: NextPage = () => {
   const router = useRouter();
+  const [catalogId, setCatalogId] = useState('');
   const { toast } = createStandaloneToast();
   const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([
     {
@@ -211,6 +212,7 @@ const ListBukuKatalogAdmin: NextPage = () => {
     const { katalogId }: any = router.query;
 
     if (katalogId) {
+      setCatalogId(katalogId);
       getCatalogName(katalogId);
     }
   }, [router.query]);
@@ -231,9 +233,7 @@ const ListBukuKatalogAdmin: NextPage = () => {
             <Flex w='full' justifyContent='flex-end' alignItems='center'>
               <Flex w='full' alignItems='center' gap='15px'>
                 <Link
-                  href={
-                    '/admin/manajemen-katalog/katalog/detail/64eaf73535600cdec6ff9ae9/tambah-buku'
-                  }
+                  href={`/admin/manajemen-katalog/katalog/detail/${catalogId}/tambah-buku`}
                 >
                   <Button
                     size='sm'
@@ -243,7 +243,9 @@ const ListBukuKatalogAdmin: NextPage = () => {
                     Buku
                   </Button>
                 </Link>
-                <Link href='/admin/manajemen-katalog/bulk-katalog'>
+                <Link
+                  href={`/admin/manajemen-katalog/katalog/detail/${catalogId}/bulk-katalog`}
+                >
                   <Button
                     size='sm'
                     rightIcon={<AiOutlinePlus />}

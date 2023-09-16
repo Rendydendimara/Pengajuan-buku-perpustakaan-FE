@@ -15,7 +15,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { Image as ChakraImage } from '@chakra-ui/react';
 import { BiSearchAlt2, BiSolidBookBookmark } from 'react-icons/bi';
 import Image from 'next/image';
@@ -24,8 +24,10 @@ import { BsFillCartFill } from 'react-icons/bs';
 import Link from 'next/link';
 import Router from 'next/router';
 import { setLocal } from '@/lib/LocalStorage/localStorage';
-import { LOCAL_USER_TYPE } from '@/constant';
+import { LOCAL_CART_PRODI, LOCAL_USER_TYPE } from '@/constant';
 import { FiChevronDown, FiMenu } from 'react-icons/fi';
+import { useSelector } from 'react-redux';
+import { ICombinedState } from '@/provider/redux/store';
 
 // interface IReduxStateWorkspace {
 //   user?: IUser;
@@ -34,12 +36,42 @@ import { FiChevronDown, FiMenu } from 'react-icons/fi';
 interface IProps {
   showOnlyInfoUser?: boolean;
 }
+interface IReduxStateWorkspace {
+  user: any;
+  cart: any;
+}
 
 const HeaderProdi: React.FC<IProps> = (props) => {
+  const { user, cart } = useSelector<ICombinedState, IReduxStateWorkspace>(
+    (state) => {
+      return {
+        user: state.user.user,
+        cart: state.cart.cart,
+      };
+    }
+  );
+  const [countCart, setCountCart] = useState(0);
+
   const handleLogout = async () => {
     setLocal(LOCAL_USER_TYPE, '');
     Router.replace('/login');
   };
+
+  const getCountCart = () => {
+    if (typeof window !== 'undefined') {
+      let cartBuku: any = localStorage.getItem(LOCAL_CART_PRODI);
+      if (cartBuku) {
+        cartBuku = JSON.parse(cartBuku);
+        return cartBuku.length;
+      }
+      return 0;
+    }
+    return 0;
+  };
+
+  useEffect(() => {
+    setCountCart(cart ? cart.length : 0);
+  }, [cart]);
 
   return (
     <Flex p='4' alignItems='center' justifyContent='space-between'>
@@ -63,28 +95,6 @@ const HeaderProdi: React.FC<IProps> = (props) => {
           </Flex>
         </Link>
       </Flex>
-      <Flex
-        gap='10px'
-        alignItems='center'
-        display={props.showOnlyInfoUser ? 'none' : 'flex'}
-      >
-        <Select w='150px' value='UGM' placeholder='Pilih katalog'>
-          <option value='option1'>UGM</option>
-          <option value='option2'>Undana</option>
-          <option value='option3'>UI</option>
-        </Select>
-        <InputGroup w='400px'>
-          <Input placeholder='Cari judul buku' />
-          <InputRightElement width='4.5rem'>
-            <BiSearchAlt2 />
-          </InputRightElement>
-        </InputGroup>
-        <Box>
-          <Link href='/prodi/manajemen-pengajuan'>
-            <BiSolidBookBookmark size={24} />
-          </Link>
-        </Box>
-      </Flex>
       <Flex gap='20px' alignItems='center' justifyContent='space-between'>
         <Box position='relative'>
           <Link href='/prodi/pengajuan'>
@@ -102,9 +112,15 @@ const HeaderProdi: React.FC<IProps> = (props) => {
             bgColor='pink'
             borderRadius='100%'
           >
-            <Text color='black'>1</Text>
+            <Text color='black'>{countCart}</Text>
           </Flex>
         </Box>
+        <Box>
+          <Link href='/prodi/manajemen-pengajuan'>
+            <BiSolidBookBookmark size={24} />
+          </Link>
+        </Box>
+
         <Flex gap='10px' alignItems='center'>
           <Menu>
             <MenuButton

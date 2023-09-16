@@ -1,6 +1,7 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
+import { cartReducer, ICartState } from './Cart/UserReducer';
 import { IUserState, userReducer } from './User/UserReducer';
 
 export interface ICombinedState {
@@ -8,6 +9,7 @@ export interface ICombinedState {
   // adminProdi: IUserAdminProdiState;
   // adminUmum: IUserAdminUmumState;
   user: IUserState;
+  cart: ICartState;
 }
 
 const appReducer = combineReducers({
@@ -15,6 +17,7 @@ const appReducer = combineReducers({
   // adminUmum: userAdminUmumReducer,
   // adminProdi: userAdminProdiReducer,
   user: userReducer,
+  cart: cartReducer,
 });
 
 const middleware = [thunk];
