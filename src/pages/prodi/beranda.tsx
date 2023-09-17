@@ -1,4 +1,5 @@
 import { ApiGetListBuku } from '@/api/buku';
+import { ApiGetListKatalogBuku } from '@/api/katalogBuku';
 import AppTemplateProdi from '@/components/templates/AppTemplateProdi';
 import LayoutProdi from '@/components/templates/LayoutProdi';
 import { APP_NAME, LOCAL_CART_PRODI } from '@/constant';
@@ -7,9 +8,11 @@ import { Button } from '@chakra-ui/button';
 import { Checkbox } from '@chakra-ui/checkbox';
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import { Input, InputGroup, InputRightElement } from '@chakra-ui/input';
-import { Box, Flex, Text, VStack } from '@chakra-ui/layout';
+import { Box, Flex, Heading, Text, VStack } from '@chakra-ui/layout';
 import { Select } from '@chakra-ui/select';
+import { Skeleton, SkeletonText } from '@chakra-ui/skeleton';
 import { createStandaloneToast } from '@chakra-ui/toast';
+import { includes, some } from 'lodash';
 import moment from 'moment';
 import type { NextPage } from 'next';
 import Head from 'next/head';
@@ -22,10 +25,20 @@ import { useDispatch } from 'react-redux';
 //   user?: IUser;
 // }
 
+interface IKatalog {
+  name: string;
+  id: string;
+}
+
 const BerandaProdi: NextPage = () => {
   const router = useRouter();
   const { toast } = createStandaloneToast();
+  const [loading, setLoading] = useState(false);
   const [dataBuku, setDataBuku] = useState<IDataBuku[]>([]);
+  const [listKatalog, setListKatalog] = useState<IKatalog[]>([]);
+  const [selectedKatalog, setSelectedKatalog] = useState('');
+  const [selectedTahun, setSelectedTahun] = useState('');
+  const [searching, setSearching] = useState('');
 
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
   //   (state) => {
@@ -40,16 +53,20 @@ const BerandaProdi: NextPage = () => {
   };
 
   const getListBuku = async () => {
+    setLoading(true);
     const res = await ApiGetListBuku();
     if (res.status === 200) {
       let temp: IDataBuku[] = [];
       let i = 0;
       for (const data of res.data.data) {
+        i += 1;
         temp.push({
+          no: i,
           _id: data._id,
           judul: data.judul,
           penulis: data.penulis,
           katalog: data.katalog.name,
+          katalogId: data.katalog._id,
           tahunTerbit: data.tahunTerbit,
           bahasa: data.bahasa,
           prodi: data.prodi,
@@ -64,10 +81,80 @@ const BerandaProdi: NextPage = () => {
         status: 'error',
       });
     }
+    setLoading(false);
   };
 
+  const getListKatalog = async () => {
+    const res = await ApiGetListKatalogBuku();
+    if (res.status === 200) {
+      let temp: IKatalog[] = [];
+      for (const data of res.data.data) {
+        temp.push({
+          id: data._id,
+          name: data.name,
+        });
+      }
+      setListKatalog(temp);
+    } else {
+      toast({
+        title: 'Gagal',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
+  };
+
+  const onChangeKatalog = (e: any) => {
+    setSelectedKatalog(e.target.value);
+  };
+
+  const onChangeTahun = (e: any) => {
+    setSelectedTahun(e.target.value);
+  };
+
+  const onChangeSearching = (e: any) => {
+    setSearching(e.target.value);
+  };
+
+  const filterBukuProdi = () => {
+    let data = dataBuku;
+    data = data.filter((data) => data.prodi !== 'umum');
+    if (searching) {
+      data = data.filter((data) => {
+        const haystack = [data.judul.toLowerCase()];
+        return some(haystack, (el) => includes(el, searching.toLowerCase()));
+      });
+    }
+    if (selectedKatalog) {
+      data = data.filter((data) => data.katalogId === selectedKatalog);
+    }
+    if (selectedTahun) {
+      data = data.filter((data) => data.tahunTerbit === selectedTahun);
+    }
+
+    return data;
+  };
+
+  const filterBukuUmum = () => {
+    let data = dataBuku;
+    data = data.filter((data) => data.prodi === 'umum');
+    if (searching) {
+      data = data.filter((data) => {
+        const haystack = [data.judul.toLowerCase()];
+        return some(haystack, (el) => includes(el, searching.toLowerCase()));
+      });
+    }
+    if (selectedKatalog) {
+      data = data.filter((data) => data.katalogId === selectedKatalog);
+    }
+    if (selectedTahun) {
+      data = data.filter((data) => data.tahunTerbit === selectedTahun);
+    }
+    return data;
+  };
   useEffect(() => {
     getListBuku();
+    getListKatalog();
   }, []);
 
   return (
@@ -85,15 +172,27 @@ const BerandaProdi: NextPage = () => {
           <Flex mt='6' gap='10px' alignItems='center'>
             <FormControl w='fit-content'>
               <FormLabel>Katalog</FormLabel>
-              <Select w='150px' value='UGM' placeholder='Pilih katalog'>
-                <option value='option1'>UGM</option>
-                <option value='option2'>Undana</option>
-                <option value='option3'>UI</option>
+              <Select
+                onChange={onChangeKatalog}
+                value={selectedKatalog}
+                w='150px'
+                placeholder='Pilih katalog'
+              >
+                {listKatalog.map((katalog, i) => (
+                  <option key={i} value={katalog.id}>
+                    {katalog.name}
+                  </option>
+                ))}
               </Select>
             </FormControl>
             <FormControl w='fit-content'>
               <FormLabel>Tahun</FormLabel>
-              <Select w='150px' value='UGM' placeholder='Pilih tahun'>
+              <Select
+                onChange={onChangeTahun}
+                value={selectedTahun}
+                w='150px'
+                placeholder='Pilih tahun'
+              >
                 <option value='2014'>2014</option>
                 <option value='2015'>2015</option>
                 <option value='2016'>2016</option>
@@ -109,7 +208,11 @@ const BerandaProdi: NextPage = () => {
             <FormControl w='fit-content'>
               <FormLabel>Cari buku</FormLabel>
               <InputGroup w='400px'>
-                <Input placeholder='Cari judul buku' />
+                <Input
+                  value={searching}
+                  onChange={onChangeSearching}
+                  placeholder='Cari judul buku'
+                />
                 <InputRightElement width='4.5rem'>
                   <BiSearchAlt2 />
                 </InputRightElement>
@@ -122,17 +225,45 @@ const BerandaProdi: NextPage = () => {
               <Box w='full'>
                 <Text fontSize='2xl'>List Buku Prodi</Text>
                 <VStack w='full' spacing={4} mt='4'>
-                  {dataBuku.map((buku, i) => (
-                    <ItemBuku key={i} buku={buku} index={i} />
-                  ))}
+                  {loading ? (
+                    [1, 2, 3, 4, 5].map((i) => <ItemLoading key={i} />)
+                  ) : filterBukuProdi().length > 0 ? (
+                    filterBukuProdi().map((buku, i) => (
+                      <ItemBuku key={i} buku={buku} index={i} />
+                    ))
+                  ) : (
+                    <Heading
+                      display='inline-block'
+                      as='h2'
+                      size='2xl'
+                      bgGradient='linear(to-r, teal.400, teal.600)'
+                      backgroundClip='text'
+                    >
+                      Data Kosong
+                    </Heading>
+                  )}
                 </VStack>
               </Box>
               <Box w='full'>
                 <Text fontSize='2xl'>List Buku Umum</Text>
                 <VStack w='full' spacing={4} mt='4'>
-                  {/* {[1, 2, 3, 4].map((i) => (
-                    <ItemBuku key={i} index={i} />
-                  ))} */}
+                  {loading ? (
+                    [1, 2, 3, 4, 5].map((i) => <ItemLoading key={i} />)
+                  ) : filterBukuUmum().length > 0 ? (
+                    filterBukuUmum().map((buku, i) => (
+                      <ItemBuku key={i} buku={buku} index={i} />
+                    ))
+                  ) : (
+                    <Heading
+                      display='inline-block'
+                      as='h2'
+                      size='2xl'
+                      bgGradient='linear(to-r, teal.400, teal.600)'
+                      backgroundClip='text'
+                    >
+                      Data Kosong
+                    </Heading>
+                  )}
                 </VStack>
               </Box>
             </VStack>
@@ -215,7 +346,7 @@ const ItemBuku: React.FC<IItemBuku> = (props) => {
           h='full'
         >
           <Text color='gray.800' fontSize='2xl'>
-            {props.index}
+            {props.buku.no}
           </Text>
         </Flex>
         <VStack
@@ -248,6 +379,52 @@ const ItemBuku: React.FC<IItemBuku> = (props) => {
           >
             Ajukan
           </Button>
+        </Box>
+      </Flex>
+    </Flex>
+  );
+};
+
+const ItemLoading: React.FC<any> = () => {
+  return (
+    <Flex
+      border='1px solid pink'
+      w='full'
+      borderRadius='8px'
+      justifyContent='space-between'
+    >
+      <Flex gap='10px' w='60%'>
+        <Skeleton width='75px' h='50px' />
+        <VStack
+          w='full'
+          justifyContent='center'
+          alignItems='flex-start'
+          spacing='2'
+        >
+          <Skeleton width='400px' h='10px' />
+          <Skeleton width='400px' h='10px' />
+          <Skeleton width='400px' h='10px' />
+        </VStack>
+      </Flex>
+      <Flex
+        w='40%'
+        alignItems='center'
+        justifyContent='space-between'
+        gap='40px'
+        pr='4'
+      >
+        <VStack
+          w='full'
+          justifyContent='center'
+          alignItems='flex-start'
+          spacing='2'
+        >
+          <Skeleton width='300px' h='10px' />
+          <Skeleton width='300px' h='10px' />
+          <Skeleton width='300px' h='10px' />
+        </VStack>
+        <Box>
+          <Skeleton height='40px' w='80px' />
         </Box>
       </Flex>
     </Flex>

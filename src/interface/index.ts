@@ -11,6 +11,7 @@ export interface IDataResultBulk {
 
 export interface IDataBuku {
   _id: string;
+  no: number;
   judul: string;
   penulis: string;
   katalog: string;
@@ -18,6 +19,7 @@ export interface IDataBuku {
   bahasa: string;
   prodi: string;
   harga?: number;
+  katalogId: string;
   tanggalUpload: string;
 }
 

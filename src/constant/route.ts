@@ -51,7 +51,31 @@ export const ROUTING_PAGES: any = {
     },
     {
       label: 'Keluar',
-      href: '/admin/logout',
+      href: '/logout',
+      icon: BiLogOut,
+      type: 'parent',
+    },
+  ],
+  prodi: [],
+};
+
+export const ROUTING_PRODI_DASHOBARD_PAGES: any = {
+  admin: [
+    {
+      label: 'Dashboard',
+      href: '/prodi/dashboard',
+      icon: FiHome,
+      type: 'parent',
+    },
+    {
+      label: 'Profile',
+      href: '/prodi/profile',
+      icon: CgProfile,
+      type: 'parent',
+    },
+    {
+      label: 'Keluar',
+      href: '/logout',
       icon: BiLogOut,
       type: 'parent',
     },

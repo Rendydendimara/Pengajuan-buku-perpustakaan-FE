@@ -80,7 +80,7 @@ const HeaderProdi: React.FC<IProps> = (props) => {
         alignItems='center'
         // display={props.showOnlyInfoUser ? 'none' : 'flex'}
       >
-        <Link href='/prodi/beranda'>
+        <Link href='/prodi/dashboard'>
           <Flex gap='10px' alignItems='center'>
             <ChakraImage
               w='100px'
@@ -133,7 +133,7 @@ const HeaderProdi: React.FC<IProps> = (props) => {
                 alignItems='center'
                 gap='10px'
               >
-                <Text>Arini Aha Pekuwali</Text>
+                <Text>{user?.namaLengkap}</Text>
                 <Image
                   src={'/images/user.png'}
                   width='40'

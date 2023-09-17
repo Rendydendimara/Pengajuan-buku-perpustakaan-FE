@@ -142,7 +142,7 @@ const ManajemenPengajuanProdi: NextPage = () => {
         temp.push({
           no: total,
           diAjuakanPada: moment(new Date(dt.createdAt)).format('L'),
-          prodi: getProdiName(user.programStudi),
+          prodi: getProdiName(user?.programStudi),
           jumlahTotalBuku: getJumlahTotalBuku(dt),
           jumlah: dt.buku.length,
           status: dt.status,

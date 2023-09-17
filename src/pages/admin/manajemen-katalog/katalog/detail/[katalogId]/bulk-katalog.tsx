@@ -217,13 +217,14 @@ const BulkKatalogAdmin: NextPage = () => {
                     name='programStudi'
                     value={form.prodi}
                     onChange={onChangeProdi}
+                    placeholder='Pilih Prodi'
                   >
-                    <option value=''></option>
                     <option value='tif'>Teknik Informatika</option>
                     <option value='ptk'>Peternakan</option>
                     <option value='agb'>Agribisnis</option>
                     <option value='agt'>Agroteknologi</option>
                     <option value='thp'>Teknologi Hasil Perikanan</option>
+                    <option value='umum'>Umum</option>
                   </Select>
                 </FormControl>
                 <FormControl my='3' id='penulis' isRequired>

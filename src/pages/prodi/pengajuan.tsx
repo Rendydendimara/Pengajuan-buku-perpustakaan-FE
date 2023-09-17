@@ -1,6 +1,6 @@
 import AppTemplateProdi from '@/components/templates/AppTemplateProdi';
 import LayoutProdi from '@/components/templates/LayoutProdi';
-import { APP_NAME } from '@/constant';
+import { APP_NAME, LOCAL_CART_PRODI } from '@/constant';
 import { Button, IconButton } from '@chakra-ui/button';
 import { Checkbox } from '@chakra-ui/checkbox';
 import { Box, Flex, Text, VStack } from '@chakra-ui/layout';
@@ -29,7 +29,7 @@ import { CiCircleRemove } from 'react-icons/ci';
 import { BsFillCartFill } from 'react-icons/bs';
 import { ICombinedState } from '@/provider/redux/store';
 import { getProdiName } from '@/utils';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { findIndex } from 'lodash';
 import { ApiCreatePengajuanBuku } from '@/api/pengajuanBuku';
@@ -63,6 +63,7 @@ const PengajuanProdi: NextPage = () => {
   const [informasiTambahan, setInformasiTambahan] = useState('');
   const toast = createStandaloneToast();
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
   //   (state) => {
@@ -98,7 +99,7 @@ const PengajuanProdi: NextPage = () => {
       );
       const res = await ApiCreatePengajuanBuku({
         dataBuku: JSON.stringify(dataBuku),
-        dosenProdi: user._id,
+        dosenProdi: user?._id,
         pesanDosen: informasiTambahan,
       });
       if (res.status === 200) {
@@ -153,6 +154,17 @@ const PengajuanProdi: NextPage = () => {
 
   const removeCrt = (id: string) => {
     const newData = dataCart.filter((dt) => dt.id !== id);
+    let cartBuku: any = localStorage.getItem(LOCAL_CART_PRODI);
+    if (cartBuku) {
+      cartBuku = JSON.parse(cartBuku);
+      const newData = cartBuku.filter((dt: any) => dt._id !== id);
+      localStorage.setItem(LOCAL_CART_PRODI, JSON.stringify(newData));
+      dispatch({
+        type: 'SET_CART',
+        cart: newData,
+      });
+    }
+
     setDataCart(newData);
   };
 
@@ -247,7 +259,7 @@ const PengajuanProdi: NextPage = () => {
                       <Text>Jumlah Buku: {getJumlahBuku()}</Text>
                       <Text>Total Banyak Buku: {getTotalBanyakBuku()}</Text>
                       <Text>
-                        Program Studi: {getProdiName(user.programStudi)}
+                        Program Studi: {getProdiName(user?.programStudi)}
                       </Text>
                       <FormControl>
                         <FormLabel>Informasi Tambahan:</FormLabel>
