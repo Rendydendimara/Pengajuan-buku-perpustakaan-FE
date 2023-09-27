@@ -44,7 +44,18 @@ export const ApiCreateBuku = async (data: {
 
 export const ApiGetListBuku = async (data: {
   type?: 'byPerpus' | 'byKatalog';
-  prodi?: 'tif' | 'ptk' | 'agb' | 'agt' | 'thp' | 'umum';
+  prodi?:
+    | 'hkm'
+    | 'pbi'
+    | 'man'
+    | 'ekm'
+    | 'pmt'
+    | 'ptk'
+    | 'agt'
+    | 'agb'
+    | 'thp'
+    | 'tif'
+    | 'umum';
 }) => {
   let endpoint = `${BACKEND_URL}/buku/list?`;
   if (data.type) {

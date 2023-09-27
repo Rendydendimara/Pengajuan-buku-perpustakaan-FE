@@ -3,7 +3,19 @@ import { BACKEND_URL } from '../constant';
 import { AxiosWithToken } from '../lib/axios';
 
 export const ApiGetListStatistik = async (data: {
-  type: 'admin' | 'tif' | 'ptk' | 'agb' | 'agt' | 'thp' | 'umum';
+  type:
+    | 'admin'
+    | 'hkm'
+    | 'pbi'
+    | 'man'
+    | 'ekm'
+    | 'pmt'
+    | 'ptk'
+    | 'agt'
+    | 'agb'
+    | 'thp'
+    | 'tif'
+    | 'umum';
   adminProdi?: string;
 }) => {
   let endpoint = `${BACKEND_URL}/shared/get-statistik?`;

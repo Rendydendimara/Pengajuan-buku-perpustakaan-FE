@@ -295,6 +295,11 @@ const TambahAdminProdi: NextPage = () => {
                     <option value='agb'>Agribisnis</option>
                     <option value='agt'>Agroteknologi</option>
                     <option value='thp'>Teknologi Hasil Perikanan</option>
+                    <option value='hkm'>Hukum</option>
+                    <option value='pbi'>Pendidikan Biologi</option>
+                    <option value='man'>Manajemen</option>
+                    <option value='ekm'>Ekonomi Pembangunan</option>
+                    <option value='pmt'>Pendidikan Matematika</option>
                   </Select>
                 </FormControl>
                 <FormControl my='3' isRequired>
