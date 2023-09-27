@@ -161,7 +161,7 @@ const ListBukuKatalogAdmin: NextPage = () => {
   );
 
   const getListPengguna = async () => {
-    const res = await ApiGetListBuku();
+    const res = await ApiGetListBuku({});
     if (res.status === 200) {
       let temp: IDataRow[] = [];
       let i = 0;

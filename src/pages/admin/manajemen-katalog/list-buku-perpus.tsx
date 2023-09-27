@@ -13,6 +13,7 @@ import {
 import { Input, InputGroup, InputRightElement } from '@chakra-ui/input';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import {
+  createStandaloneToast,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -49,6 +50,7 @@ import { usePagination, useTable } from 'react-table';
 import { BiArrowBack } from 'react-icons/bi';
 import moment from 'moment';
 import { AiOutlinePlus } from 'react-icons/ai';
+import { ApiGetListBuku } from '@/api/buku';
 
 interface IDataRow {
   id: string;
@@ -67,48 +69,8 @@ interface IDataRow {
 
 const ListBukuPerpusAdmin: NextPage = () => {
   const router = useRouter();
-  const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([
-    {
-      id: new Date().getTime().toString(),
-      no: 1,
-      judulBuku: 'Judul buku',
-      penulis: 'Penulis',
-      penerbit: 'Penerbit',
-      tanggalUpload: moment().format('L'),
-      tahun: new Date().getFullYear().toString(),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 2,
-      judulBuku: 'Judul buku',
-      penulis: 'Penulis',
-      penerbit: 'Penerbit',
-      tanggalUpload: moment().format('L'),
-      tahun: new Date().getFullYear().toString(),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 3,
-      judulBuku: 'Judul buku',
-      penulis: 'Penulis',
-      penerbit: 'Penerbit',
-      tanggalUpload: moment().format('L'),
-      tahun: new Date().getFullYear().toString(),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 4,
-      judulBuku: 'Judul buku',
-      penulis: 'Penulis',
-      penerbit: 'Penerbit',
-      tanggalUpload: moment().format('L'),
-      tahun: new Date().getFullYear().toString(),
-      aksi: new Date().getTime().toString(),
-    },
-  ]);
+  const { toast } = createStandaloneToast();
+  const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([]);
   // const { showToast } = useGlobalContext();
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
   //   (state) => {
@@ -135,10 +97,10 @@ const ListBukuPerpusAdmin: NextPage = () => {
         Header: 'Penulis',
         accessor: 'penulis',
       },
-      {
-        Header: 'Penerbit',
-        accessor: 'penerbit',
-      },
+      // {
+      //   Header: 'Penerbit',
+      //   accessor: 'penerbit',
+      // },
       {
         Header: 'Tanggal Upload',
         accessor: 'tanggalUpload',
@@ -156,30 +118,31 @@ const ListBukuPerpusAdmin: NextPage = () => {
   );
 
   const getListPengguna = async () => {
-    // const res = await ApiGetListPenjualAdminProdi({
-    //   prodiId: user?.prodi ?? '',
-    // });
-    // if (res.status === 200) {
-    //   let temp: IDataRow[] = [];
-    //   for (const data of res.data.data) {
-    //     const lapak = await ApiGetLapakByProdiId(data.prodi._id);
-    //     temp.push({
-    //       id: data._id,
-    //       nama: data.fullname,
-    //       email: data.email,
-    //       prodi: data.prodi.name,
-    //       statusAkun: data.isSuspend ?? false,
-    //       lapak: lapak?.data?.data?.namaLapak ?? '-',
-    //     });
-    //   }
-    //   setDataPengguna(temp);
-    // } else {
-    //   showToast({
-    //     title: 'Error',
-    //     message: res.data.message,
-    //     type: 'error',
-    //   });
-    // }
+    const res = await ApiGetListBuku({ type: 'byPerpus' });
+    if (res.status === 200) {
+      let temp: IDataRow[] = [];
+      let i = 0;
+      for (const data of res.data.data) {
+        i++;
+        temp.push({
+          no: i,
+          id: data._id,
+          judulBuku: data.judul,
+          penulis: data.penulis,
+          penerbit: '', //data.katalog.name,
+          tanggalUpload: moment(data.createdAt).format('L'),
+          tahun: data.tahunTerbit,
+          aksi: data._id,
+        });
+      }
+      setDataPengguna(temp);
+    } else {
+      toast({
+        title: 'Error',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
   };
 
   const back = () => {

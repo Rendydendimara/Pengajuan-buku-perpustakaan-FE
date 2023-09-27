@@ -28,6 +28,11 @@ export default function App({ Component, pageProps }: AppProps) {
         },
       });
       localCookieSaveToken(res.data.data.token);
+      if (userType === 'admin') {
+        router.push('/admin/beranda');
+      } else {
+        router.push('/prodi/beranda');
+      }
     } else {
       router.replace('/login');
     }

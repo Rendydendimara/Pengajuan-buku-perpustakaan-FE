@@ -134,7 +134,7 @@ const PermintaanBukuAdmin: NextPage = () => {
           namaPengajuan: dt.dosenProdi.namaLengkap,
           ajukanPada: moment(new Date(dt.createdAt)).format('L'),
           prodi: getProdiName(dt.dosenProdi.programStudi),
-          jumlah: dt.buku.length,
+          jumlah: dt.buku.length + dt.bukuLink.length,
           aksi: dt._id,
           status: dt.status,
         });

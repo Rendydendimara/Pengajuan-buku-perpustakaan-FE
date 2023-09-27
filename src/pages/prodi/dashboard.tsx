@@ -1,12 +1,19 @@
+import { ApiGetListStatistik } from '@/api/shared';
 import AppTemplateProdiDashboard from '@/components/templates/AppTemplateProdiDashboard';
 import Layout from '@/components/templates/Layout';
 import { APP_NAME } from '@/constant';
+import { ICombinedState } from '@/provider/redux/store';
 import { Box, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/layout';
+import { createStandaloneToast } from '@chakra-ui/toast';
+import { groupBy, orderBy } from 'lodash';
+import moment from 'moment';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BiSolidBarChartAlt2 } from 'react-icons/bi';
+import { SlCalender } from 'react-icons/sl';
+import { useSelector } from 'react-redux';
 import {
   CartesianGrid,
   Legend,
@@ -82,8 +89,83 @@ const CustomizedAxisTick: React.FC<any> = (props) => {
   );
 };
 
+interface IDataStatistik {
+  name: string;
+  ditolak: number;
+  selesai: number;
+  pengajuan: number;
+}
+
+interface IReduxStateWorkspace {
+  user: any;
+}
+
 const DashboardProdi: NextPage = () => {
   const router = useRouter();
+  const { toast } = createStandaloneToast();
+  const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
+    (state) => {
+      return {
+        user: state.user.user,
+      };
+    }
+  );
+  const [dataStatistikGrafik, setDataStatistikGrafik] = useState<
+    IDataStatistik[]
+  >([]);
+  const [dataStatistik, setDataStatistik] = useState({
+    totalBuku: 0,
+    totalKatalog: 0,
+    totalPengajuanBuku: 0,
+    totalPengajuanBukuSelesai: 0,
+    totalPengajuanBukuGagal: 0,
+    totalPengajuanBukuDalamProses: 0,
+  });
+
+  const getStatistik = async () => {
+    const res = await ApiGetListStatistik({
+      type: user?.programStudi,
+      adminProdi: user?._id,
+    });
+    if (res.status === 200) {
+      setDataStatistik(res.data.data);
+      let dataPengajuan: any = [];
+      res.data.data.dataPengajuanBuku.forEach((dt: any) => {
+        dataPengajuan.push({
+          ...dt,
+          dateYear: new Date(dt.createdAt).getFullYear(),
+        });
+      });
+      const orderByDate = orderBy(dataPengajuan, 'dateYear', 'asc');
+      const groupByDate = groupBy(orderByDate, 'dateYear');
+      const result: IDataStatistik[] = [];
+      for (const year in groupByDate) {
+        const dataDitolak = groupByDate[year].filter(
+          (dt) => dt.status === 'ditolak'
+        );
+        const dataSelesai = groupByDate[year].filter(
+          (dt) => dt.status === 'selesai'
+        );
+        result.push({
+          name: year,
+          ditolak: dataDitolak.length,
+          selesai: dataSelesai.length,
+          pengajuan: groupByDate[year].length,
+        });
+      }
+      setDataStatistikGrafik(result);
+      console.log('groupByDate', groupByDate);
+    } else {
+      toast({
+        status: 'error',
+        duration: 5000,
+        title: 'Error',
+        description: res.data.message,
+        position: 'bottom-right',
+      });
+    }
+  };
+
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
   //   (state) => {
   //     return {
@@ -91,6 +173,10 @@ const DashboardProdi: NextPage = () => {
   //     };
   //   }
   // );
+
+  useEffect(() => {
+    getStatistik();
+  }, []);
 
   return (
     <Layout>
@@ -102,7 +188,22 @@ const DashboardProdi: NextPage = () => {
       <AppTemplateProdiDashboard>
         <Box h='100%'>
           <Text fontSize='2xl'>Selamat Datang</Text>
-          <Text>FULLNAME, Admin Prodi</Text>
+          <Text>{user?.namaLengkap}namaLengkap, Admin Prodi</Text>
+          <Flex
+            alignItems='center'
+            my='2'
+            gap='2'
+            boxShadow='lg'
+            width='fit-content'
+            p='4'
+            borderRadius='8px'
+            justifyContent='center'
+          >
+            <SlCalender size='30' />
+            <Text fontSize='lg' fontWeight='bold'>
+              Tanggal {moment().format('DD/MM/YYYY')}
+            </Text>
+          </Flex>
           <Box my='8'>
             <Heading as='h3' fontSize='24px' fontWeight='700'>
               Data Statistik
@@ -112,7 +213,7 @@ const DashboardProdi: NextPage = () => {
                 <LineChart
                   width={500}
                   height={200}
-                  data={data}
+                  data={dataStatistikGrafik}
                   margin={{
                     top: 20,
                     right: 30,
@@ -132,17 +233,16 @@ const DashboardProdi: NextPage = () => {
                   <Line
                     type='monotone'
                     dataKey='ditolak'
-                    stroke='#8884d8'
+                    stroke='#ff0000'
                     label={<CustomizedLabel />}
                   />
-                  <Line type='monotone' dataKey='diterima' stroke='#82ca9d' />
                   <Line
                     type='monotone'
                     dataKey='pengajuan'
-                    stroke='#8884d8'
+                    stroke='#0000ff'
                     label={<CustomizedLabel />}
                   />
-                  <Line type='monotone' dataKey='selesai' stroke='#82ca9d' />
+                  <Line type='monotone' dataKey='selesai' stroke='#008000' />
                 </LineChart>
               </ResponsiveContainer>
 
@@ -150,27 +250,32 @@ const DashboardProdi: NextPage = () => {
                 <ItemStatistik
                   bgColor='green.100'
                   title='Daftar Buku'
-                  count={100}
+                  count={dataStatistik.totalBuku}
                 />
                 <ItemStatistik
                   bgColor='orange.100'
                   title='Daftar Katalog'
-                  count={100}
+                  count={dataStatistik.totalKatalog}
                 />
                 <ItemStatistik
                   bgColor='yellow.100'
                   title='Permintaan Pengajuan Buku'
-                  count={100}
+                  count={dataStatistik.totalPengajuanBuku}
                 />
                 <ItemStatistik
                   bgColor='purple.100'
-                  title='Permintaan Pengajuan Buku Diterima'
-                  count={100}
+                  title='Permintaan Pengajuan Buku Selesai'
+                  count={dataStatistik.totalPengajuanBukuSelesai}
+                />
+                <ItemStatistik
+                  bgColor='green.600'
+                  title='Permintaan Pengajuan Buku Dalam Proses'
+                  count={dataStatistik.totalPengajuanBukuDalamProses}
                 />
                 <ItemStatistik
                   bgColor='red.100'
-                  title='Permintaan Pengajuan Buku Ditolak'
-                  count={100}
+                  title='Permintaan Pengajuan Buku Gagal'
+                  count={dataStatistik.totalPengajuanBukuGagal}
                 />
               </SimpleGrid>
               <Box h='5' />

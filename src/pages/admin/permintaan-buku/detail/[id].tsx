@@ -56,6 +56,8 @@ const DetailPengajuanAdmin: NextPage = () => {
   const getJumlahTotalBuku = () => {
     let total = 0;
     data?.buku.map((bk: any) => (total += bk.jumlah));
+    data?.bukuLink.map((bk: any) => (total += bk.jumlah));
+
     return total;
   };
 
@@ -89,7 +91,7 @@ const DetailPengajuanAdmin: NextPage = () => {
                 <Flex alignItems='center' gap='15px'>
                   <Flex
                     borderColor='blue'
-                    w='300px'
+                    minW='300px'
                     borderWidth='1px'
                     alignItems='center'
                     justifyContent='center'
@@ -103,7 +105,7 @@ const DetailPengajuanAdmin: NextPage = () => {
                 <Flex alignItems='flex-start' gap='15px'>
                   <Flex
                     borderColor='blue'
-                    w='300px'
+                    minW='300px'
                     borderWidth='1px'
                     alignItems='center'
                     justifyContent='center'
@@ -122,18 +124,56 @@ const DetailPengajuanAdmin: NextPage = () => {
                         borderRadius='4px'
                         padding='2'
                         key={i}
-                        minW='600px'
-                        maxW='600px'
+                        minW='500px'
+                        maxW='500px'
                         alignItems='center'
                         gap='5px'
                       >
-                        <Text fontWeight='bold' fontSize='lg'>
+                        {/* <Text fontWeight='bold' fontSize='lg'>
                           {i + 1}
-                        </Text>
+                        </Text> */}
                         <Box>
-                          <Text>Judul: {buku._id.judul}</Text>
+                          <Text>Judul: {buku?._id?.judul}</Text>
                           <Text>Jumlah: {buku.jumlah}</Text>
-                          <Text>Katalog: {buku._id.katalog.name}</Text>
+                          <Text>Katalog: {buku?._id?.katalog.name}</Text>
+                        </Box>
+                      </Flex>
+                    ))}
+                    {data?.bukuLink.map((buku: any, i: number) => (
+                      <Flex
+                        bgColor='gray.400'
+                        borderRadius='4px'
+                        padding='2'
+                        key={i}
+                        minW='500px'
+                        maxW='500px'
+                        alignItems='center'
+                        gap='5px'
+                      >
+                        {/* <Text fontWeight='bold' fontSize='lg'>
+                          {i + 1}
+                        </Text> */}
+                        <Box>
+                          <Text>
+                            Link:{' '}
+                            <Text
+                              as='span'
+                              _hover={{
+                                cursor: 'pointer',
+                                textDecoration: 'underline',
+                                color: 'blue',
+                              }}
+                            >
+                              <a
+                                target='_blank'
+                                href={buku.linkBuku}
+                                rel='noopener noreferrer'
+                              >
+                                {buku.linkBuku}
+                              </a>
+                            </Text>
+                          </Text>
+                          <Text>Jumlah: {buku.jumlah}</Text>
                         </Box>
                       </Flex>
                     ))}
@@ -142,7 +182,7 @@ const DetailPengajuanAdmin: NextPage = () => {
                 <Flex alignItems='center' gap='15px'>
                   <Flex
                     borderColor='blue'
-                    w='300px'
+                    minW='300px'
                     borderWidth='1px'
                     alignItems='center'
                     justifyContent='center'
@@ -155,7 +195,7 @@ const DetailPengajuanAdmin: NextPage = () => {
                 <Flex alignItems='center' gap='15px'>
                   <Flex
                     borderColor='blue'
-                    w='300px'
+                    minW='300px'
                     borderWidth='1px'
                     alignItems='center'
                     justifyContent='center'
@@ -168,7 +208,7 @@ const DetailPengajuanAdmin: NextPage = () => {
                 <Flex alignItems='center' gap='15px'>
                   <Flex
                     borderColor='blue'
-                    w='300px'
+                    minW='300px'
                     borderWidth='1px'
                     alignItems='center'
                     justifyContent='center'
@@ -182,7 +222,7 @@ const DetailPengajuanAdmin: NextPage = () => {
                 <Flex alignItems='center' gap='15px'>
                   <Flex
                     borderColor='blue'
-                    w='300px'
+                    minW='300px'
                     borderWidth='1px'
                     alignItems='center'
                     justifyContent='center'
@@ -206,7 +246,7 @@ const DetailPengajuanAdmin: NextPage = () => {
                 <Flex alignItems='center' gap='15px'>
                   <Flex
                     borderColor='blue'
-                    w='300px'
+                    minW='300px'
                     borderWidth='1px'
                     alignItems='center'
                     justifyContent='center'

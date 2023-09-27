@@ -3,17 +3,28 @@ import Layout from '@/components/templates/Layout';
 import { APP_NAME } from '@/constant';
 import { privateRouteAdmin } from '@/lib/withprivateRouteAdmin';
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import { Stat, StatLabel, StatNumber } from '@chakra-ui/react';
+import {
+  createStandaloneToast,
+  Stat,
+  StatLabel,
+  StatNumber,
+} from '@chakra-ui/react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { BsFillDatabaseFill } from 'react-icons/bs';
 import { ImBooks } from 'react-icons/im';
 import { GiBookshelf } from 'react-icons/gi';
+import { ApiGetCountBuku } from '@/api/buku';
 
 const ManajemenkatalogAdmin: NextPage = () => {
   const router = useRouter();
+  const [dataCountBuku, setDataCountBuku] = useState({
+    totalBukuKatalog: 0,
+    totalBukuPerpus: 0,
+  });
+  const { toast } = createStandaloneToast();
 
   const gotoBukuKatalog = () => {
     router.push('/admin/manajemen-katalog/katalog');
@@ -22,6 +33,25 @@ const ManajemenkatalogAdmin: NextPage = () => {
   const gotoBukuPerpus = () => {
     router.push('/admin/manajemen-katalog/list-buku-perpus');
   };
+
+  const getCountBuku = async () => {
+    const res = await ApiGetCountBuku();
+    if (res.status === 200) {
+      setDataCountBuku(res.data.data);
+    } else {
+      toast({
+        status: 'error',
+        duration: 5000,
+        title: 'Error',
+        description: res.data.message,
+        position: 'bottom-right',
+      });
+    }
+  };
+
+  useEffect(() => {
+    getCountBuku();
+  }, []);
 
   return (
     <Layout>
@@ -47,7 +77,7 @@ const ManajemenkatalogAdmin: NextPage = () => {
               <Box onClick={gotoBukuKatalog}>
                 <StatsCard
                   title='Buku Katalog'
-                  stat='40'
+                  stat={dataCountBuku.totalBukuKatalog}
                   icon={<ImBooks size={'5em'} />}
                 />
               </Box>
@@ -56,7 +86,7 @@ const ManajemenkatalogAdmin: NextPage = () => {
               <Box onClick={gotoBukuPerpus}>
                 <StatsCard
                   title='Buku Perpus'
-                  stat='20'
+                  stat={dataCountBuku.totalBukuPerpus}
                   icon={<GiBookshelf size={'5em'} />}
                 />
               </Box>
@@ -73,7 +103,7 @@ export default ManajemenkatalogAdmin;
 
 interface StatsCardProps {
   title: string;
-  stat: string;
+  stat: number;
   icon: ReactNode;
 }
 function StatsCard(props: StatsCardProps) {

@@ -25,6 +25,11 @@ import { ImProfile } from 'react-icons/im';
 import { useDispatch, useSelector } from 'react-redux';
 import { shimmer, toBase64 } from '@/lib/ImageOptimization';
 import { privateRouteAdmin } from '@/lib/withprivateRouteAdmin';
+import { ICombinedState } from '@/provider/redux/store';
+
+interface IReduxStateWorkspace {
+  user: any;
+}
 
 const AdminProfile: NextPage = () => {
   const [imageProfile, setImageProfile] = useState();
@@ -32,7 +37,15 @@ const AdminProfile: NextPage = () => {
   const dispatch = useDispatch();
   const [loadingUploadImage, setLoadingUploadImage] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
+    (state) => {
+      return {
+        user: state.user.user,
+      };
+    }
+  );
 
+  console.log('user', user);
   const handleSubmitProfileImage = async () => {
     setLoadingUploadImage(true);
     // const res = await ApiUpdateProfile({
@@ -137,7 +150,7 @@ const AdminProfile: NextPage = () => {
                 ) : (
                   ''
                 )} */}
-                <Button
+                {/* <Button
                   my='3'
                   w='full'
                   size='sm'
@@ -145,7 +158,7 @@ const AdminProfile: NextPage = () => {
                   onClick={onOpen}
                 >
                   Unggah Foto
-                </Button>
+                </Button> */}
               </Flex>
               <Box boxShadow={'md'} p={4} w={{ base: '100%', md: '70%' }}>
                 <Box my='5'>
@@ -155,7 +168,27 @@ const AdminProfile: NextPage = () => {
                       Nama Lengkap
                     </Text>
                     <Text textAlign='right' fontWeight='500'>
-                      Admin
+                      {user?.namaLengkap}
+                    </Text>
+                  </Flex>
+                  <Divider my='2' />
+                  <Divider my='2' />
+                  <Flex alignItems='center' justifyContent='space-between'>
+                    <Text textAlign='left' fontWeight='bold'>
+                      Email
+                    </Text>
+                    <Text textAlign='right' fontWeight='500'>
+                      {user?.email}
+                    </Text>
+                  </Flex>
+                  <Divider my='2' />
+                  <Divider my='2' />
+                  <Flex alignItems='center' justifyContent='space-between'>
+                    <Text textAlign='left' fontWeight='bold'>
+                      Nomor Telfon
+                    </Text>
+                    <Text textAlign='right' fontWeight='500'>
+                      {user?.noTelfon}
                     </Text>
                   </Flex>
                   <Divider my='2' />
@@ -210,9 +243,9 @@ const AdminProfile: NextPage = () => {
                 </Box>
                 <Flex justifyContent='flex-end'>
                   {/* <Link href='/peserta/biodata/update'> */}
-                  <Button size='sm' colorScheme='teal'>
+                  {/* <Button size='sm' colorScheme='teal'>
                     Ubah
-                  </Button>
+                  </Button> */}
                   {/* </Link> */}
                 </Flex>
               </Box>

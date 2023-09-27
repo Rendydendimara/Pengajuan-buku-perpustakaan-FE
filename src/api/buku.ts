@@ -42,9 +42,19 @@ export const ApiCreateBuku = async (data: {
   }
 };
 
-export const ApiGetListBuku = async () => {
+export const ApiGetListBuku = async (data: {
+  type?: 'byPerpus' | 'byKatalog';
+  prodi?: 'tif' | 'ptk' | 'agb' | 'agt' | 'thp' | 'umum';
+}) => {
+  let endpoint = `${BACKEND_URL}/buku/list?`;
+  if (data.type) {
+    endpoint = `${endpoint}&type=${data.type}`;
+  }
+  if (data.prodi) {
+    endpoint = `${endpoint}&prodi=${data.prodi}`;
+  }
   const response = await AxiosWithToken()
-    .get(`${BACKEND_URL}/buku/list`)
+    .get(endpoint)
     .then((response) => {
       return response;
     })
@@ -116,7 +126,6 @@ export const ApiDeleteBuku = async (id: string) => {
 export const ApiBulkBukuPerpus = async (data: {
   file: any;
   uploadDate: string;
-  catalogId: string;
   prodi: string;
 }) => {
   let formData = new FormData();
@@ -127,7 +136,6 @@ export const ApiBulkBukuPerpus = async (data: {
   };
   formData.append('file', data.file);
   formData.append('uploadDate', data.uploadDate);
-  formData.append('catalogId', data.catalogId);
   formData.append('prodi', data.prodi);
 
   const response = await AxiosWithToken()
@@ -190,6 +198,27 @@ export const ApiBulkBukuKatalog = async (data: {
 export const ApiGetDetailBuku = async (id: string) => {
   const response = await AxiosWithToken()
     .get(`${BACKEND_URL}/buku/detail/${id}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  if (response) {
+    return response;
+  } else {
+    return {
+      status: 500,
+      data: {
+        message: 'Server error.',
+      },
+    };
+  }
+};
+
+export const ApiGetCountBuku = async () => {
+  const response = await AxiosWithToken()
+    .get(`${BACKEND_URL}/buku/count-buku`)
     .then((response) => {
       return response;
     })

@@ -129,6 +129,7 @@ const ManajemenPengajuanProdi: NextPage = () => {
   const getJumlahTotalBuku = (data: any) => {
     let total = 0;
     data?.buku.map((bk: any) => (total += bk.jumlah));
+    data.bukuLink.forEach((dt: any) => (total += Number(dt.jumlah)));
     return total;
   };
 
@@ -144,7 +145,7 @@ const ManajemenPengajuanProdi: NextPage = () => {
           diAjuakanPada: moment(new Date(dt.createdAt)).format('L'),
           prodi: getProdiName(user?.programStudi),
           jumlahTotalBuku: getJumlahTotalBuku(dt),
-          jumlah: dt.buku.length,
+          jumlah: dt.buku.length + dt.bukuLink.length,
           status: dt.status,
           aksi: dt._id,
         });

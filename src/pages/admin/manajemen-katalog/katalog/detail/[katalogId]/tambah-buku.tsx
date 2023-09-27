@@ -197,7 +197,7 @@ const TambahBukuAdmin: NextPage = () => {
       setForm({
         judulBuku: res.data.data.judul,
         penulis: res.data.data.penulis,
-        tahunTerbit: new Date(`01-01-${res.data.data.tahunTerbit}`),
+        tahunTerbit: '', // new Date(`01-01-${res.data.data.tahunTerbit}`),
         bahasa: res.data.data.bahasa,
         prodi: res.data.data.prodi,
       });

@@ -1,8 +1,10 @@
-import AppTemplate from '@/components/templates/AppTemplate';
+import AppTemplateProdiDashboard from '@/components/templates/AppTemplateProdiDashboard';
 import Layout from '@/components/templates/Layout';
 import { APP_NAME } from '@/constant';
+import { shimmer, toBase64 } from '@/lib/ImageOptimization';
+import { ICombinedState } from '@/provider/redux/store';
 import { Button } from '@chakra-ui/button';
-import { Box, Divider, Flex, Heading, Text } from '@chakra-ui/layout';
+import { Box, Divider, Flex, Text } from '@chakra-ui/layout';
 import {
   Alert,
   AlertIcon,
@@ -18,14 +20,13 @@ import {
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useState } from 'react';
 import Dropzone from 'react-dropzone';
-import { ImProfile } from 'react-icons/im';
 import { useDispatch, useSelector } from 'react-redux';
-import { shimmer, toBase64 } from '@/lib/ImageOptimization';
-import { privateRouteAdmin } from '@/lib/withprivateRouteAdmin';
-import AppTemplateProdiDashboard from '@/components/templates/AppTemplateProdiDashboard';
+
+interface IReduxStateWorkspace {
+  user: any;
+}
 
 const AdminProfile: NextPage = () => {
   const [imageProfile, setImageProfile] = useState();
@@ -33,7 +34,15 @@ const AdminProfile: NextPage = () => {
   const dispatch = useDispatch();
   const [loadingUploadImage, setLoadingUploadImage] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
+    (state) => {
+      return {
+        user: state.user.user,
+      };
+    }
+  );
 
+  console.log('user', user);
   const handleSubmitProfileImage = async () => {
     setLoadingUploadImage(true);
     // const res = await ApiUpdateProfile({
@@ -138,7 +147,7 @@ const AdminProfile: NextPage = () => {
                 ) : (
                   ''
                 )} */}
-                <Button
+                {/* <Button
                   my='3'
                   w='full'
                   size='sm'
@@ -146,7 +155,7 @@ const AdminProfile: NextPage = () => {
                   onClick={onOpen}
                 >
                   Unggah Foto
-                </Button>
+                </Button> */}
               </Flex>
               <Box boxShadow={'md'} p={4} w={{ base: '100%', md: '70%' }}>
                 <Box my='5'>
@@ -156,64 +165,46 @@ const AdminProfile: NextPage = () => {
                       Nama Lengkap
                     </Text>
                     <Text textAlign='right' fontWeight='500'>
-                      Admin Prodi
+                      {user?.namaLengkap}
                     </Text>
                   </Flex>
                   <Divider my='2' />
-
-                  {/* <Divider my='2' /> */}
-                  {/* <Flex alignItems='center' justifyContent='space-between'>
-                    <Text textAlign='left' fontWeight='bold'>
-                      Jenis Kelamin
-                    </Text>
-                    <Text textAlign='right' fontWeight='500'>
-                      {user
-                        ? user.gender === 'P'
-                          ? 'Perempuan'
-                          : 'Laki-laki'
-                        : '-'}
-                    </Text>
-                  </Flex>
-                  <Divider my='2' /> */}
-
-                  {/* <Divider my='2' />
+                  <Divider my='2' />
                   <Flex alignItems='center' justifyContent='space-between'>
                     <Text textAlign='left' fontWeight='bold'>
-                      Pekerjaan
+                      NIDN
                     </Text>
                     <Text textAlign='right' fontWeight='500'>
-                      {user?.pekerjaan ?? '-'}
+                      {user?.nidn}
                     </Text>
                   </Flex>
                   <Divider my='2' />
- */}
-                  {/* <Divider my='2' />
-                  <Flex alignItems='center' justifyContent='space-between'>
-                    <Text textAlign='left' fontWeight='bold'>
-                      No. Telepon
-                    </Text>
-                    <Text textAlign='right' fontWeight='500'>
-                      {user?.no_telfon ?? '-'}
-                    </Text>
-                  </Flex>
-                  <Divider my='2' />
-
                   <Divider my='2' />
                   <Flex alignItems='center' justifyContent='space-between'>
                     <Text textAlign='left' fontWeight='bold'>
                       Email
                     </Text>
                     <Text textAlign='right' fontWeight='500'>
-                      {user?.email ?? '-'}
+                      {user?.email}
                     </Text>
                   </Flex>
-                  <Divider my='2' /> */}
+                  <Divider my='2' />
+                  <Divider my='2' />
+                  <Flex alignItems='center' justifyContent='space-between'>
+                    <Text textAlign='left' fontWeight='bold'>
+                      Nomor Telfon
+                    </Text>
+                    <Text textAlign='right' fontWeight='500'>
+                      {user?.noTelfon}
+                    </Text>
+                  </Flex>
+                  <Divider my='2' />
                 </Box>
                 <Flex justifyContent='flex-end'>
                   {/* <Link href='/peserta/biodata/update'> */}
-                  <Button size='sm' colorScheme='teal'>
+                  {/* <Button size='sm' colorScheme='teal'>
                     Ubah
-                  </Button>
+                  </Button> */}
                   {/* </Link> */}
                 </Flex>
               </Box>
@@ -228,7 +219,7 @@ const AdminProfile: NextPage = () => {
         >
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Upload Profile Image</ModalHeader>
+            <ModalHeader>Ubah Profile</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
               <Flex w='full' alignItems='center' flexDirection='column'>

@@ -6,6 +6,7 @@ export const ApiCreatePengajuanBuku = async (data: {
   dataBuku: string;
   dosenProdi: string;
   pesanDosen: string;
+  bukuLink: string;
 }) => {
   const response = await Axios.post(
     `${BACKEND_URL}/pengajuan-buku/create`,
@@ -32,6 +33,26 @@ export const ApiCreatePengajuanBuku = async (data: {
 export const ApiGetListPengajuanBuku = async () => {
   const response = await AxiosWithToken()
     .get(`${BACKEND_URL}/pengajuan-buku/list`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  if (response) {
+    return response;
+  } else {
+    return {
+      status: 500,
+      data: {
+        message: 'Server error.',
+      },
+    };
+  }
+};
+export const ApiGetRekapanPengajuanBuku = async () => {
+  const response = await AxiosWithToken()
+    .get(`${BACKEND_URL}/pengajuan-buku/get-rekapan`)
     .then((response) => {
       return response;
     })

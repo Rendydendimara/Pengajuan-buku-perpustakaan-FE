@@ -54,7 +54,7 @@ const BerandaProdi: NextPage = () => {
 
   const getListBuku = async () => {
     setLoading(true);
-    const res = await ApiGetListBuku();
+    const res = await ApiGetListBuku({});
     if (res.status === 200) {
       let temp: IDataBuku[] = [];
       let i = 0;

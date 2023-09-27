@@ -34,4 +34,5 @@ export interface IPengajuanBuku {
   createdAt: string;
   deletedAt: string | null;
   updatedAt: string | null;
+  bukuLink: any[];
 }

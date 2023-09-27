@@ -48,6 +48,10 @@ interface IDataCart {
   id: string;
   jumlah: number;
 }
+interface IFormBukuLink {
+  link: string;
+  jumlah: number;
+}
 
 const PengajuanProdi: NextPage = () => {
   const router = useRouter();
@@ -60,6 +64,12 @@ const PengajuanProdi: NextPage = () => {
     }
   );
   const [dataCart, setDataCart] = useState<IDataCart[]>([]);
+  const [formBukuLink, seFormBukuLink] = useState<IFormBukuLink[]>([
+    {
+      link: '',
+      jumlah: 0,
+    },
+  ]);
   const [informasiTambahan, setInformasiTambahan] = useState('');
   const toast = createStandaloneToast();
   const [loading, setLoading] = useState(false);
@@ -73,6 +83,28 @@ const PengajuanProdi: NextPage = () => {
   //   }
   // );
 
+  const onAddFormBukuLink = () => {
+    seFormBukuLink([...formBukuLink, { link: '', jumlah: 0 }]);
+  };
+
+  const onRemoveFormBukuLink = (index: number) => {
+    seFormBukuLink([
+      ...formBukuLink.slice(0, index),
+      ...formBukuLink.slice(index + 1, formBukuLink.length),
+    ]);
+  };
+
+  const onChangeFormBukuLink = (index: number, field: any, value: string) => {
+    seFormBukuLink([
+      ...formBukuLink.slice(0, index),
+      {
+        ...formBukuLink[index],
+        [field]: value,
+      },
+      ...formBukuLink.slice(index + 1, formBukuLink.length),
+    ]);
+  };
+
   const createPengajuan = async () => {
     setLoading(true);
     let isErrorEmptyCount = false;
@@ -81,6 +113,7 @@ const PengajuanProdi: NextPage = () => {
         isErrorEmptyCount = true;
       }
     });
+
     if (isErrorEmptyCount) {
       toast.toast({
         status: 'error',
@@ -97,8 +130,26 @@ const PengajuanProdi: NextPage = () => {
           jumlah: dt.jumlah,
         })
       );
+
+      const bukuLink: any = [];
+      formBukuLink.map((dt) => {
+        if (dt.jumlah > 0 && dt.link) {
+          bukuLink.push({
+            jumlah: dt.jumlah,
+            linkBuku: dt.link,
+          });
+        }
+      });
+      console.log({
+        dataBuku: JSON.stringify(dataBuku),
+        bukuLink: JSON.stringify(bukuLink),
+        dosenProdi: user?._id,
+        pesanDosen: informasiTambahan,
+      });
+
       const res = await ApiCreatePengajuanBuku({
         dataBuku: JSON.stringify(dataBuku),
+        bukuLink: JSON.stringify(bukuLink),
         dosenProdi: user?._id,
         pesanDosen: informasiTambahan,
       });
@@ -139,12 +190,15 @@ const PengajuanProdi: NextPage = () => {
   };
 
   const getJumlahBuku = () => {
-    return dataCart.length;
+    const dataBukuLink = formBukuLink.filter((dt) => dt.jumlah > 0 && dt.link);
+    return dataCart.length + dataBukuLink.length;
   };
 
   const getTotalBanyakBuku = () => {
     let count = 0;
     dataCart.forEach((dt) => (count += Number(dt.jumlah)));
+    const dataBukuLink = formBukuLink.filter((dt) => dt.jumlah > 0 && dt.link);
+    dataBukuLink.forEach((dt) => (count += Number(dt.jumlah)));
     return count;
   };
 
@@ -203,46 +257,96 @@ const PengajuanProdi: NextPage = () => {
               Daftar Pengajuan
             </Text>
             <Flex gap='50px'>
-              <TableContainer mt='5' w='70%'>
-                <Table variant='simple'>
-                  <TableCaption>Daftar Pengajuan Buku</TableCaption>
-                  <Thead>
-                    <Tr>
-                      <Th>Program Studi</Th>
-                      <Th>Judul Buku</Th>
-                      <Th>Penerbit</Th>
-                      <Th>Jumlah</Th>
-                      <Th>Aksi</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {dataCart.map((crt: IDataCart, i: number) => (
-                      <Tr key={i}>
-                        <Td>{getProdiName(crt.prodi)}</Td>
-                        <Td>{crt.judul}</Td>
-                        <Td>{crt.katalog}</Td>
-                        <Td>
-                          <Input
-                            value={crt.jumlah}
-                            borderColor='blue'
-                            w='80px'
-                            type='number'
-                            onChange={(e) => onChangeCount(crt.id, e)}
-                          />
-                        </Td>
-                        <Td>
-                          <IconButton
-                            onClick={() => removeCrt(crt.id)}
-                            colorScheme='red'
-                            aria-label='delete'
-                            icon={<CiCircleRemove size={24} />}
-                          />
-                        </Td>
+              <Box mt='5' w='70%'>
+                <TableContainer>
+                  <Table variant='simple'>
+                    <TableCaption>Daftar Pengajuan Buku</TableCaption>
+                    <Thead>
+                      <Tr>
+                        <Th>Program Studi</Th>
+                        <Th>Judul Buku</Th>
+                        <Th>Penerbit</Th>
+                        <Th>Jumlah</Th>
+                        <Th>Aksi</Th>
                       </Tr>
+                    </Thead>
+                    <Tbody>
+                      {dataCart.map((crt: IDataCart, i: number) => (
+                        <Tr key={i}>
+                          <Td>{getProdiName(crt.prodi)}</Td>
+                          <Td>{crt.judul}</Td>
+                          <Td>{crt.katalog}</Td>
+                          <Td>
+                            <Input
+                              value={crt.jumlah}
+                              borderColor='blue'
+                              w='80px'
+                              type='number'
+                              onChange={(e) => onChangeCount(crt.id, e)}
+                            />
+                          </Td>
+                          <Td>
+                            <IconButton
+                              onClick={() => removeCrt(crt.id)}
+                              colorScheme='red'
+                              aria-label='delete'
+                              icon={<CiCircleRemove size={24} />}
+                            />
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+                <Box mt='5'>
+                  <Text fontSize='lg' fontWeight='700'>
+                    Buku Link
+                  </Text>
+                  <VStack
+                    my='2'
+                    spacing='10px'
+                    w='full'
+                    alignItems='flex-start'
+                  >
+                    {formBukuLink.map((form, i) => (
+                      <Flex w='full' alignItems='center' gap='10px'>
+                        <FormControl>
+                          <Input
+                            value={form.link}
+                            onChange={(e) =>
+                              onChangeFormBukuLink(i, 'link', e.target.value)
+                            }
+                          />
+                        </FormControl>
+                        <Input
+                          borderColor='blue'
+                          w='80px'
+                          type='number'
+                          value={form.jumlah}
+                          onChange={(e) =>
+                            onChangeFormBukuLink(i, 'jumlah', e.target.value)
+                          }
+                        />
+                        <IconButton
+                          onClick={() => onRemoveFormBukuLink(i)}
+                          colorScheme='red'
+                          aria-label='delete'
+                          icon={<CiCircleRemove size={24} />}
+                        />
+                      </Flex>
                     ))}
-                  </Tbody>
-                </Table>
-              </TableContainer>
+                  </VStack>
+
+                  <Button
+                    size='sm'
+                    colorScheme='green'
+                    onClick={onAddFormBukuLink}
+                  >
+                    Tambah
+                  </Button>
+                </Box>
+              </Box>
+
               <Box w='30%'>
                 <Box
                   boxShadow='lg'

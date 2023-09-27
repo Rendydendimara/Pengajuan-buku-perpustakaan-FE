@@ -10,6 +10,17 @@ export const getProdiName = (prodiCode: string) => {
       return 'Peternakan';
     case 'agb':
       return 'Agribisnis';
+    case 'hkm':
+      return 'Hukum';
+    case 'pbi':
+      return 'Pendidikan Biologi';
+    case 'man':
+      return 'Manajemen';
+    case 'ekm':
+      return 'Ekonomi Pembangunan';
+    case 'pmt':
+      return 'Pendidikan Matematika';
+
     default:
       return '';
   }

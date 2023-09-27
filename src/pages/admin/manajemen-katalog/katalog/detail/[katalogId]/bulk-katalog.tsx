@@ -121,6 +121,7 @@ const BulkKatalogAdmin: NextPage = () => {
       successUpload: [],
     });
     setLoadingPost(true);
+    setShowBulkInfo(false);
     event.preventDefault();
 
     const res: any = await ApiBulkBukuKatalog({
