@@ -43,7 +43,7 @@ export const ApiCreateBuku = async (data: {
 };
 
 export const ApiGetListBuku = async (data: {
-  type?: 'byPerpus' | 'byKatalog';
+  type?: 'byPerpus' | 'byKatalog' | 'all';
   prodi?:
     | 'hkm'
     | 'pbi'
@@ -56,6 +56,7 @@ export const ApiGetListBuku = async (data: {
     | 'thp'
     | 'tif'
     | 'umum';
+  katalog?: string;
 }) => {
   let endpoint = `${BACKEND_URL}/buku/list?`;
   if (data.type) {
@@ -63,6 +64,9 @@ export const ApiGetListBuku = async (data: {
   }
   if (data.prodi) {
     endpoint = `${endpoint}&prodi=${data.prodi}`;
+  }
+  if (data.katalog) {
+    endpoint = `${endpoint}&katalog=${data.katalog}`;
   }
   const response = await AxiosWithToken()
     .get(endpoint)

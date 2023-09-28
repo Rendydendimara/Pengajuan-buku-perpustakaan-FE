@@ -110,9 +110,7 @@ const BulkKatalogAdmin: NextPage = () => {
     });
   };
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement | HTMLButtonElement>
-  ): Promise<void> => {
+  const handleSubmit = async (): Promise<void> => {
     setErrorMessage('');
     onClose();
     setDataInfoResultBulk({
@@ -122,7 +120,7 @@ const BulkKatalogAdmin: NextPage = () => {
     });
     setLoadingPost(true);
     setShowBulkInfo(false);
-    event.preventDefault();
+    // event.preventDefault();
 
     const res: any = await ApiBulkBukuKatalog({
       file: form.file,
@@ -205,7 +203,7 @@ const BulkKatalogAdmin: NextPage = () => {
           )}
           <Flex my='4' justifyContent='center'>
             <Box w='50%'>
-              <form method='POST'>
+              <Box>
                 <FormControl my='3' id='nama_lengkap' isRequired>
                   <FormLabel>Nama Katalog</FormLabel>
                   <Select disabled>
@@ -252,7 +250,7 @@ const BulkKatalogAdmin: NextPage = () => {
                     required
                   />
                 </FormControl>
-              </form>
+              </Box>
               <Box mt='5'>
                 <Button
                   type='submit'
@@ -418,7 +416,12 @@ const BulkKatalogAdmin: NextPage = () => {
               )}
             </ModalBody>
             <ModalFooter gap='2'>
-              <Button onClick={handleSubmit} colorScheme='green'>
+              <Button
+                onClick={
+                  modalType === 'add' ? () => handleSubmit() : () => back()
+                }
+                colorScheme='green'
+              >
                 Ya, Lanjut
               </Button>
               <Button colorScheme='red' onClick={onClose}>

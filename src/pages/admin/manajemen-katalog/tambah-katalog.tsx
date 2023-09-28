@@ -75,13 +75,10 @@ const TambahKatalogAdmin: NextPage = () => {
     onOpen();
   };
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement | HTMLButtonElement>
-  ): Promise<void> => {
+  const handleSubmit = async (): Promise<void> => {
     setErrorMessage('');
     onClose();
     setLoadingPost(true);
-    event.preventDefault();
     if (actionType === 'edit') {
       // update api
       const res = await ApiUpdateKatalogBuku({
@@ -126,7 +123,7 @@ const TambahKatalogAdmin: NextPage = () => {
   };
 
   const back = () => {
-    router.back();
+    router.push('/admin/manajemen-katalog/katalog');
   };
 
   const getDetailCatalog = async (id: string) => {
@@ -176,7 +173,7 @@ const TambahKatalogAdmin: NextPage = () => {
           )}
           <Flex my='4' justifyContent='center'>
             <Box w='50%'>
-              <form method='POST'>
+              <Box>
                 <FormControl my='3' id='nama_lengkap' isRequired>
                   <FormLabel>Nama Katalog</FormLabel>
                   <Input
@@ -187,7 +184,7 @@ const TambahKatalogAdmin: NextPage = () => {
                     required
                   />
                 </FormControl>
-              </form>
+              </Box>
               <Box mt='5'>
                 <Button
                   size='sm'
@@ -248,7 +245,12 @@ const TambahKatalogAdmin: NextPage = () => {
               )}
             </ModalBody>
             <ModalFooter gap='2'>
-              <Button onClick={handleSubmit} colorScheme='green'>
+              <Button
+                onClick={
+                  modalType === 'add' ? () => handleSubmit() : () => back()
+                }
+                colorScheme='green'
+              >
                 Ya, Lanjut
               </Button>
               <Button colorScheme='red' onClick={onClose}>

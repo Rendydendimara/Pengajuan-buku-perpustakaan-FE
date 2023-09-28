@@ -4,6 +4,7 @@ import AppTemplateProdi from '@/components/templates/AppTemplateProdi';
 import LayoutProdi from '@/components/templates/LayoutProdi';
 import { APP_NAME, LOCAL_CART_PRODI } from '@/constant';
 import { IDataBuku } from '@/interface';
+import { ICombinedState } from '@/provider/redux/store';
 import { Button } from '@chakra-ui/button';
 import { Checkbox } from '@chakra-ui/checkbox';
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
@@ -19,11 +20,11 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { BiSearchAlt2, BiSolidBookBookmark } from 'react-icons/bi';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-// interface IReduxStateWorkspace {
-//   user?: IUser;
-// }
+interface IReduxStateWorkspace {
+  user?: any;
+}
 
 interface IKatalog {
   name: string;
@@ -39,14 +40,13 @@ const BerandaProdi: NextPage = () => {
   const [selectedKatalog, setSelectedKatalog] = useState('');
   const [selectedTahun, setSelectedTahun] = useState('');
   const [searching, setSearching] = useState('');
-
-  // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
-  //   (state) => {
-  //     return {
-  //       user: state.user.user,
-  //     };
-  //   }
-  // );
+  const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
+    (state) => {
+      return {
+        user: state.user.user,
+      };
+    }
+  );
 
   const gotoPengajuan = () => {
     router.push('/prodi/pengajuan');
@@ -54,9 +54,9 @@ const BerandaProdi: NextPage = () => {
 
   const getListBuku = async () => {
     setLoading(true);
-    const res = await ApiGetListBuku({});
+    let temp: IDataBuku[] = [];
+    let res = await ApiGetListBuku({ prodi: user?.programStudi ?? 'umum' });
     if (res.status === 200) {
-      let temp: IDataBuku[] = [];
       let i = 0;
       for (const data of res.data.data) {
         i += 1;
@@ -65,8 +65,27 @@ const BerandaProdi: NextPage = () => {
           _id: data._id,
           judul: data.judul,
           penulis: data.penulis,
-          katalog: data.katalog.name,
-          katalogId: data.katalog._id,
+          katalog: data?.katalog?.name ?? '-',
+          katalogId: data?.katalog?._id ?? '-',
+          tahunTerbit: data.tahunTerbit,
+          bahasa: data.bahasa,
+          prodi: data.prodi,
+          tanggalUpload: moment(data.createdAt).format('L'),
+        });
+      }
+    }
+    res = await ApiGetListBuku({ prodi: 'umum' });
+    if (res.status === 200) {
+      let i = 0;
+      for (const data of res.data.data) {
+        i += 1;
+        temp.push({
+          no: i,
+          _id: data._id,
+          judul: data.judul,
+          penulis: data.penulis,
+          katalog: data?.katalog?.name ?? '-',
+          katalogId: data?.katalog?._id ?? '-',
           tahunTerbit: data.tahunTerbit,
           bahasa: data.bahasa,
           prodi: data.prodi,
@@ -153,9 +172,12 @@ const BerandaProdi: NextPage = () => {
     return data;
   };
   useEffect(() => {
-    getListBuku();
     getListKatalog();
   }, []);
+
+  useEffect(() => {
+    getListBuku();
+  }, [user]);
 
   return (
     <LayoutProdi>
@@ -178,6 +200,7 @@ const BerandaProdi: NextPage = () => {
                 w='150px'
                 placeholder='Pilih katalog'
               >
+                <option value=''>Semua</option>
                 {listKatalog.map((katalog, i) => (
                   <option key={i} value={katalog.id}>
                     {katalog.name}

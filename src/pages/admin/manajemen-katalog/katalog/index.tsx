@@ -113,7 +113,7 @@ const ListKatalogAdmin: NextPage = () => {
           no: i,
           id: data._id,
           namaKatalog: data.name,
-          tanggalCreate: new Date(data.createdAt).getTime().toString(),
+          tanggalCreate: moment(data.createdAt).format('L'),
           aksi: data._id,
         });
       }

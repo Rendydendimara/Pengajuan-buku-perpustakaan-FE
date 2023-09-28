@@ -241,7 +241,7 @@ const TambahAdminProdi: NextPage = () => {
           )}
           <Flex my='4' justifyContent='center'>
             <Box w='50%'>
-              <form method='POST'>
+              <Box>
                 <FormControl my='3' id='nama_lengkap' isRequired>
                   <FormLabel>Nama Lengkap</FormLabel>
                   <Input
@@ -391,7 +391,7 @@ const TambahAdminProdi: NextPage = () => {
                     </InputRightElement>
                   </InputGroup>
                 </FormControl>
-              </form>
+              </Box>
               <Box mt='5'>
                 <Button
                   type='submit'

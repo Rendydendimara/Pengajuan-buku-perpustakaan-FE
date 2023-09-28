@@ -99,9 +99,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
     });
   };
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement | HTMLButtonElement>
-  ): Promise<void> => {
+  const handleSubmit = async (): Promise<void> => {
     setErrorMessage('');
     onClose();
     setDataInfoResultBulk({
@@ -111,7 +109,6 @@ const BulkBukuPerpusAdmin: NextPage = () => {
     });
     setShowBulkInfo(false);
     setLoadingPost(true);
-    event.preventDefault();
 
     const res: any = await ApiBulkBukuPerpus({
       file: form.file,
@@ -207,7 +204,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
           )}
           <Flex my='4' justifyContent='center'>
             <Box w='50%'>
-              <form method='POST'>
+              <Box>
                 <FormControl my='3' id='nama_lengkap' isRequired>
                   <FormLabel>Prodi</FormLabel>
                   <Select
@@ -248,7 +245,7 @@ const BulkBukuPerpusAdmin: NextPage = () => {
                     required
                   />
                 </FormControl>
-              </form>
+              </Box>
               <Box mt='5'>
                 <Button
                   type='submit'
@@ -407,7 +404,12 @@ const BulkBukuPerpusAdmin: NextPage = () => {
               )}
             </ModalBody>
             <ModalFooter gap='2'>
-              <Button onClick={handleSubmit} colorScheme='green'>
+              <Button
+                onClick={
+                  modalType === 'add' ? () => handleSubmit() : () => back()
+                }
+                colorScheme='green'
+              >
                 Ya, Lanjut
               </Button>
               <Button colorScheme='red' onClick={onClose}>

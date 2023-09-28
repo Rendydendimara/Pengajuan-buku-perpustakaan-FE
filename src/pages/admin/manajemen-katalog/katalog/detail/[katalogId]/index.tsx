@@ -72,48 +72,7 @@ const ListBukuKatalogAdmin: NextPage = () => {
   const router = useRouter();
   const [catalogId, setCatalogId] = useState('');
   const { toast } = createStandaloneToast();
-  const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([
-    {
-      id: new Date().getTime().toString(),
-      no: 1,
-      judulBuku: 'Judul buku',
-      penulis: 'Penulis',
-      penerbit: 'Penerbit',
-      tanggalUpload: moment().format('L'),
-      tahun: new Date().getFullYear().toString(),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 2,
-      judulBuku: 'Judul buku',
-      penulis: 'Penulis',
-      penerbit: 'Penerbit',
-      tanggalUpload: moment().format('L'),
-      tahun: new Date().getFullYear().toString(),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 3,
-      judulBuku: 'Judul buku',
-      penulis: 'Penulis',
-      penerbit: 'Penerbit',
-      tanggalUpload: moment().format('L'),
-      tahun: new Date().getFullYear().toString(),
-      aksi: new Date().getTime().toString(),
-    },
-    {
-      id: new Date().getTime().toString(),
-      no: 4,
-      judulBuku: 'Judul buku',
-      penulis: 'Penulis',
-      penerbit: 'Penerbit',
-      tanggalUpload: moment().format('L'),
-      tahun: new Date().getFullYear().toString(),
-      aksi: new Date().getTime().toString(),
-    },
-  ]);
+  const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([]);
   // const { showToast } = useGlobalContext();
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
   //   (state) => {
@@ -160,8 +119,11 @@ const ListBukuKatalogAdmin: NextPage = () => {
     []
   );
 
-  const getListPengguna = async () => {
-    const res = await ApiGetListBuku({});
+  const getListPengguna = async (catalogIdNew?: string) => {
+    const res = await ApiGetListBuku({
+      type: 'byKatalog',
+      katalog: catalogIdNew ? catalogIdNew : catalogId,
+    });
     if (res.status === 200) {
       let temp: IDataRow[] = [];
       let i = 0;
@@ -205,15 +167,12 @@ const ListBukuKatalogAdmin: NextPage = () => {
   };
 
   useEffect(() => {
-    getListPengguna();
-  }, []);
-
-  useEffect(() => {
     const { katalogId }: any = router.query;
 
     if (katalogId) {
       setCatalogId(katalogId);
       getCatalogName(katalogId);
+      getListPengguna(katalogId);
     }
   }, [router.query]);
 

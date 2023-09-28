@@ -161,6 +161,11 @@ const PengajuanProdi: NextPage = () => {
           description: 'Pengajuan berhasil dibuat',
           position: 'bottom-right',
         });
+        localStorage.setItem(LOCAL_CART_PRODI, '');
+        dispatch({
+          type: 'SET_CART',
+          cart: [],
+        });
         router.push('/prodi/manajemen-pengajuan');
       } else {
         toast.toast({
@@ -298,7 +303,8 @@ const PengajuanProdi: NextPage = () => {
                     </Tbody>
                   </Table>
                 </TableContainer>
-                <Box mt='5'>
+
+                <Box mt='5' mb='30px'>
                   <Text fontSize='lg' fontWeight='700'>
                     Buku Link
                   </Text>
@@ -345,6 +351,26 @@ const PengajuanProdi: NextPage = () => {
                     Tambah
                   </Button>
                 </Box>
+                <Text
+                  mt='40px'
+                  as='span'
+                  fontSize='xl'
+                  color='blue.700'
+                  fontWeight='bold'
+                  _hover={{
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                    color: 'blue',
+                  }}
+                >
+                  <a
+                    target='_blank'
+                    href='https://docs.google.com/forms/u/0/'
+                    rel='noopener noreferrer'
+                  >
+                    Link Pengajuan
+                  </a>
+                </Text>
               </Box>
 
               <Box w='30%'>
