@@ -50,7 +50,7 @@ import { usePagination, useTable } from 'react-table';
 import { BiArrowBack } from 'react-icons/bi';
 import moment from 'moment';
 import { AiOutlinePlus } from 'react-icons/ai';
-import { ApiGetListBuku } from '@/api/buku';
+import { ApiDeleteBuku, ApiGetListBuku } from '@/api/buku';
 import { includes, some } from 'lodash';
 import { IKatalog } from '@/pages/prodi/beranda';
 import { ApiGetListKatalogBuku } from '@/api/katalogBuku';
@@ -254,7 +254,7 @@ const ListBukuPerpusAdmin: NextPage = () => {
               <CustomTable
                 columns={columns}
                 data={filteredData()}
-                getListPenggfilteredDatana={getListPengguna}
+                getListPengguna={getListPengguna}
               />
             </Box>
           </Box>
@@ -296,15 +296,40 @@ function CustomTable({ columns, data, getListPengguna }: any) {
     usePagination
   );
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [idSelected, setIdSelected] = useState('');
+  const { toast } = createStandaloneToast();
 
   const hapus = (id: string) => {
+    setIdSelected(id);
     onOpen();
     // Router.push(`/admin/manajemen-pengguna/${id}`);
   };
 
-  const editPage = (id: string) => {
-    // Router.push(`/admin/manajemen-pengguna/tambah?id=${id}&action=edit`);
+  const handleHapusBuku = async () => {
+    const res = await ApiDeleteBuku(idSelected);
+    if (res.status === 200) {
+      toast({
+        title: 'Berhasil',
+        description: 'Berhasil hapus buku',
+        status: 'success',
+      });
+      getListPengguna();
+    } else {
+      toast({
+        title: 'Gagal',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
+    onClose();
   };
+
+  // const editPage = (id: string) => {
+  //   const katalogId: any = router.query.katalogId;
+  //   Router.push(
+  //     `/admin/manajemen-katalog/katalog/detail/${katalogId}/tambah-buku?id=${id}&action=edit`
+  //   );
+  // };
 
   // Render the UI for your table
   return (
@@ -329,13 +354,13 @@ function CustomTable({ columns, data, getListPengguna }: any) {
                     return (
                       <Td key={y} {...cell.getCellProps()}>
                         <Flex alignItems='center' gap='10px'>
-                          <Button
+                          {/* <Button
                             size='sm'
                             onClick={() => editPage(row.original.id)}
                             colorScheme='orange'
                           >
                             Ubah
-                          </Button>
+                          </Button> */}
                           <Button
                             size='sm'
                             onClick={() => hapus(row.original.id)}
@@ -460,7 +485,7 @@ function CustomTable({ columns, data, getListPengguna }: any) {
             </Box>
           </ModalBody>
           <ModalFooter gap='2'>
-            <Button size='sm' onClick={onClose} colorScheme='green'>
+            <Button size='sm' onClick={handleHapusBuku} colorScheme='green'>
               Ya, Lanjut
             </Button>
             <Button size='sm' colorScheme='red' onClick={onClose}>

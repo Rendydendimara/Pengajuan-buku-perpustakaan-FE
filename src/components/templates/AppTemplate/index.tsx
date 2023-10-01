@@ -71,7 +71,7 @@ const AppTemplate: React.FC<IProps> = (props) => {
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box overflowX='scroll' ml={{ base: 0, md: 60 }} p='2'>
+      <Box overflowX='scroll' minH='100vh' ml={{ base: 0, md: 60 }} p='2'>
         {props.children}
       </Box>
     </Box>

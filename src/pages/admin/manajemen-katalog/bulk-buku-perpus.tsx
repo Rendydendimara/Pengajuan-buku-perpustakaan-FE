@@ -127,27 +127,6 @@ const BulkBukuPerpusAdmin: NextPage = () => {
       setErrorMessage(res.data.message);
     }
     setLoadingPost(false);
-
-    // setShowBulkInfo(true);
-    // const res: any = await ApiCreateAccountPenjualAdminProdi({
-    //   judulBuku: form.judulBuku,
-    //   penulis: form.penulis,
-    //   penerbit: form.penerbit,
-    //   tanggalUpload: form.tanggalUpload,
-    //   tahunBuku: form.tahunBuku,
-    //   password: form.password,
-    // });
-    // if (res.status === 200) {
-    //   showToast({
-    //     title: 'Berhasil',
-    //     message: 'Berhasil membuat akun Penjual',
-    //     type: 'success',
-    //   });
-    //   router.push('/admin-prodi/pengguna/list-pengguna');
-    // } else {
-    //   setErrorMessage(res.data.message);
-    // }
-    setLoadingPost(false);
   };
 
   const back = () => {
