@@ -178,7 +178,6 @@ const TambahAdminProdi: NextPage = () => {
   const getDetailDosen = async (id: string) => {
     const res = await ApiGetDetailDosenProdi(id);
     if (res.status === 200) {
-      console.log('res.data', res.data);
       setForm({
         namaLengkap: res.data.data.namaLengkap,
         email: res.data.data.email ?? '',

@@ -42,7 +42,6 @@ const AdminProfile: NextPage = () => {
     }
   );
 
-  console.log('user', user);
   const handleSubmitProfileImage = async () => {
     setLoadingUploadImage(true);
     // const res = await ApiUpdateProfile({

@@ -56,6 +56,7 @@ import {
 } from '@/api/pengajuanBuku';
 import { getProdiName } from '@/utils';
 import { getColorStatus } from '@/utils/colors';
+import { includes, some } from 'lodash';
 
 interface IDataRow {
   id: string;
@@ -122,6 +123,23 @@ const PermintaanBukuAdmin: NextPage = () => {
     ],
     []
   );
+  const [searching, setSearching] = useState('');
+
+  const onChangeSearching = (e: any) => {
+    setSearching(e.target.value);
+  };
+
+  const filteredData = () => {
+    let data = dataPengguna;
+    if (searching) {
+      data = data.filter((data) => {
+        const haystack = [data.namaPengajuan.toLowerCase()];
+        return some(haystack, (el) => includes(el, searching.toLowerCase()));
+      });
+    }
+
+    return data;
+  };
 
   const getListPengguna = async () => {
     const res = await ApiGetListPengajuanBuku();
@@ -176,7 +194,11 @@ const PermintaanBukuAdmin: NextPage = () => {
               <Box>
                 <FormLabel>Cari nama pengajuan</FormLabel>
                 <InputGroup w='500px' size='md'>
-                  <Input placeholder='Cari nama pengajuan...' />
+                  <Input
+                    placeholder='Cari nama pengajuan...'
+                    onChange={onChangeSearching}
+                    value={searching}
+                  />
                   <InputRightElement>
                     <IconButton
                       aria-label='cari'
@@ -190,7 +212,7 @@ const PermintaanBukuAdmin: NextPage = () => {
             <Box my='3'>
               <CustomTable
                 columns={columns}
-                data={dataPengguna}
+                data={filteredData()}
                 getListPengguna={getListPengguna}
               />
               <Link href='/admin/permintaan-buku/rekapan-permintaan-buku'>

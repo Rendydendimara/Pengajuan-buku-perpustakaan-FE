@@ -1,3 +1,4 @@
+import { includes, some } from 'lodash';
 import AppTemplate from '@/components/templates/AppTemplate';
 import Layout from '@/components/templates/Layout';
 import { APP_NAME } from '@/constant';
@@ -119,6 +120,24 @@ const ListBukuKatalogAdmin: NextPage = () => {
     []
   );
 
+  const [searching, setSearching] = useState('');
+
+  const onChangeSearching = (e: any) => {
+    setSearching(e.target.value);
+  };
+
+  const filteredData = () => {
+    let data = dataPengguna;
+    if (searching) {
+      data = data.filter((data) => {
+        const haystack = [data.judulBuku.toLowerCase()];
+        return some(haystack, (el) => includes(el, searching.toLowerCase()));
+      });
+    }
+
+    return data;
+  };
+
   const getListPengguna = async (catalogIdNew?: string) => {
     const res = await ApiGetListBuku({
       type: 'byKatalog',
@@ -219,7 +238,11 @@ const ListBukuKatalogAdmin: NextPage = () => {
                   <Box>
                     <FormLabel>Cari nama</FormLabel>
                     <InputGroup w='500px' size='md'>
-                      <Input placeholder='Cari nama...' />
+                      <Input
+                        placeholder='Cari nama...'
+                        onChange={onChangeSearching}
+                        value={searching}
+                      />
                       <InputRightElement>
                         <IconButton
                           aria-label='cari'
@@ -235,7 +258,7 @@ const ListBukuKatalogAdmin: NextPage = () => {
             <Box my='3'>
               <CustomTable
                 columns={columns}
-                data={dataPengguna}
+                data={filteredData()}
                 getListPengguna={getListPengguna}
               />
             </Box>

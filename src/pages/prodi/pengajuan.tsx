@@ -140,12 +140,6 @@ const PengajuanProdi: NextPage = () => {
           });
         }
       });
-      console.log({
-        dataBuku: JSON.stringify(dataBuku),
-        bukuLink: JSON.stringify(bukuLink),
-        dosenProdi: user?._id,
-        pesanDosen: informasiTambahan,
-      });
 
       const res = await ApiCreatePengajuanBuku({
         dataBuku: JSON.stringify(dataBuku),

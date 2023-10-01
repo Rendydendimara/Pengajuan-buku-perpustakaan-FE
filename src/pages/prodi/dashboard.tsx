@@ -154,7 +154,6 @@ const DashboardProdi: NextPage = () => {
         });
       }
       setDataStatistikGrafik(result);
-      console.log('groupByDate', groupByDate);
     } else {
       toast({
         status: 'error',

@@ -1,6 +1,7 @@
 import Axios from 'axios';
 import { BACKEND_URL } from '../constant';
 import { AxiosWithToken } from '../lib/axios';
+import fileDownload from 'js-file-download';
 
 export const ApiCreatePengajuanBuku = async (data: {
   dataBuku: string;
@@ -184,6 +185,35 @@ export const ApiChangeStatusPengajuanBuku = async (data: {
       status: 500,
       data: {
         message: 'Server error.',
+      },
+    };
+  }
+};
+
+export const ApiCetakRekapan = async (tahun?: string) => {
+  const response = await Axios.get(
+    `${BACKEND_URL}/pengajuan-buku/cetak-rekapan?tahun=${tahun}`,
+    {
+      responseType: 'blob',
+    }
+  )
+    .then((response) => {
+      fileDownload(
+        response.data,
+        `${new Date().getTime().toString()}-laporan.pdf`
+      );
+      return response;
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  if (response) {
+    return response;
+  } else {
+    return {
+      status: 500,
+      data: {
+        message: 'Server error. Silakan hubungi admin',
       },
     };
   }

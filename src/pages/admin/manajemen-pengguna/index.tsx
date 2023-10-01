@@ -42,6 +42,7 @@ import { usePagination, useTable } from 'react-table';
 import { BiArrowBack } from 'react-icons/bi';
 import { privateRouteAdmin } from '@/lib/withprivateRouteAdmin';
 import { ApiGetListDosenProdi } from '@/api/dosenProdi';
+import { includes, some } from 'lodash';
 
 interface IDataRow {
   id: string;
@@ -97,6 +98,23 @@ const ManajemenPenggunaAdmin: NextPage = () => {
     ],
     []
   );
+  const [searching, setSearching] = useState('');
+
+  const onChangeSearching = (e: any) => {
+    setSearching(e.target.value);
+  };
+
+  const filteredData = () => {
+    let data: any = dataPengguna;
+    if (searching) {
+      data = data.filter((data: any) => {
+        const haystack = [data.nama.toLowerCase()];
+        return some(haystack, (el) => includes(el, searching.toLowerCase()));
+      });
+    }
+
+    return data;
+  };
 
   const getListPengguna = async () => {
     const res = await ApiGetListDosenProdi();
@@ -161,7 +179,11 @@ const ManajemenPenggunaAdmin: NextPage = () => {
               <Box>
                 <FormLabel>Cari nama</FormLabel>
                 <InputGroup w='500px' size='md'>
-                  <Input placeholder='Cari nama...' />
+                  <Input
+                    placeholder='Cari nama...'
+                    onChange={onChangeSearching}
+                    value={searching}
+                  />
                   <InputRightElement>
                     <IconButton
                       aria-label='cari'
@@ -175,7 +197,7 @@ const ManajemenPenggunaAdmin: NextPage = () => {
             <Box my='3'>
               <CustomTable
                 columns={columns}
-                data={dataPengguna}
+                data={filteredData()}
                 getListPengguna={getListPengguna}
               />
             </Box>

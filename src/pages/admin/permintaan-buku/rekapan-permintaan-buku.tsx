@@ -24,7 +24,10 @@ import {
   createStandaloneToast,
 } from '@chakra-ui/react';
 import { AiOutlineFilePdf } from 'react-icons/ai';
-import { ApiGetRekapanPengajuanBuku } from '@/api/pengajuanBuku';
+import {
+  ApiCetakRekapan,
+  ApiGetRekapanPengajuanBuku,
+} from '@/api/pengajuanBuku';
 import { groupBy } from 'lodash';
 import { privateRouteAdmin } from '@/lib/withprivateRouteAdmin';
 
@@ -68,6 +71,7 @@ let resulttif: IBukuRekapan[] = [];
 const RekapanPermintaanBukuAdmin: NextPage = () => {
   const router = useRouter();
   const { toast } = createStandaloneToast();
+  const [loadingDownload, setLoadingDownload] = useState(false);
   const [dataRekapan, setDataRekapan] = useState<IDataRekapan>({
     hkm: [],
     pbi: [],
@@ -157,6 +161,22 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
         });
       });
     return result;
+  };
+
+  const handleCetakRekapan = async () => {
+    setLoadingDownload(true);
+    const res = await ApiCetakRekapan();
+    if (res.status !== 200) {
+      toast({
+        position: 'bottom',
+        title: 'Error',
+        description: res.data.message,
+        status: 'error',
+        duration: 8000,
+        isClosable: true,
+      });
+    }
+    setLoadingDownload(false);
   };
 
   const getListPengguna = async () => {
@@ -263,7 +283,12 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
               <TableRekap title='Hukum' data={dataRekapan.hkm} />
               <TableRekap title='Ekonomi Pembangunan' data={dataRekapan.ekm} />
               <TableRekap title='Manajemen' data={dataRekapan.man} />
-              <Button colorScheme='purple' leftIcon={<AiOutlineFilePdf />}>
+              <Button
+                isLoading={loadingDownload}
+                onClick={handleCetakRekapan}
+                colorScheme='purple'
+                leftIcon={<AiOutlineFilePdf />}
+              >
                 Cetak PDF
               </Button>
             </Box>

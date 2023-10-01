@@ -26,7 +26,7 @@ interface IReduxStateWorkspace {
   user?: any;
 }
 
-interface IKatalog {
+export interface IKatalog {
   name: string;
   id: string;
 }
@@ -312,14 +312,11 @@ const ItemBuku: React.FC<IItemBuku> = (props) => {
   const addToCart = (buku: IDataBuku) => {
     if (typeof window !== 'undefined') {
       let cartBuku: any = localStorage.getItem(LOCAL_CART_PRODI);
-      console.log(cartBuku);
       if (cartBuku) {
         cartBuku = JSON.parse(cartBuku);
         const exist = cartBuku.find((dt: IDataBuku) => dt._id === buku._id);
-        console.log('exist', exist);
         if (!exist) {
           cartBuku.push(buku);
-          console.log('cartBuku', cartBuku);
           localStorage.setItem(LOCAL_CART_PRODI, JSON.stringify(cartBuku));
           dispatch({
             type: 'SET_CART',

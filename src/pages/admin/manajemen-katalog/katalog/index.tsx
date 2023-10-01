@@ -37,7 +37,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { Select } from '@chakra-ui/select';
-import { findIndex } from 'lodash';
+import { findIndex, includes, some } from 'lodash';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -67,6 +67,23 @@ interface IDataRow {
 const ListKatalogAdmin: NextPage = () => {
   const router = useRouter();
   const [dataPengguna, setDataPengguna] = useState<[]>([]);
+  const [searching, setSearching] = useState('');
+
+  const onChangeSearching = (e: any) => {
+    setSearching(e.target.value);
+  };
+
+  const filteredData = () => {
+    let data: any = dataPengguna;
+    if (searching) {
+      data = data.filter((data: any) => {
+        const haystack = [data.namaKatalog.toLowerCase()];
+        return some(haystack, (el) => includes(el, searching.toLowerCase()));
+      });
+    }
+
+    return data;
+  };
   // const { showToast } = useGlobalContext();
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
   //   (state) => {
@@ -189,7 +206,11 @@ const ListKatalogAdmin: NextPage = () => {
                   <Box>
                     <FormLabel>Cari nama</FormLabel>
                     <InputGroup w='500px' size='md'>
-                      <Input placeholder='Cari nama...' />
+                      <Input
+                        placeholder='Cari nama...'
+                        onChange={onChangeSearching}
+                        value={searching}
+                      />
                       <InputRightElement>
                         <IconButton
                           aria-label='cari'
@@ -205,7 +226,7 @@ const ListKatalogAdmin: NextPage = () => {
             <Box my='3'>
               <CustomTable
                 columns={columns}
-                data={dataPengguna}
+                data={filteredData()}
                 getListPengguna={getListPengguna}
               />
             </Box>

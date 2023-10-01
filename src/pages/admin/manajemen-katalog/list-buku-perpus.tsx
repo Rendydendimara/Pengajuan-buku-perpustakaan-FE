@@ -2,7 +2,7 @@ import AppTemplate from '@/components/templates/AppTemplate';
 import Layout from '@/components/templates/Layout';
 import { APP_NAME } from '@/constant';
 import { Button, IconButton } from '@chakra-ui/button';
-import { FormLabel } from '@chakra-ui/form-control';
+import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -51,6 +51,9 @@ import { BiArrowBack } from 'react-icons/bi';
 import moment from 'moment';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { ApiGetListBuku } from '@/api/buku';
+import { includes, some } from 'lodash';
+import { IKatalog } from '@/pages/prodi/beranda';
+import { ApiGetListKatalogBuku } from '@/api/katalogBuku';
 
 interface IDataRow {
   id: string;
@@ -71,6 +74,7 @@ const ListBukuPerpusAdmin: NextPage = () => {
   const router = useRouter();
   const { toast } = createStandaloneToast();
   const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([]);
+  const [listKatalog, setListKatalog] = useState<IKatalog[]>([]);
   // const { showToast } = useGlobalContext();
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
   //   (state) => {
@@ -116,6 +120,23 @@ const ListBukuPerpusAdmin: NextPage = () => {
     ],
     []
   );
+  const [searching, setSearching] = useState('');
+
+  const onChangeSearching = (e: any) => {
+    setSearching(e.target.value);
+  };
+
+  const filteredData = () => {
+    let data = dataPengguna;
+    if (searching) {
+      data = data.filter((data) => {
+        const haystack = [data.judulBuku.toLowerCase()];
+        return some(haystack, (el) => includes(el, searching.toLowerCase()));
+      });
+    }
+
+    return data;
+  };
 
   const getListPengguna = async () => {
     const res = await ApiGetListBuku({ type: 'byPerpus' });
@@ -145,12 +166,33 @@ const ListBukuPerpusAdmin: NextPage = () => {
     }
   };
 
+  const getListKatalog = async () => {
+    const res = await ApiGetListKatalogBuku();
+    if (res.status === 200) {
+      let temp: IKatalog[] = [];
+      for (const data of res.data.data) {
+        temp.push({
+          id: data._id,
+          name: data.name,
+        });
+      }
+      setListKatalog(temp);
+    } else {
+      toast({
+        title: 'Gagal',
+        description: res.data.message,
+        status: 'error',
+      });
+    }
+  };
+
   const back = () => {
     router.back();
   };
 
   useEffect(() => {
     getListPengguna();
+    getListKatalog();
   }, []);
 
   return (
@@ -180,31 +222,39 @@ const ListBukuPerpusAdmin: NextPage = () => {
                   </Button>
                 </Link>
               </Flex>
-              <Box>
-                <FormLabel>Filter</FormLabel>
-                <Select>
-                  <option value=''>Penerbit A </option>
-                  <option value=''>Penerbit B </option>
-                  <option value=''>Penerbit C </option>
-                  <option value=''>Penerbit D </option>
-                </Select>
-                {/* <InputGroup w='500px' size='md'>
-                  <Input placeholder='Cari nama...' />
-                  <InputRightElement>
-                    <IconButton
-                      aria-label='cari'
-                      // onClick={handleClick}
-                      icon={<Search2Icon />}
+              <Flex w='full' alignItems='center' gap='20px'>
+                {/* <FormControl>
+                  <FormLabel>Filter</FormLabel>
+                  <Select>
+                    <option value=''>Semua</option>
+                    {listKatalog.map((kat, i) => (
+                      <option value={kat.name}>{kat.name}</option>
+                    ))}
+                  </Select>
+                </FormControl> */}
+                <FormControl>
+                  <InputGroup w='500px' size='md'>
+                    <Input
+                      placeholder='Cari nama...'
+                      onChange={onChangeSearching}
+                      value={searching}
                     />
-                  </InputRightElement>
-                </InputGroup> */}
-              </Box>
+                    <InputRightElement>
+                      <IconButton
+                        aria-label='cari'
+                        // onClick={handleClick}
+                        icon={<Search2Icon />}
+                      />
+                    </InputRightElement>
+                  </InputGroup>
+                </FormControl>
+              </Flex>
             </Flex>
             <Box my='3'>
               <CustomTable
                 columns={columns}
-                data={dataPengguna}
-                getListPengguna={getListPengguna}
+                data={filteredData()}
+                getListPenggfilteredDatana={getListPengguna}
               />
             </Box>
           </Box>

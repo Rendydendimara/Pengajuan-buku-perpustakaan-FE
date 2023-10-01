@@ -131,7 +131,6 @@ const BerandaAdmin: NextPage = () => {
         });
       }
       setDataStatistikGrafik(result);
-      console.log('groupByDate', groupByDate);
     } else {
       toast({
         status: 'error',
