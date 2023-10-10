@@ -100,7 +100,83 @@ const DetailPengajuanProdi: NextPage = () => {
                   </Flex>
                   <Text>: {data?._id}</Text>
                 </Flex>
+                <Flex alignItems='center' gap='15px'>
+                  <Flex
+                    borderColor='blue'
+                    minW='300px'
+                    borderWidth='1px'
+                    alignItems='center'
+                    justifyContent='center'
+                    padding='2'
+                  >
+                    Pesan Dari Prodi
+                  </Flex>
+                  <Text maxW='500px'>: {data?.pesanDosen}</Text>
+                </Flex>
 
+                <Flex alignItems='center' gap='15px'>
+                  <Flex
+                    borderColor='blue'
+                    minW='300px'
+                    borderWidth='1px'
+                    alignItems='center'
+                    justifyContent='center'
+                    padding='2'
+                  >
+                    Status
+                  </Flex>
+                  <Flex
+                    padding='1'
+                    borderRadius='10px'
+                    alignItems='center'
+                    bgColor={getColorStatus(data?.status ?? '')}
+                    justifyContent='center'
+                  >
+                    <Text color='white' fontWeight='700'>
+                      {data?.status}
+                    </Text>
+                  </Flex>
+                </Flex>
+
+                <Flex alignItems='center' gap='15px'>
+                  <Flex
+                    borderColor='blue'
+                    minW='300px'
+                    borderWidth='1px'
+                    alignItems='center'
+                    justifyContent='center'
+                    padding='2'
+                  >
+                    Pesan Dari Admin
+                  </Flex>
+                  <Text maxW='500px'>: {data?.pesanAdmin}</Text>
+                </Flex>
+                <Flex alignItems='center' gap='15px'>
+                  <Flex
+                    borderColor='blue'
+                    minW='300px'
+                    borderWidth='1px'
+                    alignItems='center'
+                    justifyContent='center'
+                    padding='2'
+                  >
+                    Jumlah Buku
+                  </Flex>
+                  <Text>: {data?.jumlah}</Text>
+                </Flex>
+                <Flex alignItems='center' gap='15px'>
+                  <Flex
+                    borderColor='blue'
+                    minW='300px'
+                    borderWidth='1px'
+                    alignItems='center'
+                    justifyContent='center'
+                    padding='2'
+                  >
+                    Jumlah Total Buku
+                  </Flex>
+                  <Text>: {getJumlahTotalBuku()}</Text>
+                </Flex>
                 <Flex alignItems='flex-start' gap='15px'>
                   <Flex
                     borderColor='blue'
@@ -177,83 +253,6 @@ const DetailPengajuanProdi: NextPage = () => {
                       </Flex>
                     ))}
                   </VStack>
-                </Flex>
-                <Flex alignItems='center' gap='15px'>
-                  <Flex
-                    borderColor='blue'
-                    minW='300px'
-                    borderWidth='1px'
-                    alignItems='center'
-                    justifyContent='center'
-                    padding='2'
-                  >
-                    Jumlah Buku
-                  </Flex>
-                  <Text>: {data?.jumlah}</Text>
-                </Flex>
-                <Flex alignItems='center' gap='15px'>
-                  <Flex
-                    borderColor='blue'
-                    minW='300px'
-                    borderWidth='1px'
-                    alignItems='center'
-                    justifyContent='center'
-                    padding='2'
-                  >
-                    Jumlah Total Buku
-                  </Flex>
-                  <Text>: {getJumlahTotalBuku()}</Text>
-                </Flex>
-                <Flex alignItems='center' gap='15px'>
-                  <Flex
-                    borderColor='blue'
-                    minW='300px'
-                    borderWidth='1px'
-                    alignItems='center'
-                    justifyContent='center'
-                    padding='2'
-                  >
-                    Informasi Tambahan
-                  </Flex>
-                  <Text maxW='500px'>: {data?.pesanDosen}</Text>
-                </Flex>
-
-                <Flex alignItems='center' gap='15px'>
-                  <Flex
-                    borderColor='blue'
-                    minW='300px'
-                    borderWidth='1px'
-                    alignItems='center'
-                    justifyContent='center'
-                    padding='2'
-                  >
-                    Status
-                  </Flex>
-                  <Flex
-                    padding='1'
-                    borderRadius='10px'
-                    alignItems='center'
-                    bgColor={getColorStatus(data?.status ?? '')}
-                    justifyContent='center'
-                  >
-                    <Text color='white' fontWeight='700'>
-                      {data?.status}
-                    </Text>
-                  </Flex>
-                </Flex>
-
-                <Flex alignItems='center' gap='15px'>
-                  <Flex
-                    borderColor='blue'
-                    minW='300px'
-                    borderWidth='1px'
-                    alignItems='center'
-                    justifyContent='center'
-                    padding='2'
-                  >
-                    Informasi Admin
-                  </Flex>
-                  <Text maxW='500px'>: {data?.pesanAdmin}</Text>
                 </Flex>
               </VStack>
             </Box>

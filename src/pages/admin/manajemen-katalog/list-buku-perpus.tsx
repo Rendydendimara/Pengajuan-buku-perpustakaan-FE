@@ -64,6 +64,7 @@ interface IDataRow {
   tanggalUpload: string;
   tahun: string;
   aksi: string;
+  jumlahTersedia: number;
 }
 
 // interface IReduxStateWorkspace {
@@ -101,10 +102,10 @@ const ListBukuPerpusAdmin: NextPage = () => {
         Header: 'Penulis',
         accessor: 'penulis',
       },
-      // {
-      //   Header: 'Penerbit',
-      //   accessor: 'penerbit',
-      // },
+      {
+        Header: 'Jumlah Tersedia',
+        accessor: 'jumlahTersedia',
+      },
       {
         Header: 'Tanggal Upload',
         accessor: 'tanggalUpload',
@@ -154,6 +155,7 @@ const ListBukuPerpusAdmin: NextPage = () => {
           tanggalUpload: moment(data.createdAt).format('L'),
           tahun: data.tahunTerbit,
           aksi: data._id,
+          jumlahTersedia: 10,
         });
       }
       setDataPengguna(temp);

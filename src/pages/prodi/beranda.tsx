@@ -58,7 +58,7 @@ const BerandaProdi: NextPage = () => {
     let res = await ApiGetListBuku({ prodi: user?.programStudi ?? 'umum' });
     if (res.status === 200) {
       let i = 0;
-      for (const data of res.data.data) {
+      for (const data of res.data.data.slice(0, 50)) {
         i += 1;
         temp.push({
           no: i,
@@ -77,7 +77,7 @@ const BerandaProdi: NextPage = () => {
     res = await ApiGetListBuku({ prodi: 'umum' });
     if (res.status === 200) {
       let i = 0;
-      for (const data of res.data.data) {
+      for (const data of res.data.data.slice(0, 50)) {
         i += 1;
         temp.push({
           no: i,
@@ -90,6 +90,7 @@ const BerandaProdi: NextPage = () => {
           bahasa: data.bahasa,
           prodi: data.prodi,
           tanggalUpload: moment(data.createdAt).format('L'),
+          tipeBuku: data.tipeBuku,
         });
       }
       setDataBuku(temp);
@@ -390,6 +391,12 @@ const ItemBuku: React.FC<IItemBuku> = (props) => {
         <Box>
           <Text>Bahasa: {props.buku.bahasa}</Text>
           <Text>Tahun terbit: {props.buku.tahunTerbit}</Text>
+          <Text fontStyle='italic'>
+            Info:{' '}
+            {props.buku.tipeBuku === 'byPerpus'
+              ? 'Tersedia Di Perpustakaana (10 buah)'
+              : 'Belum tersedia di perpustakaan'}{' '}
+          </Text>
         </Box>
         <Box>
           <Button

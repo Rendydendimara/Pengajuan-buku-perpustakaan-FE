@@ -544,7 +544,7 @@ function CustomTable({ columns, data, getListPengguna }: any) {
               pengajuan ?
             </Text>
             <FormControl my='5' id='email' isRequired>
-              <FormLabel>Informasi tambahan</FormLabel>
+              <FormLabel>Pesan Dari Prodi</FormLabel>
               <Textarea
                 value={formStatus.pesan}
                 onChange={changePesan}

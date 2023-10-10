@@ -273,7 +273,15 @@ const PengajuanProdi: NextPage = () => {
                       {dataCart.map((crt: IDataCart, i: number) => (
                         <Tr key={i}>
                           <Td>{getProdiName(crt.prodi)}</Td>
-                          <Td>{crt.judul}</Td>
+                          <Td>
+                            <Text
+                              maxWidth='300px'
+                              minWidth='300px'
+                              whiteSpace='break-spaces'
+                            >
+                              {crt.judul}
+                            </Text>
+                          </Td>
                           <Td>{crt.katalog}</Td>
                           <Td>
                             <Input
@@ -298,7 +306,7 @@ const PengajuanProdi: NextPage = () => {
                   </Table>
                 </TableContainer>
 
-                <Box mt='5' mb='30px'>
+                {/* <Box mt='5' mb='30px'>
                   <Text fontSize='lg' fontWeight='700'>
                     Buku Link
                   </Text>
@@ -344,27 +352,29 @@ const PengajuanProdi: NextPage = () => {
                   >
                     Tambah
                   </Button>
-                </Box>
-                <Text
-                  mt='40px'
-                  as='span'
-                  fontSize='xl'
-                  color='blue.700'
-                  fontWeight='bold'
-                  _hover={{
-                    cursor: 'pointer',
-                    textDecoration: 'underline',
-                    color: 'blue',
-                  }}
-                >
-                  <a
-                    target='_blank'
-                    href='https://docs.google.com/forms/u/0/'
-                    rel='noopener noreferrer'
+                </Box> */}
+                <Box mt='10'>
+                  <Text
+                    mt='10'
+                    as='span'
+                    fontSize='xl'
+                    color='blue.700'
+                    fontWeight='bold'
+                    _hover={{
+                      cursor: 'pointer',
+                      textDecoration: 'underline',
+                      color: 'blue',
+                    }}
                   >
-                    Link Pengajuan
-                  </a>
-                </Text>
+                    <a
+                      target='_blank'
+                      href='https://docs.google.com/forms/u/0/'
+                      rel='noopener noreferrer'
+                    >
+                      Link Pengajuan
+                    </a>
+                  </Text>
+                </Box>
               </Box>
 
               <Box w='30%'>
@@ -386,7 +396,7 @@ const PengajuanProdi: NextPage = () => {
                         Program Studi: {getProdiName(user?.programStudi)}
                       </Text>
                       <FormControl>
-                        <FormLabel>Informasi Tambahan:</FormLabel>
+                        <FormLabel>Pesan Dari Prodi:</FormLabel>
                         <Textarea
                           value={informasiTambahan}
                           onChange={onChangeInformasiTambahan}

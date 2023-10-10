@@ -21,6 +21,7 @@ export interface IDataBuku {
   harga?: number;
   katalogId: string;
   tanggalUpload: string;
+  tipeBuku?: 'byKatalog' | 'byPerpus';
 }
 
 export interface IPengajuanBuku {
