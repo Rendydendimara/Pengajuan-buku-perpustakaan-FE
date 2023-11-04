@@ -163,7 +163,6 @@ const TambahBukuAdmin: NextPage = () => {
     if (res.status === 200) {
       setCatalogData(res.data.data);
     } else {
-      console.log('back');
       Router.push(`/admin/manajemen-katalog/katalog/`);
     }
   };

@@ -175,16 +175,18 @@ const PengajuanProdi: NextPage = () => {
   };
 
   const onChangeCount = (id: string, e: any) => {
-    const index = findIndex(dataCart, ['id', id]);
-    if (index != -1) {
-      setDataCart([
-        ...dataCart.slice(0, index),
-        {
-          ...dataCart[index],
-          jumlah: Number(e.target.value),
-        },
-        ...dataCart.slice(index + 1, dataCart.length),
-      ]);
+    if (!isNaN(e.target.value)) {
+      const index = findIndex(dataCart, ['id', id]);
+      if (index != -1) {
+        setDataCart([
+          ...dataCart.slice(0, index),
+          {
+            ...dataCart[index],
+            jumlah: Number(e.target.value),
+          },
+          ...dataCart.slice(index + 1, dataCart.length),
+        ]);
+      }
     }
   };
 
@@ -288,7 +290,7 @@ const PengajuanProdi: NextPage = () => {
                               value={crt.jumlah}
                               borderColor='blue'
                               w='80px'
-                              type='number'
+                              // type='ST'
                               onChange={(e) => onChangeCount(crt.id, e)}
                             />
                           </Td>

@@ -22,6 +22,7 @@ import {
   TableCaption,
   TableContainer,
   createStandaloneToast,
+  FormControl,
 } from '@chakra-ui/react';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import {
@@ -30,6 +31,7 @@ import {
 } from '@/api/pengajuanBuku';
 import { groupBy } from 'lodash';
 import { privateRouteAdmin } from '@/lib/withprivateRouteAdmin';
+import { getProdiName } from '@/utils';
 
 interface IDataRow {
   id: string;
@@ -72,7 +74,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
   const router = useRouter();
   const { toast } = createStandaloneToast();
   const [loadingDownload, setLoadingDownload] = useState(false);
-  const [dataRekapan, setDataRekapan] = useState<IDataRekapan>({
+  const [dataRekapan, setDataRekapan] = useState<IDataRekapan | any>({
     hkm: [],
     pbi: [],
     man: [],
@@ -84,14 +86,11 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
     thp: [],
     tif: [],
   });
-  // const { showToast } = useGlobalContext();
-  // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
-  //   (state) => {
-  //     return {
-  //       user: state.user.user,
-  //     };
-  //   }
-  // );
+  const [form, setForm] = useState({
+    tahun: '',
+    prodi: '',
+  });
+
   const columns = useMemo(
     () => [
       {
@@ -165,7 +164,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
 
   const handleCetakRekapan = async () => {
     setLoadingDownload(true);
-    const res = await ApiCetakRekapan();
+    const res = await ApiCetakRekapan(form);
     if (res.status !== 200) {
       toast({
         position: 'bottom',
@@ -228,6 +227,20 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
     router.back();
   };
 
+  const onChangeProdi = (e: any) => {
+    setForm({
+      ...form,
+      prodi: e.target.value,
+    });
+  };
+
+  const onChangeTahun = (e: any) => {
+    setForm({
+      ...form,
+      tahun: e.target.value,
+    });
+  };
+
   useEffect(() => {
     getListPengguna();
   }, []);
@@ -240,6 +253,58 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <AppTemplate>
+        <Flex mt='6' gap='10px' alignItems='center'>
+          <FormControl my='3' id='nama_lengkap' isRequired w="200px">
+            <FormLabel>Prodi</FormLabel>
+            <Select
+              name='programStudi'
+              value={form.prodi}
+              onChange={onChangeProdi}
+              placeholder='Pilih Prodi'
+            >
+              <option value='semua'>Semua</option>
+              <option value='tif'>Teknik Informatika</option>
+              <option value='ptk'>Peternakan</option>
+              <option value='agb'>Agribisnis</option>
+              <option value='agt'>Agroteknologi</option>
+              <option value='thp'>Teknologi Hasil Perikanan</option>
+              <option value='hkm'>Hukum</option>
+              <option value='pbi'>Pendidikan Biologi</option>
+              <option value='man'>Manajemen</option>
+              <option value='ekm'>Ekonomi Pembangunan</option>
+              <option value='pmt'>Pendidikan Matematika</option>
+              <option value='umum'>Umum</option>
+            </Select>
+          </FormControl>
+          <FormControl w="200px">
+            <FormLabel>Tahun</FormLabel>
+            <Select
+              onChange={onChangeTahun}
+              value={form.tahun}
+              placeholder='Pilih tahun'
+            >
+              <option value='2014'>2014</option>
+              <option value='2015'>2015</option>
+              <option value='2016'>2016</option>
+              <option value='2017'>2017</option>
+              <option value='2018'>2018</option>
+              <option value='2019'>2019</option>
+              <option value='2020'>2020</option>
+              <option value='2021'>2021</option>
+              <option value='2022'>2022</option>
+              <option value='2023'>2023</option>
+            </Select>
+          </FormControl>
+          <Button
+            mt="30px"
+            isLoading={loadingDownload}
+            onClick={handleCetakRekapan}
+            colorScheme='purple'
+            leftIcon={<AiOutlineFilePdf />}
+          >
+            Cetak PDF
+          </Button>
+        </Flex>
         <Box p='4' minH='100vh'>
           <Text fontWeight='700' color='gray.700' fontSize='2xl'>
             Rekapan Permintaan Buku
@@ -267,30 +332,30 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
               </Box>
             </Flex> */}
             <Box my='4'>
-              <TableRekap title='Teknik Informatika' data={dataRekapan.tif} />
-              <TableRekap title='Peternakan' data={dataRekapan.ptk} />
-              <TableRekap
-                title='Teknologi Hasil Perikanan'
-                data={dataRekapan.thp}
-              />
-              <TableRekap title='Agribisnis' data={dataRekapan.agb} />
-              <TableRekap title='Agroteknologi' data={dataRekapan.agt} />
-              <TableRekap
-                title='Pendidikan Matematika'
-                data={dataRekapan.pmt}
-              />
-              <TableRekap title='Pendidikan Biologi' data={dataRekapan.pbi} />
-              <TableRekap title='Hukum' data={dataRekapan.hkm} />
-              <TableRekap title='Ekonomi Pembangunan' data={dataRekapan.ekm} />
-              <TableRekap title='Manajemen' data={dataRekapan.man} />
-              <Button
-                isLoading={loadingDownload}
-                onClick={handleCetakRekapan}
-                colorScheme='purple'
-                leftIcon={<AiOutlineFilePdf />}
-              >
-                Cetak PDF
-              </Button>
+              {form.prodi === '' || form.prodi === 'semua' ?
+                <>
+                  <TableRekap title='Teknik Informatika' data={dataRekapan.tif} />
+                  <TableRekap title='Peternakan' data={dataRekapan.ptk} />
+                  <TableRekap
+                    title='Teknologi Hasil Perikanan'
+                    data={dataRekapan.thp}
+                  />
+                  <TableRekap title='Agribisnis' data={dataRekapan.agb} />
+                  <TableRekap title='Agroteknologi' data={dataRekapan.agt} />
+                  <TableRekap
+                    title='Pendidikan Matematika'
+                    data={dataRekapan.pmt}
+                  />
+                  <TableRekap title='Pendidikan Biologi' data={dataRekapan.pbi} />
+                  <TableRekap title='Hukum' data={dataRekapan.hkm} />
+                  <TableRekap title='Ekonomi Pembangunan' data={dataRekapan.ekm} />
+                  <TableRekap title='Manajemen' data={dataRekapan.man} />
+                </>
+                :
+                <>
+                  <TableRekap title={getProdiName(form.prodi)} data={dataRekapan[form.prodi]} />
+                </>
+              }
             </Box>
           </Box>
         </Box>

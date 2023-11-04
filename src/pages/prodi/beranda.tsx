@@ -190,7 +190,7 @@ const BerandaProdi: NextPage = () => {
       <AppTemplateProdi>
         <Box w='full' mt='15'>
           <Text fontSize='lg' fontWeight='700'>
-            Prodi Teknik Informatika
+            Prodi Teknik Informatika (Hardcode)
           </Text>
           <Flex mt='6' gap='10px' alignItems='center'>
             <FormControl w='fit-content'>

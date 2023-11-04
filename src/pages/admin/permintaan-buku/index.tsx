@@ -362,39 +362,46 @@ function CustomTable({ columns, data, getListPengguna }: any) {
                     return (
                       <Td key={y} {...cell.getCellProps()}>
                         <Flex alignItems='center' gap='10px'>
-                          <Button
-                            isLoading={loading}
-                            onClick={() => {
-                              setModalType('reject');
-                              onOpenChangeStatus(row.original.id, 'ditolak');
-                            }}
-                            colorScheme='red'
-                            size='sm'
-                          >
-                            Tolak
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              setModalType('accept');
-                              onOpenChangeStatus(row.original.id, 'diterima');
-                            }}
-                            isLoading={loading}
-                            colorScheme='green'
-                            size='sm'
-                          >
-                            Terima
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              setModalType('selesai');
-                              onOpenChangeStatus(row.original.id, 'selesai');
-                            }}
-                            isLoading={loading}
-                            colorScheme='green'
-                            size='sm'
-                          >
-                            Selesai
-                          </Button>
+                          {row.original.status === 'diproses' || row.original.status === 'diterima' ? (
+                            <Button
+                              isLoading={loading}
+                              onClick={() => {
+                                setModalType('reject');
+                                onOpenChangeStatus(row.original.id, 'ditolak');
+                              }}
+                              colorScheme='red'
+                              size='sm'
+                            >
+                              Tolak
+                            </Button>
+                          ) : null}
+                          {row.original.status === 'diproses' && (
+                            <Button
+                              onClick={() => {
+                                setModalType('accept');
+                                onOpenChangeStatus(row.original.id, 'diterima');
+                              }}
+                              isLoading={loading}
+                              colorScheme='green'
+                              size='sm'
+                            >
+                              Terima
+                            </Button>
+                          )}
+                          {row.original.status === 'diterima' && (
+                            <Button
+                              onClick={() => {
+                                setModalType('selesai');
+                                onOpenChangeStatus(row.original.id, 'selesai');
+                              }}
+                              isLoading={loading}
+                              colorScheme='green'
+                              size='sm'
+                            >
+                              Selesai
+                            </Button>
+
+                          )}
                           <Button
                             onClick={() => detailPage(row.original.id)}
                             colorScheme='blue'
@@ -415,7 +422,7 @@ function CustomTable({ columns, data, getListPengguna }: any) {
                           bgColor={getColorStatus(row.original.status)}
                           justifyContent='center'
                         >
-                          <Text color='white' fontWeight='700'>
+                          <Text color='black' fontWeight='700'>
                             {row.original.status}
                           </Text>
                         </Center>
@@ -528,8 +535,8 @@ function CustomTable({ columns, data, getListPengguna }: any) {
             {modalType === 'reject'
               ? 'Tolak'
               : modalType === 'accept'
-              ? 'Terima'
-              : 'Selesai'}{' '}
+                ? 'Terima'
+                : 'Selesai'}{' '}
             Pengajuan
           </ModalHeader>
           <ModalCloseButton />
@@ -539,8 +546,8 @@ function CustomTable({ columns, data, getListPengguna }: any) {
               {modalType === 'reject'
                 ? 'menolak'
                 : modalType === 'accept'
-                ? 'menerima'
-                : 'menyelesaikan'}{' '}
+                  ? 'menerima'
+                  : 'menyelesaikan'}{' '}
               pengajuan ?
             </Text>
             <FormControl my='5' id='email' isRequired>

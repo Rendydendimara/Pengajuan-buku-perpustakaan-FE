@@ -51,6 +51,7 @@ export const ApiGetListPengajuanBuku = async () => {
     };
   }
 };
+
 export const ApiGetRekapanPengajuanBuku = async () => {
   const response = await AxiosWithToken()
     .get(`${BACKEND_URL}/pengajuan-buku/get-rekapan`)
@@ -93,33 +94,33 @@ export const ApiGetListPengajuanBukuByDosen = async (dosenId: string) => {
   }
 };
 
-export const ApiUpdatePengajuanBuku = async (data: {
-  buku: string;
-  jumlah: number;
-  pesanAdmin: string;
-  pesanDosen: string;
-  status: string;
-  id: string;
-}) => {
-  const response = await Axios.put(`${BACKEND_URL}/pengajuan-buku/update`, data)
-    .then((response) => {
-      return response;
-    })
-    .catch((error) => {
-      return error.response;
-    });
+// export const ApiUpdatePengajuanBuku = async (data: {
+//   buku: string;
+//   jumlah: number;
+//   pesanAdmin: string;
+//   pesanDosen: string;
+//   status: string;
+//   id: string;
+// }) => {
+//   const response = await Axios.put(`${BACKEND_URL}/pengajuan-buku/update`, data)
+//     .then((response) => {
+//       return response;
+//     })
+//     .catch((error) => {
+//       return error.response;
+//     });
 
-  if (response) {
-    return response;
-  } else {
-    return {
-      status: 500,
-      data: {
-        message: 'Server error.',
-      },
-    };
-  }
-};
+//   if (response) {
+//     return response;
+//   } else {
+//     return {
+//       status: 500,
+//       data: {
+//         message: 'Server error.',
+//       },
+//     };
+//   }
+// };
 
 export const ApiDeletePengajuanBuku = async (id: string) => {
   const response = await AxiosWithToken()
@@ -190,9 +191,12 @@ export const ApiChangeStatusPengajuanBuku = async (data: {
   }
 };
 
-export const ApiCetakRekapan = async (tahun?: string) => {
+export const ApiCetakRekapan = async (form: {
+  tahun: string;
+  prodi: string;
+}) => {
   const response = await Axios.get(
-    `${BACKEND_URL}/pengajuan-buku/cetak-rekapan?tahun=${tahun}`,
+    `${BACKEND_URL}/pengajuan-buku/cetak-rekapan?tahun=${form.tahun}&prodi=${form.prodi}`,
     {
       responseType: 'blob',
     }
@@ -214,6 +218,57 @@ export const ApiCetakRekapan = async (tahun?: string) => {
       status: 500,
       data: {
         message: 'Server error. Silakan hubungi admin',
+      },
+    };
+  }
+};
+
+export const ApiChangeStatusPengajuanBukuItemBuku = async (data: {
+  status: string; pengajuanId: string; bukuId: string;
+}) => {
+  const response = await Axios.post(
+    `${BACKEND_URL}/pengajuan-buku/change-status-item-buku`,
+    data
+  )
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  if (response) {
+    return response;
+  } else {
+    return {
+      status: 500,
+      data: {
+        message: 'Server error.',
+      },
+    };
+  }
+};
+
+
+export const ApiChangeAllStatusPengajuanBukuItemBuku = async (data: {
+  status: string; pengajuanId: string;
+}) => {
+  const response = await Axios.post(
+    `${BACKEND_URL}/pengajuan-buku/change-all-status-item-buku`,
+    data
+  )
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      return error.response;
+    });
+  if (response) {
+    return response;
+  } else {
+    return {
+      status: 500,
+      data: {
+        message: 'Server error.',
       },
     };
   }

@@ -2,17 +2,29 @@ import { ApiGetDetailPengajuanBuku } from '@/api/pengajuanBuku';
 import AppTemplateProdi from '@/components/templates/AppTemplateProdi';
 import LayoutProdi from '@/components/templates/LayoutProdi';
 import { APP_NAME } from '@/constant';
-import { IPengajuanBuku } from '@/interface';
+import { IDataBuku, IPengajuanBuku } from '@/interface';
 import { getColorStatus } from '@/utils/colors';
 import { Button } from '@chakra-ui/button';
 import { Box, Flex, Text, VStack } from '@chakra-ui/layout';
 import { createStandaloneToast } from '@chakra-ui/toast';
+import moment from 'moment';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { BiArrowBack } from 'react-icons/bi';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
+} from '@chakra-ui/react'
 
 // interface IReduxStateWorkspace {
 //   user?: IUser;
@@ -52,10 +64,27 @@ const DetailPengajuanProdi: NextPage = () => {
     }
   };
 
-  const getJumlahTotalBuku = () => {
+  const getJumlahTotalBuku = (status?: string) => {
     let total = 0;
+    if (status) {
+      if (status === 'diproses') {
+        data?.buku.filter((dt: any) => dt.status === 'diproses').map((bk: any) => (total += bk.jumlah));
+        return total;
+      } else if (status === 'diterima') {
+        data?.buku.filter((dt: any) => dt.status === 'diterima').map((bk: any) => (total += bk.jumlah));
+        return total;
+      } else if (status === 'selesai') {
+        data?.buku.filter((dt: any) => dt.status === 'selesai').map((bk: any) => (total += bk.jumlah));
+        return total;
+      } else if (status === 'gagal') {
+        data?.buku.filter((dt: any) => dt.status === 'gagal').map((bk: any) => (total += bk.jumlah));
+        return total;
+      } else if (status === 'ditolak') {
+        data?.buku.filter((dt: any) => dt.status === 'ditolak').map((bk: any) => (total += bk.jumlah));
+        return total;
+      }
+    }
     data?.buku.map((bk: any) => (total += bk.jumlah));
-    data?.bukuLink.map((bk: any) => (total += bk.jumlah));
 
     return total;
   };
@@ -94,7 +123,7 @@ const DetailPengajuanProdi: NextPage = () => {
                     borderWidth='1px'
                     alignItems='center'
                     justifyContent='center'
-                    padding='2'
+                    padding='1'
                   >
                     Id Pengajuan Buku
                   </Flex>
@@ -107,13 +136,12 @@ const DetailPengajuanProdi: NextPage = () => {
                     borderWidth='1px'
                     alignItems='center'
                     justifyContent='center'
-                    padding='2'
+                    padding='1'
                   >
-                    Pesan Dari Prodi
+                    Tanggal Pengajuan
                   </Flex>
-                  <Text maxW='500px'>: {data?.pesanDosen}</Text>
+                  <Text>: {moment(data?.createdAt).format('LLL')}</Text>
                 </Flex>
-
                 <Flex alignItems='center' gap='15px'>
                   <Flex
                     borderColor='blue'
@@ -121,7 +149,7 @@ const DetailPengajuanProdi: NextPage = () => {
                     borderWidth='1px'
                     alignItems='center'
                     justifyContent='center'
-                    padding='2'
+                    padding='1'
                   >
                     Status
                   </Flex>
@@ -132,12 +160,11 @@ const DetailPengajuanProdi: NextPage = () => {
                     bgColor={getColorStatus(data?.status ?? '')}
                     justifyContent='center'
                   >
-                    <Text color='white' fontWeight='700'>
+                    <Text color='black' fontWeight='700'>
                       {data?.status}
                     </Text>
                   </Flex>
                 </Flex>
-
                 <Flex alignItems='center' gap='15px'>
                   <Flex
                     borderColor='blue'
@@ -145,20 +172,7 @@ const DetailPengajuanProdi: NextPage = () => {
                     borderWidth='1px'
                     alignItems='center'
                     justifyContent='center'
-                    padding='2'
-                  >
-                    Pesan Dari Admin
-                  </Flex>
-                  <Text maxW='500px'>: {data?.pesanAdmin}</Text>
-                </Flex>
-                <Flex alignItems='center' gap='15px'>
-                  <Flex
-                    borderColor='blue'
-                    minW='300px'
-                    borderWidth='1px'
-                    alignItems='center'
-                    justifyContent='center'
-                    padding='2'
+                    padding='1'
                   >
                     Jumlah Buku
                   </Flex>
@@ -171,11 +185,89 @@ const DetailPengajuanProdi: NextPage = () => {
                     borderWidth='1px'
                     alignItems='center'
                     justifyContent='center'
-                    padding='2'
+                    padding='1'
                   >
                     Jumlah Total Buku
                   </Flex>
                   <Text>: {getJumlahTotalBuku()}</Text>
+                </Flex>
+                <Flex alignItems='center' gap='15px'>
+                  <Flex
+                    borderColor='blue'
+                    minW='300px'
+                    borderWidth='1px'
+                    alignItems='center'
+                    justifyContent='center'
+                    padding='1'
+                  >
+                    Jumlah Total Buku Diproses
+                  </Flex>
+                  <Text>: {getJumlahTotalBuku('diproses')}</Text>
+                </Flex>
+                <Flex alignItems='center' gap='15px'>
+                  <Flex
+                    borderColor='blue'
+                    minW='300px'
+                    borderWidth='1px'
+                    alignItems='center'
+                    justifyContent='center'
+                    padding='1'
+                  >
+                    Jumlah Total Buku Diterima
+                  </Flex>
+                  <Text>: {getJumlahTotalBuku('diterima')}</Text>
+                </Flex>
+                <Flex alignItems='center' gap='15px'>
+                  <Flex
+                    borderColor='blue'
+                    minW='300px'
+                    borderWidth='1px'
+                    alignItems='center'
+                    justifyContent='center'
+                    padding='1'
+                  >
+                    Jumlah Total Buku Ditolak
+                  </Flex>
+                  <Text>: {getJumlahTotalBuku('ditolak')}</Text>
+                </Flex>
+                <Flex alignItems='center' gap='15px'>
+                  <Flex
+                    borderColor='blue'
+                    minW='300px'
+                    borderWidth='1px'
+                    alignItems='center'
+                    justifyContent='center'
+                    padding='1'
+                  >
+                    Jumlah Total Buku Selesai
+                  </Flex>
+                  <Text>: {getJumlahTotalBuku('selesai')}</Text>
+                </Flex>
+                <Flex alignItems='center' gap='15px'>
+                  <Flex
+                    borderColor='blue'
+                    minW='300px'
+                    borderWidth='1px'
+                    alignItems='center'
+                    justifyContent='center'
+                    padding='1'
+                  >
+                    Pesan Ke Admin
+                  </Flex>
+                  <Text maxW='500px'>: {data?.pesanDosen}</Text>
+                </Flex>
+                <Flex alignItems='center' gap='15px'>
+                  <Flex
+                    borderColor='blue'
+                    minW='300px'
+                    borderWidth='1px'
+                    alignItems='center'
+                    justifyContent='center'
+                    padding='1'
+                  >
+                    Pesan Dari Admin
+                  </Flex>
+                  <Text maxW='500px'>: {data?.pesanAdmin}</Text>
                 </Flex>
                 <Flex alignItems='flex-start' gap='15px'>
                   <Flex
@@ -184,76 +276,53 @@ const DetailPengajuanProdi: NextPage = () => {
                     borderWidth='1px'
                     alignItems='center'
                     justifyContent='center'
-                    padding='2'
+                    padding='1'
                   >
-                    Buku
+                    Informasi Buku :
                   </Flex>
-                  <VStack
-                    w='full'
-                    justifyContent='flex-start'
-                    alignItems='flex-start'
-                  >
-                    {data?.buku.map((buku: any, i: number) => (
-                      <Flex
-                        bgColor='gray.400'
-                        borderRadius='4px'
-                        padding='2'
-                        key={i}
-                        minW='600px'
-                        maxW='600px'
-                        alignItems='center'
-                        gap='5px'
-                      >
-                        {/* <Text fontWeight='bold' fontSize='lg'>
-                          {i + 1}
-                        </Text> */}
-                        <Box>
-                          <Text>Judul: {buku?._id?.judul}</Text>
-                          <Text>Jumlah: {buku?.jumlah}</Text>
-                          <Text>Katalog: {buku?._id?.katalog.name}</Text>
-                        </Box>
-                      </Flex>
-                    ))}
-                    {data?.bukuLink.map((buku: any, i: number) => (
-                      <Flex
-                        bgColor='gray.400'
-                        borderRadius='4px'
-                        padding='2'
-                        key={i}
-                        minW='600px'
-                        maxW='600px'
-                        alignItems='center'
-                        gap='5px'
-                      >
-                        {/* <Text fontWeight='bold' fontSize='lg'>
-                          {i + 1}
-                        </Text> */}
-                        <Box>
-                          <Text>
-                            Link:{' '}
-                            <Text
-                              as='span'
-                              _hover={{
-                                cursor: 'pointer',
-                                textDecoration: 'underline',
-                                color: 'blue',
-                              }}
-                            >
-                              <a
-                                target='_blank'
-                                href={buku.linkBuku}
-                                rel='noopener noreferrer'
-                              >
-                                {buku.linkBuku}
-                              </a>
-                            </Text>
-                          </Text>
-                          <Text>Jumlah: {buku.jumlah}</Text>
-                        </Box>
-                      </Flex>
-                    ))}
-                  </VStack>
                 </Flex>
+                {data &&
+                  <TableContainer>
+                    <Table size='sm'>
+                      <Thead>
+                        <Tr>
+                          <Th>No</Th>
+                          <Th>Judul Buku</Th>
+                          <Th>Katalog</Th>
+                          <Th textAlign="center">Jumlah</Th>
+                          <Th>Keterangan</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {data?.buku.map((buku: any, i: number) => (
+                          <Tr key={i}>
+                            <Td>{i + 1}</Td>
+                            <Td>{buku._id?.judul}</Td>
+                            <Td textAlign="center">{buku?._id?.katalog.name}</Td>
+                            <Td textAlign="center">{buku?.jumlah}</Td>
+                            <Td>
+                              <Flex
+                                padding='1'
+                                borderRadius='10px'
+                                alignItems='center'
+                                bgColor={getColorStatus(buku.status ?? '')}
+                                justifyContent='center'
+                              >
+                                <Text color='black' fontWeight='700'>
+                                  {buku?.status}
+                                </Text>
+                              </Flex>
+
+                            </Td>
+                          </Tr>
+
+
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
+
+                }
               </VStack>
             </Box>
           </Box>
