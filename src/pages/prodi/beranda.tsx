@@ -5,6 +5,7 @@ import LayoutProdi from '@/components/templates/LayoutProdi';
 import { APP_NAME, LOCAL_CART_PRODI } from '@/constant';
 import { IDataBuku } from '@/interface';
 import { ICombinedState } from '@/provider/redux/store';
+import { getProdiName } from '@/utils';
 import { Button } from '@chakra-ui/button';
 import { Checkbox } from '@chakra-ui/checkbox';
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
@@ -56,8 +57,8 @@ const BerandaProdi: NextPage = () => {
     setLoading(true);
     let temp: IDataBuku[] = [];
     let res = await ApiGetListBuku({ prodi: user?.programStudi ?? 'umum' });
+    let i = 0;
     if (res.status === 200) {
-      let i = 0;
       for (const data of res.data.data.slice(0, 50)) {
         i += 1;
         temp.push({
@@ -70,6 +71,26 @@ const BerandaProdi: NextPage = () => {
           tahunTerbit: data.tahunTerbit,
           bahasa: data.bahasa,
           prodi: data.prodi,
+          tipeBuku: data.tipeBuku,
+          tanggalUpload: moment(data.createdAt).format('L'),
+        });
+      }
+    }
+    res = await ApiGetListBuku({ prodi: user?.programStudi ?? 'umum', type: 'byPerpus' });
+    if (res.status === 200) {
+      for (const data of res.data.data.slice(0, 50)) {
+        i += 1;
+        temp.push({
+          no: i,
+          _id: data._id,
+          judul: data.judul,
+          penulis: data.penulis,
+          katalog: data?.katalog?.name ?? '-',
+          katalogId: data?.katalog?._id ?? '-',
+          tahunTerbit: data.tahunTerbit,
+          bahasa: data.bahasa,
+          prodi: data.prodi,
+          tipeBuku: data.tipeBuku,
           tanggalUpload: moment(data.createdAt).format('L'),
         });
       }
@@ -177,7 +198,9 @@ const BerandaProdi: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    getListBuku();
+    if (user) {
+      getListBuku();
+    }
   }, [user]);
 
   return (
@@ -190,7 +213,7 @@ const BerandaProdi: NextPage = () => {
       <AppTemplateProdi>
         <Box w='full' mt='15'>
           <Text fontSize='lg' fontWeight='700'>
-            Prodi Teknik Informatika (Hardcode)
+            {getProdiName(user?.programStudi ?? '')}
           </Text>
           <Flex mt='6' gap='10px' alignItems='center'>
             <FormControl w='fit-content'>
@@ -391,10 +414,10 @@ const ItemBuku: React.FC<IItemBuku> = (props) => {
         <Box>
           <Text>Bahasa: {props.buku.bahasa}</Text>
           <Text>Tahun terbit: {props.buku.tahunTerbit}</Text>
-          <Text fontStyle='italic'>
+          <Text fontWeight="600" color={props.buku.tipeBuku === 'byPerpus' ? "green.300" : "black"} fontStyle='italic'>
             Info:{' '}
             {props.buku.tipeBuku === 'byPerpus'
-              ? 'Tersedia Di Perpustakaana (10 buah)'
+              ? 'Tersedia Di Perpustakaan'
               : 'Belum tersedia di perpustakaan'}{' '}
           </Text>
         </Box>

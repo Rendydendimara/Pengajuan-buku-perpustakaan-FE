@@ -20,6 +20,8 @@ export const getProdiName = (prodiCode: string) => {
       return 'Ekonomi Pembangunan';
     case 'pmt':
       return 'Pendidikan Matematika';
+    case 'umum':
+      return 'Umum';
 
     default:
       return '';

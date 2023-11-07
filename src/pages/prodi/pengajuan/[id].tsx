@@ -298,7 +298,7 @@ const DetailPengajuanProdi: NextPage = () => {
                           <Tr key={i}>
                             <Td>{i + 1}</Td>
                             <Td>{buku._id?.judul}</Td>
-                            <Td textAlign="center">{buku?._id?.katalog.name}</Td>
+                            <Td textAlign="center">{buku?._id?.katalog?.name ?? "-"}</Td>
                             <Td textAlign="center">{buku?.jumlah}</Td>
                             <Td>
                               <Flex

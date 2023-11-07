@@ -372,7 +372,7 @@ const DetailPengajuanAdmin: NextPage = () => {
                             <Tr key={i}>
                               <Td>{i + 1}</Td>
                               <Td>{buku._id?.judul}</Td>
-                              <Td textAlign="center">{buku?._id?.katalog.name}</Td>
+                              <Td textAlign="center">{buku?._id?.katalog?.name ?? "-"}</Td>
                               <Td textAlign="center">{buku?.jumlah}</Td>
                               <Td>
                                 <Flex
@@ -389,50 +389,68 @@ const DetailPengajuanAdmin: NextPage = () => {
                               </Td>
                               <Td>
                                 {data.status === 'ditolak' || data.status === 'selesai' || data.status === 'diproses' ? '-' : <Flex alignItems='center' gap='10px'>
-                                  {buku.status === 'diproses' || buku.status === 'diterima' ? <Button
-                                    isLoading={loadingChangeStatusBuku}
-                                    colorScheme='red'
-                                    size='sm'
-                                    onClick={() => {
-                                      changeItemBukuStatus({
-                                        idBuku: buku._id._id,
-                                        status: 'ditolak'
-                                      })
-                                    }}
-                                  >
-                                    Tolak
-                                  </Button> : '-'}
-                                  {buku.status === 'diproses' && (
-                                    <Button
-                                      isLoading={loadingChangeStatusBuku}
-                                      colorScheme='green'
-                                      size='sm'
-                                      onClick={() => {
-                                        changeItemBukuStatus({
-                                          idBuku: buku._id._id,
-                                          status: 'diterima'
-                                        })
-                                      }}
+                                  {buku.status === 'diproses' ?
+                                    <>
+                                      <Button
+                                        isLoading={loadingChangeStatusBuku}
+                                        colorScheme='red'
+                                        size='sm'
+                                        onClick={() => {
+                                          changeItemBukuStatus({
+                                            idBuku: buku._id._id,
+                                            status: 'ditolak'
+                                          })
+                                        }}
+                                      >
+                                        Tolak
+                                      </Button>
+                                      <Button
+                                        isLoading={loadingChangeStatusBuku}
+                                        colorScheme='green'
+                                        size='sm'
+                                        onClick={() => {
+                                          changeItemBukuStatus({
+                                            idBuku: buku._id._id,
+                                            status: 'diterima'
+                                          })
+                                        }}
 
-                                    >
-                                      Terima
-                                    </Button>
-                                  )}
+                                      >
+                                        Terima
+                                      </Button>
+                                    </>
+                                    : '-'}
+
                                   {buku.status === 'diterima' && (
-                                    <Button
-                                      isLoading={loadingChangeStatusBuku}
-                                      colorScheme='green'
-                                      size='sm'
-                                      onClick={() => {
-                                        changeItemBukuStatus({
-                                          idBuku: buku._id._id,
-                                          status: 'selesai'
-                                        })
-                                      }}
+                                    <>
+                                      <Button
+                                        isLoading={loadingChangeStatusBuku}
+                                        colorScheme='red'
+                                        size='sm'
+                                        onClick={() => {
+                                          changeItemBukuStatus({
+                                            idBuku: buku._id._id,
+                                            status: 'gagal'
+                                          })
+                                        }}
+                                      >
+                                        Gagal
+                                      </Button>
+                                      <Button
+                                        isLoading={loadingChangeStatusBuku}
+                                        colorScheme='green'
+                                        size='sm'
+                                        onClick={() => {
+                                          changeItemBukuStatus({
+                                            idBuku: buku._id._id,
+                                            status: 'selesai'
+                                          })
+                                        }}
 
-                                    >
-                                      Selesai
-                                    </Button>
+                                      >
+                                        Selesai
+                                      </Button>
+                                    </>
                                   )}
                                 </Flex>}
                               </Td>

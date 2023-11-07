@@ -362,44 +362,60 @@ function CustomTable({ columns, data, getListPengguna }: any) {
                     return (
                       <Td key={y} {...cell.getCellProps()}>
                         <Flex alignItems='center' gap='10px'>
-                          {row.original.status === 'diproses' || row.original.status === 'diterima' ? (
-                            <Button
-                              isLoading={loading}
-                              onClick={() => {
-                                setModalType('reject');
-                                onOpenChangeStatus(row.original.id, 'ditolak');
-                              }}
-                              colorScheme='red'
-                              size='sm'
-                            >
-                              Tolak
-                            </Button>
-                          ) : null}
+
                           {row.original.status === 'diproses' && (
-                            <Button
-                              onClick={() => {
-                                setModalType('accept');
-                                onOpenChangeStatus(row.original.id, 'diterima');
-                              }}
-                              isLoading={loading}
-                              colorScheme='green'
-                              size='sm'
-                            >
-                              Terima
-                            </Button>
+                            <>
+                              <Button
+                                isLoading={loading}
+                                onClick={() => {
+                                  setModalType('reject');
+                                  onOpenChangeStatus(row.original.id, 'ditolak');
+                                }}
+                                colorScheme='red'
+                                size='sm'
+                              >
+                                Tolak
+                              </Button>
+
+                              <Button
+                                onClick={() => {
+                                  setModalType('accept');
+                                  onOpenChangeStatus(row.original.id, 'diterima');
+                                }}
+                                isLoading={loading}
+                                colorScheme='green'
+                                size='sm'
+                              >
+                                Terima
+                              </Button>
+
+                            </>
                           )}
                           {row.original.status === 'diterima' && (
-                            <Button
-                              onClick={() => {
-                                setModalType('selesai');
-                                onOpenChangeStatus(row.original.id, 'selesai');
-                              }}
-                              isLoading={loading}
-                              colorScheme='green'
-                              size='sm'
-                            >
-                              Selesai
-                            </Button>
+                            <>
+                              <Button
+                                onClick={() => {
+                                  setModalType('reject');
+                                  onOpenChangeStatus(row.original.id, 'gagal');
+                                }}
+                                isLoading={loading}
+                                colorScheme='red'
+                                size='sm'
+                              >
+                                Gagal
+                              </Button>
+                              <Button
+                                onClick={() => {
+                                  setModalType('selesai');
+                                  onOpenChangeStatus(row.original.id, 'selesai');
+                                }}
+                                isLoading={loading}
+                                colorScheme='green'
+                                size='sm'
+                              >
+                                Selesai
+                              </Button>
+                            </>
 
                           )}
                           <Button

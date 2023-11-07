@@ -85,6 +85,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
     agb: [],
     thp: [],
     tif: [],
+    umum: []
   });
   const [form, setForm] = useState({
     tahun: '',
@@ -139,7 +140,8 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
       | 'agt'
       | 'agb'
       | 'thp'
-      | 'tif',
+      | 'tif'
+      | 'umum',
     dataSource: any[]
   ) => {
     let result: IBukuRekapan[] = [];
@@ -152,7 +154,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
             result.push({
               judulBuku: buku._id.judul,
               penulis: buku._id.penulis,
-              penerbit: buku._id.katalog.name,
+              penerbit: buku?._id?.katalog?.name ?? "-",
               tahunBuku: buku._id.tahunTerbit,
               diBuat: moment(dt.createdAt).format('L'),
             });
@@ -199,6 +201,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
       let thp: IBukuRekapan[] = filterData('thp', dataResult);
       let hkm: IBukuRekapan[] = filterData('hkm', dataResult);
       let tif: IBukuRekapan[] = filterData('tif', dataResult);
+      let umum: IBukuRekapan[] = filterData('umum', dataResult);
 
       setDataRekapan({
         hkm,
@@ -211,6 +214,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
         agb,
         thp,
         tif,
+        umum
       });
     } else {
       toast({
@@ -273,7 +277,7 @@ const RekapanPermintaanBukuAdmin: NextPage = () => {
               <option value='man'>Manajemen</option>
               <option value='ekm'>Ekonomi Pembangunan</option>
               <option value='pmt'>Pendidikan Matematika</option>
-              <option value='umum'>Umum</option>
+              {/* <option value='umum'>Umum</option> */}
             </Select>
           </FormControl>
           <FormControl w="200px">
