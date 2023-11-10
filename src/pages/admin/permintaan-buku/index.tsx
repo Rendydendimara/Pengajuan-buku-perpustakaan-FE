@@ -362,8 +362,7 @@ function CustomTable({ columns, data, getListPengguna }: any) {
                     return (
                       <Td key={y} {...cell.getCellProps()}>
                         <Flex alignItems='center' gap='10px'>
-
-                          {row.original.status === 'diproses' && (
+                          {/* {row.original.status === 'diproses' && (
                             <>
                               <Button
                                 isLoading={loading}
@@ -417,7 +416,7 @@ function CustomTable({ columns, data, getListPengguna }: any) {
                               </Button>
                             </>
 
-                          )}
+                          )} */}
                           <Button
                             onClick={() => detailPage(row.original.id)}
                             colorScheme='blue'

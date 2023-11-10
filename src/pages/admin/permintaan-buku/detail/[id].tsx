@@ -1,4 +1,4 @@
-import { ApiChangeAllStatusPengajuanBukuItemBuku, ApiChangeStatusPengajuanBukuItemBuku, ApiGetDetailPengajuanBuku } from '@/api/pengajuanBuku';
+import { ApiChangeAllStatusPengajuanBukuItemBuku, ApiChangeStatusPengajuanBuku, ApiChangeStatusPengajuanBukuItemBuku, ApiGetDetailPengajuanBuku } from '@/api/pengajuanBuku';
 import AppTemplate from '@/components/templates/AppTemplate';
 import AppTemplateProdi from '@/components/templates/AppTemplateProdi';
 import Layout from '@/components/templates/Layout';
@@ -25,6 +25,17 @@ import {
   Td,
   TableCaption,
   TableContainer,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  FormControl,
+  FormLabel,
+  Textarea,
+  ModalFooter,
 } from '@chakra-ui/react'
 
 // interface IReduxStateWorkspace {
@@ -47,6 +58,54 @@ const DetailPengajuanAdmin: NextPage = () => {
   const { toast } = createStandaloneToast();
   const [data, setData] = useState<IPengajuanBuku>();
   const [idPengajuan, setIdPengajuan] = useState('');
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [modalType, setModalType] =
+    useState<'reject' | 'accept' | 'selesai' | ''>('');
+  const [loading, setLoading] = useState(false);
+  const [formStatus, setFormStatus] = useState({
+    status: '',
+    pesan: '',
+    id: '',
+  });
+
+  const onOpenChangeStatus = (id: string, status: string) => {
+    setFormStatus({
+      ...formStatus,
+      id: id,
+      status: status,
+    });
+    onOpen();
+  };
+
+  const onChangeStatus = async () => {
+    setLoading(true);
+    const res = await ApiChangeStatusPengajuanBuku({
+      status: formStatus.status,
+      pesan: formStatus.pesan,
+      id: formStatus.id,
+    });
+    if (res.status === 200) {
+      toast({
+        status: 'success',
+        duration: 5000,
+        title: 'Berhasil',
+        description: 'Berhasil mengganti status',
+        position: 'bottom-right',
+      });
+      getData(idPengajuan);
+      onClose();
+    } else {
+      toast({
+        status: 'error',
+        duration: 5000,
+        title: 'Error',
+        description: res.data.message,
+        position: 'bottom-right',
+      });
+    }
+    setLoading(false);
+  };
+
 
   const getData = async (id: string) => {
     const res = await ApiGetDetailPengajuanBuku(id);
@@ -132,6 +191,12 @@ const DetailPengajuanAdmin: NextPage = () => {
     setLoadingChangeStatusBuku(false)
   }
 
+  const changePesan = (e: any) => {
+    setFormStatus({
+      ...formStatus,
+      pesan: e.target.value,
+    });
+  };
 
   useEffect(() => {
     const id: any = router.query.id;
@@ -167,7 +232,8 @@ const DetailPengajuanAdmin: NextPage = () => {
                     minW='300px'
                     borderWidth='1px'
                     alignItems='center'
-                    justifyContent='center'
+                    justifyContent='flex-start'
+                    fontWeight={500}
                     padding='1'
                   >
                     Id Pengajuan Buku
@@ -180,7 +246,8 @@ const DetailPengajuanAdmin: NextPage = () => {
                     minW='300px'
                     borderWidth='1px'
                     alignItems='center'
-                    justifyContent='center'
+                    justifyContent='flex-start'
+                    fontWeight={500}
                     padding='1'
                   >
                     Tanggal Pengajuan
@@ -193,7 +260,8 @@ const DetailPengajuanAdmin: NextPage = () => {
                     minW='300px'
                     borderWidth='1px'
                     alignItems='center'
-                    justifyContent='center'
+                    justifyContent='flex-start'
+                    fontWeight={500}
                     padding='1'
                   >
                     Status
@@ -216,7 +284,86 @@ const DetailPengajuanAdmin: NextPage = () => {
                     minW='300px'
                     borderWidth='1px'
                     alignItems='center'
+                    justifyContent='flex-start'
+                    fontWeight={500}
+                    padding='1'
+                  >
+                    Aksi Pengajuan
+                  </Flex>
+                  <Flex
+                    padding='1'
+                    borderRadius='10px'
+                    alignItems='center'
                     justifyContent='center'
+                  >
+                    {data && <Flex alignItems='center' gap='10px'>
+                      {data.status === 'diproses' && (
+                        <>
+                          <Button
+                            isLoading={loading}
+                            onClick={() => {
+                              setModalType('reject');
+                              onOpenChangeStatus(data._id, 'ditolak');
+                            }}
+                            colorScheme='red'
+                            size='sm'
+                          >
+                            Tolak
+                          </Button>
+
+                          <Button
+                            onClick={() => {
+                              setModalType('accept');
+                              onOpenChangeStatus(data._id, 'diterima');
+                            }}
+                            isLoading={loading}
+                            colorScheme='green'
+                            size='sm'
+                          >
+                            Terima
+                          </Button>
+
+                        </>
+                      )}
+                      {data.status === 'diterima' && (
+                        <>
+                          <Button
+                            onClick={() => {
+                              setModalType('reject');
+                              onOpenChangeStatus(data._id, 'gagal');
+                            }}
+                            isLoading={loading}
+                            colorScheme='red'
+                            size='sm'
+                          >
+                            Gagal
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setModalType('selesai');
+                              onOpenChangeStatus(data._id, 'selesai');
+                            }}
+                            isLoading={loading}
+                            colorScheme='green'
+                            size='sm'
+                          >
+                            Selesai
+                          </Button>
+                        </>
+                      )}
+                      {data.status === 'selesai' || data.status === 'ditolak' || data.status === 'gagal' ? '-' : null}
+                    </Flex>
+                    }
+                  </Flex>
+                </Flex>
+                <Flex alignItems='center' gap='15px'>
+                  <Flex
+                    borderColor='blue'
+                    minW='300px'
+                    borderWidth='1px'
+                    alignItems='center'
+                    justifyContent='flex-start'
+                    fontWeight={500}
                     padding='1'
                   >
                     Jumlah Buku
@@ -229,7 +376,8 @@ const DetailPengajuanAdmin: NextPage = () => {
                     minW='300px'
                     borderWidth='1px'
                     alignItems='center'
-                    justifyContent='center'
+                    justifyContent='flex-start'
+                    fontWeight={500}
                     padding='1'
                   >
                     Jumlah Total Buku
@@ -242,7 +390,8 @@ const DetailPengajuanAdmin: NextPage = () => {
                     minW='300px'
                     borderWidth='1px'
                     alignItems='center'
-                    justifyContent='center'
+                    justifyContent='flex-start'
+                    fontWeight={500}
                     padding='1'
                   >
                     Jumlah Total Buku Diproses
@@ -255,7 +404,8 @@ const DetailPengajuanAdmin: NextPage = () => {
                     minW='300px'
                     borderWidth='1px'
                     alignItems='center'
-                    justifyContent='center'
+                    justifyContent='flex-start'
+                    fontWeight={500}
                     padding='1'
                   >
                     Jumlah Total Buku Diterima
@@ -268,7 +418,8 @@ const DetailPengajuanAdmin: NextPage = () => {
                     minW='300px'
                     borderWidth='1px'
                     alignItems='center'
-                    justifyContent='center'
+                    justifyContent='flex-start'
+                    fontWeight={500}
                     padding='1'
                   >
                     Jumlah Total Buku Ditolak
@@ -281,7 +432,8 @@ const DetailPengajuanAdmin: NextPage = () => {
                     minW='300px'
                     borderWidth='1px'
                     alignItems='center'
-                    justifyContent='center'
+                    justifyContent='flex-start'
+                    fontWeight={500}
                     padding='1'
                   >
                     Jumlah Total Buku Selesai
@@ -294,7 +446,8 @@ const DetailPengajuanAdmin: NextPage = () => {
                     minW='300px'
                     borderWidth='1px'
                     alignItems='center'
-                    justifyContent='center'
+                    justifyContent='flex-start'
+                    fontWeight={500}
                     padding='1'
                   >
                     Pesan Dari Admin Prodi
@@ -307,7 +460,8 @@ const DetailPengajuanAdmin: NextPage = () => {
                     minW='300px'
                     borderWidth='1px'
                     alignItems='center'
-                    justifyContent='center'
+                    justifyContent='flex-start'
+                    fontWeight={500}
                     padding='1'
                   >
                     Pesan Ke Admin Prodi
@@ -320,7 +474,8 @@ const DetailPengajuanAdmin: NextPage = () => {
                     minW='300px'
                     borderWidth='1px'
                     alignItems='center'
-                    justifyContent='center'
+                    justifyContent='flex-start'
+                    fontWeight={500}
                     padding='1'
                   >
                     Informasi Buku :
@@ -467,6 +622,47 @@ const DetailPengajuanAdmin: NextPage = () => {
           </Box>
         </Box>
       </AppTemplate>
+      <Modal onClose={onClose} isOpen={isOpen} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            {modalType === 'reject'
+              ? 'Tolak'
+              : modalType === 'accept'
+                ? 'Terima'
+                : 'Selesai'}{' '}
+            Pengajuan
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>
+              Apakah kamu yakin untuk{' '}
+              {modalType === 'reject'
+                ? 'menolak'
+                : modalType === 'accept'
+                  ? 'menerima'
+                  : 'menyelesaikan'}{' '}
+              pengajuan ?
+            </Text>
+            <FormControl my='5' id='email' isRequired>
+              <FormLabel>Pesan Dari Prodi</FormLabel>
+              <Textarea
+                value={formStatus.pesan}
+                onChange={changePesan}
+                rows={5}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter gap='2'>
+            <Button size='sm' onClick={onChangeStatus} colorScheme='green'>
+              Ya, Lanjut
+            </Button>
+            <Button colorScheme='red' size='sm' onClick={onClose}>
+              Batal
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Layout>
   );
 };
