@@ -76,6 +76,7 @@ interface IDataRow {
 const PermintaanBukuAdmin: NextPage = () => {
   const router = useRouter();
   const { toast } = createStandaloneToast();
+  const [filterTahun, setFilterTahun] = useState('')
   const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([]);
   // const { showToast } = useGlobalContext();
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
@@ -137,6 +138,11 @@ const PermintaanBukuAdmin: NextPage = () => {
         return some(haystack, (el) => includes(el, searching.toLowerCase()));
       });
     }
+    if (filterTahun) {
+      data = data.filter((data) => {
+        return filterTahun === new Date(data.ajukanPada).getFullYear().toString()
+      });
+    }
 
     return data;
   };
@@ -173,6 +179,10 @@ const PermintaanBukuAdmin: NextPage = () => {
     router.back();
   };
 
+  const changeFilterTahun = (e: any) => {
+    setFilterTahun(e.target.value)
+  }
+
   useEffect(() => {
     getListPengguna();
   }, []);
@@ -190,7 +200,19 @@ const PermintaanBukuAdmin: NextPage = () => {
             Permintaan Buku
           </Text>
           <Box my='4'>
-            <Flex w='full' justifyContent='flex-end'>
+            <Flex w='full' justifyContent='flex-end' gap="20px">
+              <FormControl w="200px">
+                <FormLabel>Filter Tahun</FormLabel>
+                <Select placeholder='Pilih tahun' onChange={changeFilterTahun}>
+                  <option value='2018'>2018</option>
+                  <option value='2019'>2019</option>
+                  <option value='2020'>2020</option>
+                  <option value='2021'>2021</option>
+                  <option value='2022'>2022</option>
+                  <option value='2023'>2023</option>
+                  <option value='2024'>2024</option>
+                </Select>
+              </FormControl>
               <Box>
                 <FormLabel>Cari nama pengajuan</FormLabel>
                 <InputGroup w='500px' size='md'>

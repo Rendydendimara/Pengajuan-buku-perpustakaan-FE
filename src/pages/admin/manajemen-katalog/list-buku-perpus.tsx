@@ -75,6 +75,7 @@ const ListBukuPerpusAdmin: NextPage = () => {
   const router = useRouter();
   const { toast } = createStandaloneToast();
   const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([]);
+  const [filterTahun, setFilterTahun] = useState('')
   const [listKatalog, setListKatalog] = useState<IKatalog[]>([]);
   // const { showToast } = useGlobalContext();
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
@@ -135,9 +136,20 @@ const ListBukuPerpusAdmin: NextPage = () => {
         return some(haystack, (el) => includes(el, searching.toLowerCase()));
       });
     }
+    if (filterTahun) {
+      data = data.filter((data) => {
+        return filterTahun === new Date(data.tanggalUpload).getFullYear().toString()
+      });
+    }
+
 
     return data;
   };
+
+  const changeFilterTahun = (e: any) => {
+    setFilterTahun(e.target.value)
+  }
+
 
   const getListPengguna = async () => {
     const res = await ApiGetListBuku({ type: 'byPerpus' });
@@ -225,15 +237,18 @@ const ListBukuPerpusAdmin: NextPage = () => {
                 </Link>
               </Flex>
               <Flex w='full' alignItems='center' gap='20px'>
-                {/* <FormControl>
-                  <FormLabel>Filter</FormLabel>
-                  <Select>
-                    <option value=''>Semua</option>
-                    {listKatalog.map((kat, i) => (
-                      <option value={kat.name}>{kat.name}</option>
-                    ))}
+                <FormControl w="200px">
+                  <FormLabel>Filter Tahun</FormLabel>
+                  <Select placeholder='Pilih tahun' onChange={changeFilterTahun}>
+                    <option value='2018'>2018</option>
+                    <option value='2019'>2019</option>
+                    <option value='2020'>2020</option>
+                    <option value='2021'>2021</option>
+                    <option value='2022'>2022</option>
+                    <option value='2023'>2023</option>
+                    <option value='2024'>2024</option>
                   </Select>
-                </FormControl> */}
+                </FormControl>
                 <FormControl>
                   <InputGroup w='500px' size='md'>
                     <Input

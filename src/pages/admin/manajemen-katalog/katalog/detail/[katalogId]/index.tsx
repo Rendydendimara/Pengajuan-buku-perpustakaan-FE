@@ -34,6 +34,7 @@ import {
   Th,
   Thead,
   Tooltip,
+  FormControl,
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -73,6 +74,7 @@ const ListBukuKatalogAdmin: NextPage = () => {
   const router = useRouter();
   const [catalogId, setCatalogId] = useState('');
   const { toast } = createStandaloneToast();
+  const [filterTahun, setFilterTahun] = useState('')
   const [dataPengguna, setDataPengguna] = useState<IDataRow[]>([]);
   // const { showToast } = useGlobalContext();
   // const { user } = useSelector<ICombinedState, IReduxStateWorkspace>(
@@ -82,6 +84,7 @@ const ListBukuKatalogAdmin: NextPage = () => {
   //     };
   //   }
   // );
+
   const columns = useMemo(
     () => [
       {
@@ -101,16 +104,16 @@ const ListBukuKatalogAdmin: NextPage = () => {
         accessor: 'penulis',
       },
       {
+        Header: 'Tahun',
+        accessor: 'tahun',
+      },
+      {
         Header: 'Penerbit',
         accessor: 'penerbit',
       },
       {
         Header: 'Tanggal Upload',
         accessor: 'tanggalUpload',
-      },
-      {
-        Header: 'Tahun',
-        accessor: 'tahun',
       },
       {
         Header: 'Aksi',
@@ -132,6 +135,12 @@ const ListBukuKatalogAdmin: NextPage = () => {
       data = data.filter((data) => {
         const haystack = [data.judulBuku.toLowerCase()];
         return some(haystack, (el) => includes(el, searching.toLowerCase()));
+      });
+    }
+
+    if (filterTahun) {
+      data = data.filter((data) => {
+        return filterTahun === new Date(data.tanggalUpload).getFullYear().toString()
       });
     }
 
@@ -172,6 +181,11 @@ const ListBukuKatalogAdmin: NextPage = () => {
   const back = () => {
     router.back();
   };
+
+  const changeFilterTahun = (e: any) => {
+    setFilterTahun(e.target.value)
+  }
+
 
   const [catalogData, setCatalogData] = useState<any>();
 
@@ -233,7 +247,19 @@ const ListBukuKatalogAdmin: NextPage = () => {
                 </Link>
               </Flex>
               <Box>
-                <Flex w='full' justifyContent='flex-end'>
+                <Flex w='full' justifyContent='flex-end' gap="20px">
+                  <FormControl w="200px">
+                    <FormLabel>Filter Tahun</FormLabel>
+                    <Select placeholder='Pilih tahun' onChange={changeFilterTahun}>
+                      <option value='2018'>2018</option>
+                      <option value='2019'>2019</option>
+                      <option value='2020'>2020</option>
+                      <option value='2021'>2021</option>
+                      <option value='2022'>2022</option>
+                      <option value='2023'>2023</option>
+                      <option value='2024'>2024</option>
+                    </Select>
+                  </FormControl>
                   <Box>
                     <FormLabel>Cari nama</FormLabel>
                     <InputGroup w='500px' size='md'>
